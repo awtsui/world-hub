@@ -1,22 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
-import { CartItem } from '@/types';
+import { Ticket } from '@/types';
 import dbConnect from '@/utils/mongodb';
 import Order from '@/models/Order';
+import Big from 'big.js';
 
 const { STRIPE_SECRET_KEY } = process.env;
-
 if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY not defined');
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const sessionId = searchParams.get('id');
+    if (!sessionId) {
+      throw Error('Parameters not properly defined');
+    }
+    if (!sessionId.startsWith('cs_')) {
+      throw Error('Incorrect Checkout Session ID');
+    }
+    const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['payment_intent', 'customer'],
+    });
+
+    return NextResponse.json(
+      {
+        status: checkoutSession.status,
+        payment_status: checkoutSession.payment_status,
+        customer_email: checkoutSession.customer_details?.email,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: `Internal Server Error: ${error}` },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     await dbConnect();
-    const { cartItems, userId } = await request.json();
+    const { tickets, userId } = await request.json();
 
-    if (!cartItems.length) {
+    if (!tickets.length) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
     }
     if (!userId) {
@@ -27,24 +57,32 @@ export async function POST(request: Request) {
     }
 
     let lineItems: any[] = [];
-    cartItems.forEach((item: CartItem) => {
+    let totalPrice = Big(0);
+    let amount = 0;
+    tickets.forEach((item: Ticket) => {
+      const ticketAmount = item.price.times(item.unitAmount);
+      totalPrice = totalPrice.add(ticketAmount);
+      amount += item.unitAmount;
       lineItems.push({
         quantity: item.unitAmount,
         price_data: {
-          currency: 'USD',
+          currency: item.currency,
           product_data: {
-            name: item.eventName,
-            metadata: { eventId: item.eventId },
+            name: item.eventTitle,
+            metadata: { eventId: item.eventId, label: item.label },
           },
-          unit_amount: Math.round(parseFloat(item.price) * 100),
+          unit_amount: ticketAmount,
         },
       });
     });
 
     const order = await Order.create({
-      items: lineItems,
       userId,
       isPaid: false,
+      amount,
+      totalPrice,
+      tickets,
+      email: '',
     });
 
     const headerList = headers();

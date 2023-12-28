@@ -19,7 +19,7 @@ export default function CheckoutSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('sessionId');
 
-  const URL = sessionId ? `/api/stripe/sessions/${sessionId}` : null;
+  const URL = sessionId ? `/api/stripe/sessions/?id=${sessionId}` : null;
   const { data, error, isLoading } = useSWR(URL, fetcher);
 
   // TODO: Redirect to a error page

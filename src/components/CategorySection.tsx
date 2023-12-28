@@ -25,7 +25,7 @@ export default function CategorySection({
           </a>
           <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth snap-x gap-3">
             {filteredEvents.map((event) => (
-              <EventCard key={event.eventId} {...event}></EventCard>
+              <EventCard key={event.eventId} event={event}></EventCard>
             ))}
           </div>
         </div>
