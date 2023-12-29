@@ -13,7 +13,7 @@
     "@stripe/react-stripe-js": "^2.4.0",
     "@stripe/stripe-js": "^2.2.0",
     "@types/stripe": "^8.0.417",
-    "@worldcoin/idkit": "^0.5.1",
+    "@worldcoin/idkit": "^1.1.1",
     "big.js": "^6.2.1",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.292.0",
