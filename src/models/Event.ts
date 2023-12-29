@@ -1,17 +1,28 @@
 import { Schema, model, models } from 'mongoose';
-import { Event as IEvent } from '@/types';
+import { IEvent } from '@/types';
+import { Decimal128 } from 'mongodb';
 
 const EventSchema = new Schema<IEvent>(
   {
-    eventId: Number,
-    eventName: String,
-    profileId: String,
+    eventId: String,
+    title: String,
+    subTitle: String,
+    hostId: String,
     category: String,
     subCategory: String,
     thumbnailUrl: String,
-    eventDatetime: Date,
-    price: String,
+    datetime: Date,
+    currency: String,
     description: String,
+    venueId: String,
+    lineup: [String],
+    ticketLimit: Number,
+    ticketTiers: [
+      {
+        label: String,
+        price: Decimal128,
+      },
+    ],
   },
   { collection: 'events' }
 );

@@ -1,7 +1,11 @@
 'use client';
 import { Button } from '@/components/Button';
 import { Role } from '@/types';
-import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit';
+import {
+  IDKitWidget,
+  ISuccessResult,
+  VerificationLevel,
+} from '@worldcoin/idkit';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -51,12 +55,12 @@ export default function VerifyPage() {
   return (
     <div className="flex items-center justify-center h-screen">
       <IDKitWidget
-        app_id={process.env.NEXT_PUBLIC_WLD_CLIENT_ID!}
+        app_id={`app_${process.env.NEXT_PUBLIC_WLD_CLIENT_ID!}`}
         action="verifytransaction"
-        signal="value"
+        signal="verify"
         onSuccess={onSuccess}
         handleVerify={verifyProof}
-        enableTelemetry
+        verification_level={VerificationLevel.Device}
       >
         {({ open }) => <Button onClick={open}>Verify with World ID</Button>}
       </IDKitWidget>

@@ -3,24 +3,13 @@ import EventCard from '@/components/EventCard';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Event } from '@/types';
+import { getEventsByCategory } from '@/utils/client-helper';
 
 type CategoryPageParams = {
   params: {
     categoryId: string;
   };
 };
-
-async function getEventsByCategory(categoryName: string) {
-  try {
-    const baseUrl = process.env.BASE_URL;
-    const resp = await fetch(`${baseUrl}/api/events?category=${categoryName}`, {
-      next: { revalidate: 3600 },
-    });
-    return resp.json();
-  } catch (error) {
-    throw new Error(`Unable to fetch events by category: ${error}`);
-  }
-}
 
 export default async function CategoryPage({ params }: CategoryPageParams) {
   // TODO: Organize events based on subcategory
@@ -43,7 +32,7 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
         <div className="flex flex-wrap gap-3">
           {events.length > 0 ? (
             events.map((event) => (
-              <EventCard key={event.eventId} {...event}></EventCard>
+              <EventCard key={event.eventId} event={event}></EventCard>
             ))
           ) : (
             <div>No Events</div>

@@ -2,20 +2,15 @@ import { Event } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 
-type EventCardProps = Event;
+type EventCardProps = { event: Event };
 
-export default function EventCard({
-  eventId,
-  eventName,
-  thumbnailUrl,
-  subCategory,
-}: EventCardProps) {
+export default function EventCard({ event }: EventCardProps) {
   return (
     <div className="flex-shrink-0 snap-center">
-      <Link href={`/event/${eventId}`}>
+      <Link href={`/event/${event.eventId}`}>
         <Image
-          src={thumbnailUrl}
-          alt={eventName}
+          src={event.thumbnailUrl}
+          alt={event.title}
           width={300}
           height={200}
           className="object-cover"
@@ -23,8 +18,8 @@ export default function EventCard({
       </Link>
 
       <div className="flex flex-col">
-        <p>{eventName}</p>
-        <p>{subCategory}</p>
+        <p>{event.title}</p>
+        <p>{event.subCategory}</p>
       </div>
     </div>
   );

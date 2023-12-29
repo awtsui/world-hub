@@ -1,6 +1,6 @@
 'use client';
 
-import { CartItem, Event } from '@/types';
+import { Ticket } from '@/types';
 import {
   createContext,
   useCallback,
@@ -10,10 +10,12 @@ import {
   useState,
 } from 'react';
 
+const LOCAL_STORAGE_KEY = 'STRIPE_CART_ITEMS';
+
 interface CartContext {
-  items: CartItem[];
-  addItem: (event: Event) => void;
-  removeItem: (id: number) => void;
+  tickets: Ticket[];
+  addTicket: (ticket: Ticket) => void;
+  removeTicket: (eventId: string, ticketLabel: string) => void;
   resetCart: () => void;
 }
 
@@ -21,7 +23,7 @@ function loadJSON(key: string) {
   if (localStorage[key]) return JSON.parse(localStorage[key] ?? '');
   return '';
 }
-function saveJSON(key: string, data: CartItem[]) {
+function saveJSON(key: string, data: Ticket[]) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
@@ -40,38 +42,59 @@ interface CartProviderProps {
 }
 
 export function CartProvider({ children }: CartProviderProps) {
-  const key = 'STRIPE_CART_ITEMS';
   const firstRender = useRef(true);
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
 
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
-      const localItems = loadJSON(key);
-      localItems && setItems(localItems);
+      const localItems = loadJSON(LOCAL_STORAGE_KEY);
+      localItems && setTickets(localItems);
     }
-    saveJSON(key, items);
-  }, [key, items]);
+    saveJSON(LOCAL_STORAGE_KEY, tickets);
+  }, [LOCAL_STORAGE_KEY, tickets]);
 
-  const addItem = useCallback(
-    (event: Event) =>
-      setItems((cartItems) =>
-        cartItems.concat([{ unitAmount: 1, ...event, price: event.price }])
+  const addTicket = useCallback(
+    (ticket: Ticket) =>
+      setTickets((prev) => {
+        let ticketFound = false;
+        const next: Ticket[] = [];
+        prev.forEach((item) => {
+          if (item.eventId === ticket.eventId && item.label === ticket.label) {
+            next.push({
+              ...item,
+              unitAmount: item.unitAmount + ticket.unitAmount,
+            });
+            ticketFound = true;
+          } else {
+            next.push(item);
+          }
+        });
+        if (!ticketFound) {
+          next.push(ticket);
+        }
+        return next;
+      }),
+    []
+  );
+  const removeTicket = useCallback(
+    (eventId: string, ticketLabel: string) =>
+      setTickets((prev) =>
+        prev.filter(
+          (ticket) =>
+            ticket.eventId !== eventId ||
+            (ticket.eventId === eventId && ticket.label !== ticketLabel)
+        )
       ),
     []
   );
-  const removeItem = useCallback(
-    (id: number) =>
-      setItems((cartItems) =>
-        cartItems.filter((event) => event.eventId !== id)
-      ),
-    []
-  );
 
-  const resetCart = useCallback(() => setItems([]), []);
+  const resetCart = useCallback(() => setTickets([]), []);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, resetCart }}>
+    <CartContext.Provider
+      value={{ tickets, addTicket, removeTicket, resetCart }}
+    >
       {children}
     </CartContext.Provider>
   );

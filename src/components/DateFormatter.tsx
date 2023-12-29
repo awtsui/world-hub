@@ -11,6 +11,6 @@ export default function DateFormatter({ date }: DateFormatterProps) {
     }).format(date);
     return <span>{formattedDate}</span>;
   } catch (error) {
-    throw new Error(date.toString());
+    throw error;
   }
 }

@@ -1,6 +1,8 @@
 import DateFormatter from '@/components/DateFormatter';
 import ReturnButton from '@/components/ReturnButton';
-import TicketButton from '@/components/TicketButton';
+import AddTicketButton from '@/components/AddTicketButton';
+import { Event, Tier } from '@/types';
+import { getEventsById } from '@/utils/client-helper';
 
 type EventPageParams = {
   params: {
@@ -8,21 +10,9 @@ type EventPageParams = {
   };
 };
 
-async function getEvent(eventId: string) {
-  try {
-    const baseUrl = process.env.BASE_URL;
-    const resp = await fetch(`${baseUrl}/api/events/${eventId}`, {
-      next: { revalidate: 3600 },
-    });
-    return resp.json();
-  } catch (error) {
-    throw new Error(`Unable to fetch event by id: ${error}`);
-  }
-}
-
 export default async function EventPage({ params }: EventPageParams) {
   // Replace with data fetching
-  const event = await getEvent(params.eventId);
+  const event: Event = (await getEventsById([params.eventId]))[0];
 
   return (
     <div className="px-12 py-4">
@@ -30,17 +20,24 @@ export default async function EventPage({ params }: EventPageParams) {
       {event ? (
         <div className="p-4">
           <div className="flex flex-col items-center">
-            <h1 className="text-3xl font-bold mb-4">{event.eventName}</h1>
-
+            <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
             <p className="mb-2">
-              <strong>{event.profileId}(Artist)</strong>
+              <strong>Artist: {event.hostId}</strong>
             </p>
             <p className="mb-2">
-              <DateFormatter date={new Date(event.eventDatetime)} />
+              <DateFormatter date={new Date(event.datetime)} />
             </p>
-            <p className="mb-2">Price: ${event.price}</p>
             <p className="mb-2">{event.description}</p>
-            <TicketButton event={event} />
+            <p className="mb-2">
+              {event.category} {'>'} {event.subCategory}
+            </p>
+            {event.ticketTiers.map((tier: Tier) => (
+              <div key={tier.label} className="flex">
+                <p className="mb-2">Tier: {tier.label}</p>
+                <p className="mb-2">Price: ${tier.price.toFixed(2)}</p>
+                <AddTicketButton event={event} tier={tier} />
+              </div>
+            ))}
           </div>
         </div>
       ) : (

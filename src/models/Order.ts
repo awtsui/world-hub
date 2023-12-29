@@ -1,12 +1,28 @@
 import { Schema, model, models } from 'mongoose';
+import { IOrder } from '@/types';
+import { Decimal128 } from 'mongodb';
 
-const OrderSchema = new Schema(
+const OrderSchema = new Schema<IOrder>(
   {
-    items: Object,
     userId: String,
     isPaid: Boolean,
+    amount: Number,
+    totalPrice: Decimal128,
+    tickets: [
+      {
+        eventId: String,
+        eventTitle: String,
+        price: Decimal128,
+        currency: String,
+        label: String,
+        unitAmount: Number,
+      },
+    ],
+    email: String,
+    timestamp: { type: Date, default: Date.now },
   },
-  { timestamps: true }
+
+  { collection: 'orders' }
 );
 
 const Order = models.Order || model('Order', OrderSchema);

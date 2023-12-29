@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { Button } from '../../../components/Button';
 import { useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+export default function SignInPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
   const guestCallbackUrl =
