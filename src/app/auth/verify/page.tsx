@@ -23,7 +23,7 @@ export default function VerifyPage() {
       body: JSON.stringify({
         ...proof,
         action: 'verifytransaction',
-        signal: 'value',
+        signal: 'verify',
       }),
     });
 
@@ -37,22 +37,11 @@ export default function VerifyPage() {
     // TODO: Check if user has purchased this event ticket before
     // Send user to checkout page if new
     // Send user to home page with error alert if duplicate
+    console.log(data);
     await signIn('anonymous', {
-      credentials: { id: data.nullifier_hash },
+      id: data.nullifier_hash,
       callbackUrl,
     });
-
-    // if (session && session.user) {
-    //   await update({
-    //     ...session,
-    //     user: {
-    //       ...session.user,
-    //       id: data.nullifier_hash,
-    //       role: Role.user,
-    //     },
-    //   });
-    // }
-    // router.push(callbackUrl);
   }
   return (
     <div className="flex items-center justify-center h-screen">

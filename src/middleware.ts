@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   if (matchesProtectedPath) {
     const token = await getToken({ req: request });
     if (!token || token.role !== 'user') {
-      const url = new URL('/auth/signin', request.url);
+      const url = new URL('/auth', request.url);
       url.searchParams.set('callbackUrl', encodeURI(request.url));
       return NextResponse.redirect(url);
     }

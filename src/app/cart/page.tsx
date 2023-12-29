@@ -21,7 +21,10 @@ export default function CartPage() {
       <div className="flex justify-between">
         <div className="flex flex-col w-full max-w-xl gap-5">
           {tickets.map((ticket) => (
-            <div className="flex flex-col">
+            <div
+              key={`${ticket.eventId}:${ticket.label}`}
+              className="flex flex-col"
+            >
               <div className="flex items-start justify-between">
                 <div className="flex flex-col">
                   <p>{ticket.eventTitle}</p>
