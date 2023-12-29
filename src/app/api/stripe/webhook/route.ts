@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
       signature,
       STRIPE_WEBHOOK_SECRET!
     );
+    console.log(event);
 
     if (event.type === 'checkout.session.completed') {
       const metadata = event.data.object.metadata;
@@ -39,7 +40,8 @@ export async function POST(request: NextRequest) {
         // TODO: If user does not exist, create new user entry
         const user = await User.findOneAndUpdate(
           { userId: order.userId },
-          { $push: { orders: metadata.orderId } }
+          { $push: { orders: metadata.orderId } },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
         );
       }
       // TODO: Fulfill order

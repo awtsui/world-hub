@@ -37,7 +37,6 @@ export default function VerifyPage() {
     // TODO: Check if user has purchased this event ticket before
     // Send user to checkout page if new
     // Send user to home page with error alert if duplicate
-    console.log(data);
     await signIn('anonymous', {
       id: data.nullifier_hash,
       callbackUrl,

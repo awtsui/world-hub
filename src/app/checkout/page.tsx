@@ -11,6 +11,7 @@ import { useSession } from 'next-auth/react';
 import { Event, Order, Ticket } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useAlert } from '@/context/AlertContext';
+import { handleFetchError } from '@/utils/client-helper';
 
 export default function CheckoutPage() {
   const stripePromise = getStripe();
@@ -30,7 +31,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     // 2. Gather event ticket restrictions
-    const eventsSearchUrl = new URL('/api/events');
+    const eventsSearchUrl = new URL('http:/localhost:3000/api/events');
     eventIds.forEach((id) => {
       eventsSearchUrl.searchParams.set('id', id);
     });
@@ -42,37 +43,43 @@ export default function CheckoutPage() {
           eventLimits[event.eventId] = event.ticketLimit;
         });
         setEventLimits(eventLimits);
-      });
+      })
+      .catch((error) => handleFetchError(error));
 
     // 3. Fetch user past orders and filter for events currently in cart
     async function fetchRelevantOrders() {
-      const userSearchUrl = new URL('/api/users');
-      userSearchUrl.searchParams.set('worldId', session?.user?.id || '');
-      const userSearchResp = await fetch(userSearchUrl);
-      const userSearchData = await userSearchResp.json();
+      try {
+        const userSearchUrl = new URL('http:/localhost:3000/api/users');
+        userSearchUrl.searchParams.set('worldId', session?.user?.id || '');
+        const userSearchResp = await fetch(userSearchUrl);
+        const userSearchData = await userSearchResp.json();
 
-      const orderIds: string[] = userSearchData.orders;
-      const ordersSearchUrl = new URL('/api/orders');
-      orderIds.forEach((orderId) => {
-        ordersSearchUrl.searchParams.set('id', orderId);
-      });
-      const orderSearchResp = await fetch(ordersSearchUrl);
-      const orderSearchData: Order[] = await orderSearchResp.json();
-      const pastRelevantTickets: Record<string, number> = {};
-      orderSearchData.forEach((order) => {
-        order.tickets.forEach((ticket) => {
-          if (Object.keys(pastRelevantTickets).includes(ticket.eventId)) {
-            pastRelevantTickets[ticket.eventId] += ticket.unitAmount;
-          } else {
-            pastRelevantTickets[ticket.eventId] = ticket.unitAmount;
-          }
+        const orderIds: string[] = userSearchData.orders;
+        const ordersSearchUrl = new URL('http:/localhost:3000/api/orders');
+        orderIds.forEach((orderId) => {
+          ordersSearchUrl.searchParams.set('id', orderId);
         });
-      });
-      setPastRelevantTickets(pastRelevantTickets);
+        const orderSearchResp = await fetch(ordersSearchUrl);
+        const orderSearchData: Order[] = await orderSearchResp.json();
+        const pastRelevantTickets: Record<string, number> = {};
+        orderSearchData.forEach((order) => {
+          order.tickets.forEach((ticket) => {
+            if (Object.keys(pastRelevantTickets).includes(ticket.eventId)) {
+              pastRelevantTickets[ticket.eventId] += ticket.unitAmount;
+            } else {
+              pastRelevantTickets[ticket.eventId] = ticket.unitAmount;
+            }
+          });
+        });
+        setPastRelevantTickets(pastRelevantTickets);
+      } catch (error) {
+        handleFetchError(error);
+      }
     }
-
-    fetchRelevantOrders();
-  }, []);
+    if (session?.user?.id) {
+      fetchRelevantOrders();
+    }
+  }, [session?.user?.id]);
 
   useEffect(() => {
     // 4. Verify if user is not making any invalid purchases
@@ -105,7 +112,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     // 6. Request Stripe session
-    if (isEligibleForCheckout) {
+    if (isEligibleForCheckout && session?.user?.id) {
       fetch('/api/stripe/sessions', {
         method: 'POST',
         headers: {
@@ -114,9 +121,10 @@ export default function CheckoutPage() {
         body: JSON.stringify({ tickets: tickets, userId: session?.user?.id }), // TODO: Add more fields
       })
         .then((resp) => resp.json())
-        .then((data) => setClientSecret(data.clientSecret));
+        .then((data) => setClientSecret(data.clientSecret))
+        .catch((error) => handleFetchError(error));
     }
-  }, [isEligibleForCheckout]);
+  }, [isEligibleForCheckout, session?.user?.id]);
 
   return (
     <div>

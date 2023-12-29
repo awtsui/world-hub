@@ -1,4 +1,3 @@
-import { Event } from '@/types';
 import Big from 'big.js';
 
 export async function getEventsById(eventIds: string[]) {
@@ -54,4 +53,8 @@ function convertEvent(event: any) {
     }),
   };
   return convertedEvent;
+}
+
+export function handleFetchError(error: any) {
+  console.log(error);
 }

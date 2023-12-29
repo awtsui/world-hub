@@ -59,8 +59,8 @@ export async function POST(request: Request) {
     let lineItems: any[] = [];
     let totalPrice = Big(0);
     let amount = 0;
-    tickets.forEach((item: Ticket) => {
-      const ticketAmount = item.price.times(item.unitAmount);
+    tickets.forEach((item: any) => {
+      const ticketAmount = Big(item.price).times(item.unitAmount);
       totalPrice = totalPrice.add(ticketAmount);
       amount += item.unitAmount;
       lineItems.push({
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
             name: item.eventTitle,
             metadata: { eventId: item.eventId, label: item.label },
           },
-          unit_amount: ticketAmount,
+          unit_amount: ticketAmount.times(100).toNumber(),
         },
       });
     });
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       userId,
       isPaid: false,
       amount,
-      totalPrice,
+      totalPrice: totalPrice.toNumber(),
       tickets,
       email: '',
     });

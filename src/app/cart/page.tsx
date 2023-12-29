@@ -17,7 +17,7 @@ export default function CartPage() {
 
   return (
     <div className="flex flex-col px-12 py-4 gap-4">
-      <text className="text-3xl">Shopping Cart</text>
+      <p className="text-3xl">Shopping Cart</p>
       <div className="flex justify-between">
         <div className="flex flex-col w-full max-w-xl gap-5">
           {tickets.map((ticket) => (
