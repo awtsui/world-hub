@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     const resp = await fetch(
-      `${WLD_BASE_URL}/api/v1/verify/${NEXT_PUBLIC_WLD_CLIENT_ID}`,
+      `${WLD_BASE_URL}/api/v1/verify/app_${NEXT_PUBLIC_WLD_CLIENT_ID}`,
       {
         method: 'POST',
         headers: {
@@ -30,7 +30,6 @@ export async function POST(request: Request) {
         body: JSON.stringify(proof),
       }
     );
-
     const data = await resp.json();
 
     if (!resp.ok) {
