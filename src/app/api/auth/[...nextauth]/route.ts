@@ -1,21 +1,35 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { Role } from '@/types';
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
+import clientPromise from '@/utils/mongodb';
 
 // if (!process.env.NEXTAUTH_SECRET) {
 //   throw new Error('Please provide process.env.NEXTAUTH_SECRET');
 // }
 
-// For more information on each option (and a full list of options) go to
-// https://next-auth.js.org/configuration/options
+const adapter = MongoDBAdapter(clientPromise);
+
 export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers/oauth
+  adapter,
   providers: [
     CredentialsProvider({
       name: 'anonymous',
-      credentials: {},
+      credentials: {
+        id: { label: 'ID', type: 'text' },
+      },
       async authorize(credentials, req) {
-        return createAnonymousUser();
+        if (credentials?.id) {
+          const user = {
+            id: credentials.id,
+            name: credentials.id,
+            provider: 'worldcoin',
+            role: Role.user,
+          };
+          return user;
+        }
+        return null;
       },
     }),
     {
@@ -40,20 +54,20 @@ export const authOptions: NextAuthOptions = {
     },
   ],
   callbacks: {
-    async jwt({ token, trigger, user, session, account }) {
-      if (trigger === 'update' && session.user) {
-        // TODO:  Note, that `session` can be any arbitrary object, remember to validate it!
-        token.role = session.user.role;
-        token.id = session.user.id;
-      }
-      if (user) {
-        token.role = user.role;
-        token.id = user.id;
-        token.provider = account?.provider;
-      }
-      return token;
-    },
-    session({ session, token }) {
+    // async jwt({ token, trigger, user, session, account }) {
+    //   if (trigger === 'update' && session.user) {
+    //     // TODO:  Note, that `session` can be any arbitrary object, remember to validate it!
+    //     token.role = session.user.role;
+    //     token.id = session.user.id;
+    //   }
+    //   if (user) {
+    //     token.role = user.role;
+    //     token.id = user.id;
+    //     token.provider = account?.provider;
+    //   }
+    //   return token;
+    // },
+    async session({ session, token }) {
       if (token && session.user) {
         session.user.role = token.role;
         session.user.id = token.id;
@@ -67,21 +81,10 @@ export const authOptions: NextAuthOptions = {
     newUser: '/auth/newuser',
   },
   session: {
-    strategy: 'jwt',
+    strategy: 'database',
   },
 };
 
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
-// Helper functions
-
-function createAnonymousUser() {
-  return {
-    id: 'test-id',
-    name: 'test-id',
-    provider: 'guest',
-    role: Role.guest,
-  };
-}

@@ -1,8 +1,7 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
 
 export default function NewUserPage() {
-  // Add user details to database
+  // TODO: Add user details to database
 
   return (
     <div className="flex flex-col">
