@@ -1,4 +1,4 @@
-import dbConnect from '@/utils/mongodb';
+import dbConnect from '@/utils/mongoosedb';
 import Order from '@/models/Order';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
       signature,
       STRIPE_WEBHOOK_SECRET!
     );
+    console.log(event);
 
     if (event.type === 'checkout.session.completed') {
       const metadata = event.data.object.metadata;
@@ -36,9 +37,11 @@ export async function POST(request: NextRequest) {
           isPaid: true,
           email: customerDetails.email,
         });
+        // TODO: If user does not exist, create new user entry
         const user = await User.findOneAndUpdate(
           { userId: order.userId },
-          { $push: { orders: metadata.orderId } }
+          { $push: { orders: metadata.orderId } },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
         );
       }
       // TODO: Fulfill order

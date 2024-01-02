@@ -6,15 +6,13 @@ import {
   ISuccessResult,
   VerificationLevel,
 } from '@worldcoin/idkit';
-import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export default function VerifyPage() {
-  const { data: session, update } = useSession();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
-  const router = useRouter();
 
   async function verifyProof(proof: any) {
     const resp = await fetch('/api/worldcoin/verify', {
@@ -25,7 +23,7 @@ export default function VerifyPage() {
       body: JSON.stringify({
         ...proof,
         action: 'verifytransaction',
-        signal: 'value',
+        signal: 'verify',
       }),
     });
 
@@ -39,18 +37,10 @@ export default function VerifyPage() {
     // TODO: Check if user has purchased this event ticket before
     // Send user to checkout page if new
     // Send user to home page with error alert if duplicate
-
-    if (session && session.user) {
-      await update({
-        ...session,
-        user: {
-          ...session.user,
-          id: data.nullifier_hash,
-          role: Role.user,
-        },
-      });
-    }
-    router.push(callbackUrl);
+    await signIn('anonymous', {
+      id: data.nullifier_hash,
+      callbackUrl,
+    });
   }
   return (
     <div className="flex items-center justify-center h-screen">

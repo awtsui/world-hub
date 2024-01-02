@@ -6,16 +6,26 @@ import { Role } from '@/types';
 //   throw new Error('Please provide process.env.NEXTAUTH_SECRET');
 // }
 
-// For more information on each option (and a full list of options) go to
-// https://next-auth.js.org/configuration/options
 export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers/oauth
   providers: [
     CredentialsProvider({
-      name: 'anonymous',
-      credentials: {},
+      id: 'anonymous',
+      name: 'Anonymous',
+      credentials: {
+        id: { label: 'ID', type: 'text' },
+      },
       async authorize(credentials, req) {
-        return createAnonymousUser();
+        if (credentials?.id) {
+          const user = {
+            id: credentials.id,
+            name: credentials.id,
+            provider: 'worldcoin',
+            role: Role.user,
+          };
+          return user;
+        }
+        return null;
       },
     }),
     {
@@ -41,11 +51,11 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, trigger, user, session, account }) {
-      if (trigger === 'update' && session.user) {
-        // TODO:  Note, that `session` can be any arbitrary object, remember to validate it!
-        token.role = session.user.role;
-        token.id = session.user.id;
-      }
+      // if (trigger === 'update' && session.user) {
+      //   // TODO:  Note, that `session` can be any arbitrary object, remember to validate it!
+      //   token.role = session.user.role;
+      //   token.id = session.user.id;
+      // }
       if (user) {
         token.role = user.role;
         token.id = user.id;
@@ -53,7 +63,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       if (token && session.user) {
         session.user.role = token.role;
         session.user.id = token.id;
@@ -64,7 +74,6 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/auth/signin',
-    newUser: '/auth/newuser',
   },
   session: {
     strategy: 'jwt',
@@ -74,14 +83,3 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
-// Helper functions
-
-function createAnonymousUser() {
-  return {
-    id: 'test-id',
-    name: 'test-id',
-    provider: 'guest',
-    role: Role.guest,
-  };
-}

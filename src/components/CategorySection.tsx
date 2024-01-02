@@ -1,5 +1,6 @@
 import { Category, Event } from '@/types';
 import EventCard from './EventCard';
+import Link from 'next/link';
 
 type CategorySectionProps = {
   category: Category;
@@ -20,9 +21,12 @@ export default function CategorySection({
     <div className="flex flex-col">
       {filteredEvents.length > 0 && (
         <div className="pb-8">
-          <a className="text-xl" href={`/marketplace/category/${category.id}`}>
+          <Link
+            className="text-xl"
+            href={`/marketplace/category/${category.id}`}
+          >
             {category.name}
-          </a>
+          </Link>
           <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth snap-x gap-3">
             {filteredEvents.map((event) => (
               <EventCard key={event.eventId} event={event}></EventCard>

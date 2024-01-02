@@ -6,7 +6,7 @@ export default function UserMenu() {
     <div>
       <div className="hidden md:block">
         <AuthButton />
-        {/* <SessionPoke /> */}
+        <SessionPoke />
       </div>
     </div>
   );

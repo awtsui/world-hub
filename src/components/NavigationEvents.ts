@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAlert } from '../context/AlertContext';
@@ -10,27 +10,20 @@ export default function NavigationEvents() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
 
-  async function handleUpdateUser() {
-    if (session && session.user?.provider === 'credentials') {
-      await update({
-        ...session,
-        user: {
-          ...session?.user,
-          id: session?.user?.name,
-          role: 'guest',
-        },
-      });
+  async function handleUserSession() {
+    // Sign out user if "continue as guest"
+    if (session && session.user?.provider === 'anonymous') {
+      await signOut();
     }
-    console.log('updated: ' + session?.user);
   }
 
   useEffect(() => {
     const url = `${pathname}?${searchParams}`;
     if (isCheckingOut && !pathname.startsWith('/checkout/success')) {
       // Removes user permissions if guest and verified
-      handleUpdateUser();
+      handleUserSession();
       setIsCheckingOut(false);
     }
     if (

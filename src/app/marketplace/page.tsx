@@ -10,7 +10,7 @@ export default async function MarketplacePage() {
   return (
     <div className="flex flex-col px-12 py-4">
       <div className="flex gap-4 items-center">
-        <text className="text-3xl">Marketplace</text>
+        <p className="text-3xl">Marketplace</p>
 
         <CategoryDropdown categories={categories} />
       </div>

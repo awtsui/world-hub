@@ -1,5 +1,5 @@
 import Venue from '@/models/Venue';
-import dbConnect from '@/utils/mongodb';
+import dbConnect from '@/utils/mongoosedb';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

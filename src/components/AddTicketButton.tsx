@@ -23,9 +23,5 @@ export default function AddTicketButton({ event, tier }: AddTicketButtonProps) {
     addTicket(newTicket);
   }
 
-  return (
-    <div>
-      <Button onClick={() => addItemToCart(event)}>Add to Cart</Button>
-    </div>
-  );
+  return <Button onClick={() => addItemToCart(event)}>Add to Cart</Button>;
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/utils/mongodb';
+import dbConnect from '@/utils/mongoosedb';
 
 import Event from '@/models/Event';
 
