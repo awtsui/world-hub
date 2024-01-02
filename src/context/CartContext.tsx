@@ -1,6 +1,7 @@
 'use client';
 
 import { Ticket } from '@/types';
+import { deserialize, serialize } from '@/utils/client-helper';
 import {
   createContext,
   useCallback,
@@ -20,11 +21,11 @@ interface CartContext {
 }
 
 function loadJSON(key: string) {
-  if (localStorage[key]) return JSON.parse(localStorage[key] ?? '');
+  if (localStorage[key]) return deserialize(localStorage[key] ?? '');
   return '';
 }
 function saveJSON(key: string, data: Ticket[]) {
-  localStorage.setItem(key, JSON.stringify(data));
+  localStorage.setItem(key, serialize(data));
 }
 
 const CartContext = createContext<CartContext | null>(null);

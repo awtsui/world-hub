@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/components/Button';
-import { Role } from '@/types';
 import {
   IDKitWidget,
   ISuccessResult,

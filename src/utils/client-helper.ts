@@ -58,3 +58,20 @@ function convertEvent(event: any) {
 export function handleFetchError(error: any) {
   console.log(error);
 }
+
+// Big.js-safe JSON serialization
+export function serialize(data: any) {
+  return JSON.stringify(data, (key, value) =>
+    typeof value === 'bigint' ? `BIGINT::${value}` : value
+  );
+}
+
+// Big.js-safe JSON deseralization
+export function deserialize(json: string) {
+  return JSON.parse(json, (key, value) => {
+    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
+      return BigInt(value.substring(8));
+    }
+    return value;
+  });
+}

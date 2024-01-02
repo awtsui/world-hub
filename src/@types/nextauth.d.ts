@@ -1,14 +1,12 @@
 import { DefaultSession, DefaultUser } from 'next-auth';
 
-export enum Role {
-  guest = 'guest',
+enum Role {
   user = 'user',
   admin = 'admin',
 }
 
 interface IUser extends DefaultUser {
   role?: Role;
-  id: string;
   provider?: string;
 }
 
