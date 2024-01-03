@@ -7,9 +7,7 @@ export async function getEventsById(eventIds: string[]) {
       fetchUrl.searchParams.set('id', eventId);
     });
     const resp = await fetch(fetchUrl);
-
-    const data = await resp.json();
-    return data.map((event: any) => convertEvent(event));
+    return await resp.json();
   } catch (error) {
     throw new Error(`Unable to fetch event by id: ${error}`);
   }
@@ -18,13 +16,9 @@ export async function getEventsById(eventIds: string[]) {
 export async function getEventsByCategory(categoryName: string) {
   try {
     const resp = await fetch(
-      `${process.env.BASE_URL}/api/events?category=${categoryName}`,
-      {
-        next: { revalidate: 0 },
-      }
+      `${process.env.BASE_URL}/api/events?category=${categoryName}`
     );
-    const data = await resp.json();
-    return data.map((event: any) => convertEvent(event));
+    return await resp.json();
   } catch (error) {
     throw new Error(`Unable to fetch events by category: ${error}`);
   }
@@ -32,27 +26,11 @@ export async function getEventsByCategory(categoryName: string) {
 
 export async function getAllEvents() {
   try {
-    const resp = await fetch(`${process.env.BASE_URL}/api/events`, {
-      next: { revalidate: 0 },
-    });
-    const data = await resp.json();
-    return data.map((event: any) => convertEvent(event));
+    const resp = await fetch(`${process.env.BASE_URL}/api/events`);
+    return await resp.json();
   } catch (error) {
     throw new Error(`Unable to fetch events: ${error}`);
   }
-}
-
-function convertEvent(event: any) {
-  const convertedEvent = {
-    ...event,
-    ticketTiers: event.ticketTiers.map((tier: any) => {
-      return {
-        label: tier.label,
-        price: new Big(tier.price),
-      };
-    }),
-  };
-  return convertedEvent;
 }
 
 export function handleFetchError(error: any) {

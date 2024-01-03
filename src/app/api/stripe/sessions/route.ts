@@ -57,9 +57,10 @@ export async function POST(request: Request) {
     }
 
     let lineItems: any[] = [];
-    let totalPrice = Big(0);
+    let totalPrice = Big('0.0');
     let amount = 0;
     tickets.forEach((item: any) => {
+      // TODO: convert price field to Big
       const ticketAmount = Big(item.price).times(item.unitAmount);
       totalPrice = totalPrice.add(ticketAmount);
       amount += item.unitAmount;

@@ -6,17 +6,12 @@ import Link from 'next/link';
 
 export default function CartButton() {
   const { tickets } = useCart();
-  let numOfItems = 0;
-
-  tickets.forEach((ticket) => {
-    numOfItems += ticket.unitAmount;
-  });
 
   return (
     <Link href="/cart">
       <Button className="flex gap-3">
         <ShoppingCart />
-        {numOfItems}
+        {Object.values(tickets).reduce((acc, curr) => acc + curr.unitAmount, 0)}
       </Button>
     </Link>
   );

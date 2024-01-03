@@ -16,7 +16,7 @@ export default function AddTicketButton({ event, tier }: AddTicketButtonProps) {
       eventId: event.eventId,
       eventTitle: event.title,
       currency: event.currency,
-      price: Big(tier.price),
+      price: tier.price,
       label: tier.label,
       unitAmount: 1,
     };

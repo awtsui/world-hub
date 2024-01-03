@@ -1,6 +1,7 @@
 'use client';
 
 import { Ticket } from '@/types';
+import Big from 'big.js';
 import {
   createContext,
   useCallback,
@@ -12,22 +13,13 @@ import {
 
 const LOCAL_STORAGE_KEY = 'STRIPE_CART_ITEMS';
 
-interface CartContext {
-  tickets: Ticket[];
-  addTicket: (ticket: Ticket) => void;
-  removeTicket: (eventId: string, ticketLabel: string) => void;
-  resetCart: () => void;
-}
-
 function loadJSON(key: string) {
   if (localStorage[key]) return JSON.parse(localStorage[key] ?? '');
   return '';
 }
-function saveJSON(key: string, data: Ticket[]) {
+function saveJSON(key: string, data: Record<string, Ticket>) {
   localStorage.setItem(key, JSON.stringify(data));
 }
-
-const CartContext = createContext<CartContext | null>(null);
 
 export const useCart = () => {
   const context = useContext(CartContext);
@@ -37,13 +29,22 @@ export const useCart = () => {
   return context;
 };
 
+interface CartContext {
+  tickets: Record<string, Ticket>;
+  addTicket: (ticket: Ticket) => void;
+  removeTicket: (eventId: string, ticketLabel: string) => void;
+  resetCart: () => void;
+}
+
+const CartContext = createContext<CartContext | null>(null);
+
 interface CartProviderProps {
   children?: React.ReactNode;
 }
 
 export function CartProvider({ children }: CartProviderProps) {
   const firstRender = useRef(true);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [tickets, setTickets] = useState<Record<string, Ticket>>({});
 
   useEffect(() => {
     if (firstRender.current) {
@@ -54,46 +55,44 @@ export function CartProvider({ children }: CartProviderProps) {
     saveJSON(LOCAL_STORAGE_KEY, tickets);
   }, [LOCAL_STORAGE_KEY, tickets]);
 
-  const addTicket = useCallback(
-    (ticket: Ticket) =>
-      setTickets((prev) => {
-        let ticketFound = false;
-        const next: Ticket[] = [];
-        prev.forEach((item) => {
-          if (item.eventId === ticket.eventId && item.label === ticket.label) {
-            next.push({
-              ...item,
-              unitAmount: item.unitAmount + ticket.unitAmount,
-            });
-            ticketFound = true;
-          } else {
-            next.push(item);
-          }
-        });
-        if (!ticketFound) {
-          next.push(ticket);
-        }
-        return next;
-      }),
-    []
-  );
-  const removeTicket = useCallback(
-    (eventId: string, ticketLabel: string) =>
-      setTickets((prev) =>
-        prev.filter(
-          (ticket) =>
-            ticket.eventId !== eventId ||
-            (ticket.eventId === eventId && ticket.label !== ticketLabel)
-        )
-      ),
-    []
-  );
+  const addTicket = useCallback((ticket: Ticket) => {
+    const ticketId = ticket.eventId + ':' + ticket.label; // TODO: define ticket id creation, must be deterministic
+    setTickets((prev) => {
+      if (prev[ticketId]) {
+        return {
+          ...prev,
+          [ticketId]: {
+            ...prev[ticketId],
+            unitAmount: prev[ticketId].unitAmount + ticket.unitAmount,
+          },
+        };
+      } else {
+        return {
+          ...prev,
+          [ticketId]: ticket,
+        };
+      }
+    });
+  }, []);
+  const removeTicket = useCallback((eventId: string, ticketLabel: string) => {
+    const ticketId = eventId + ':' + ticketLabel;
+    setTickets((prev) => {
+      const next = { ...prev };
+      delete next[ticketId];
+      return next;
+    });
+  }, []);
 
-  const resetCart = useCallback(() => setTickets([]), []);
+  const resetCart = useCallback(() => setTickets({}), []);
 
   return (
     <CartContext.Provider
-      value={{ tickets, addTicket, removeTicket, resetCart }}
+      value={{
+        tickets,
+        addTicket,
+        removeTicket,
+        resetCart,
+      }}
     >
       {children}
     </CartContext.Provider>

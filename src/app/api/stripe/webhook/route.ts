@@ -41,8 +41,14 @@ export async function POST(request: NextRequest) {
         const user = await User.findOneAndUpdate(
           { userId: order.userId },
           { $push: { orders: metadata.orderId } },
-          { upsert: true, new: true, setDefaultsOnInsert: true }
+          { upsert: true }
         );
+        if (!user) {
+          await User.updateOne(
+            { userId: order.userId },
+            { worldId: order.worldId }
+          );
+        }
       }
       // TODO: Fulfill order
     }

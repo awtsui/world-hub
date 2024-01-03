@@ -27,7 +27,9 @@ export default function CheckoutPage() {
   const [isEligibleForCheckout, setIsEligibleForCheckout] = useState(false);
 
   // 1. Gather list of events from user cart
-  const eventIds: string[] = tickets.map((ticket) => ticket.eventId);
+  const eventIds: string[] = Object.values(tickets).map(
+    (ticket) => ticket.eventId
+  );
 
   useEffect(() => {
     // 2. Gather event ticket restrictions
@@ -89,7 +91,7 @@ export default function CheckoutPage() {
     });
 
     let isValidOrder = true;
-    tickets.forEach((ticket) => {
+    Object.values(tickets).forEach((ticket) => {
       const limitLeft =
         remainingTicketLimits[ticket.eventId] - ticket.unitAmount;
       if (limitLeft < 0) {
@@ -118,7 +120,10 @@ export default function CheckoutPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ tickets: tickets, userId: session?.user?.id }), // TODO: Add more fields
+        body: JSON.stringify({
+          tickets: Object.values(tickets),
+          userId: session?.user?.id,
+        }), // TODO: Add more fields
       })
         .then((resp) => resp.json())
         .then((data) => setClientSecret(data.clientSecret))
