@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/Button';
 import { useCart } from '@/context/CartContext';
-import { Ticket } from '@/types';
 import Big from 'big.js';
 import { Delete } from 'lucide-react';
 import Link from 'next/link';
@@ -10,7 +9,7 @@ import Link from 'next/link';
 export default function CartPage() {
   const { tickets, removeTicket } = useCart();
 
-  const subTotal = tickets.reduce(
+  const subTotal = Object.values(tickets).reduce(
     (total, item) => total.plus(Big(item.price).times(item.unitAmount)),
     Big('0.0')
   );
@@ -20,15 +19,12 @@ export default function CartPage() {
       <p className="text-3xl">Shopping Cart</p>
       <div className="flex justify-between">
         <div className="flex flex-col w-full max-w-xl gap-5">
-          {tickets.map((ticket) => (
-            <div
-              key={`${ticket.eventId}:${ticket.label}`}
-              className="flex flex-col"
-            >
+          {Object.entries(tickets).map(([ticketId, ticket]) => (
+            <div key={ticketId} className="flex flex-col">
               <div className="flex items-start justify-between">
                 <div className="flex flex-col">
                   <p>{ticket.eventTitle}</p>
-                  <p>${ticket.price.toString()}</p>
+                  <p>${ticket.price}</p>
                 </div>
                 <div className="flex gap-5">
                   <p>{ticket.unitAmount}</p>

@@ -4,7 +4,7 @@ import Big from 'big.js';
 
 interface ITier {
   label: string;
-  price: Big;
+  price: string;
 }
 
 export interface IEvent {
@@ -43,7 +43,7 @@ export interface IUser {
 interface ITicket {
   eventId: string;
   eventTitle: string;
-  price: Big;
+  price: string;
   currency: string;
   label: string;
   unitAmount: number;

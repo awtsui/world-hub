@@ -2,7 +2,7 @@ import DateFormatter from '@/components/DateFormatter';
 import ReturnButton from '@/components/ReturnButton';
 import AddTicketButton from '@/components/AddTicketButton';
 import { Event, Tier } from '@/types';
-import { getEventsById } from '@/utils/client-helper';
+import { deserialize, getEventsById, serialize } from '@/utils/client-helper';
 
 type EventPageParams = {
   params: {
@@ -34,7 +34,7 @@ export default async function EventPage({ params }: EventPageParams) {
             {event.ticketTiers.map((tier: Tier) => (
               <div key={tier.label} className="flex">
                 <p className="mb-2">Tier: {tier.label}</p>
-                <p className="mb-2">Price: ${tier.price.toFixed(2)}</p>
+                <p className="mb-2">Price: ${tier.price}</p>
                 <AddTicketButton event={event} tier={tier} />
               </div>
             ))}
