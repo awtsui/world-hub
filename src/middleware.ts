@@ -37,12 +37,18 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (hostname == `app.localhost:3000`) {
+  if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
     if (pathname === '/') {
       return NextResponse.redirect(new URL('/marketplace', request.url));
     }
     return NextResponse.rewrite(
       new URL(`/app${path === '/' ? '' : path}`, request.url)
+    );
+  }
+
+  if (hostname == `hosts.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+    return NextResponse.rewrite(
+      new URL(`/hosts${path === '/' ? '' : path}`, request.url)
     );
   }
 
