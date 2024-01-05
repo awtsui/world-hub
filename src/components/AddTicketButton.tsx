@@ -2,7 +2,6 @@
 import { Event, Ticket, Tier } from '@/types';
 import { Button } from './Button';
 import { useCart } from '../context/CartContext';
-import Big from 'big.js';
 
 type AddTicketButtonProps = {
   event: Event;

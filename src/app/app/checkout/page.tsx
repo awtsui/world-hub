@@ -1,11 +1,11 @@
 'use client';
 
-import getStripe from '../../utils/get-stripejs';
+import getStripe from '../../../utils/get-stripejs';
 import {
   EmbeddedCheckoutProvider,
   EmbeddedCheckout,
 } from '@stripe/react-stripe-js';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../../context/CartContext';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Event, Order, Ticket } from '@/types';
@@ -51,29 +51,37 @@ export default function CheckoutPage() {
     // 3. Fetch user past orders and filter for events currently in cart
     async function fetchRelevantOrders() {
       try {
-        const userSearchUrl = new URL('http:/localhost:3000/api/users');
-        userSearchUrl.searchParams.set('worldId', session?.user?.id || '');
-        const userSearchResp = await fetch(userSearchUrl);
-        const userSearchData = await userSearchResp.json();
+        const fetchUserUrl = new URL('http:/localhost:3000/api/users');
+        fetchUserUrl.searchParams.set('id', session?.user?.id || '');
+        const fetchUserResp = await fetch(fetchUserUrl);
+        if (!fetchUserResp.ok) {
+          throw Error('Unable to retrieve user OR user does not exist');
+        }
+        const fetchUserData = await fetchUserResp.json();
 
-        const orderIds: string[] = userSearchData.orders;
-        const ordersSearchUrl = new URL('http:/localhost:3000/api/orders');
-        orderIds.forEach((orderId) => {
-          ordersSearchUrl.searchParams.set('id', orderId);
-        });
-        const orderSearchResp = await fetch(ordersSearchUrl);
-        const orderSearchData: Order[] = await orderSearchResp.json();
-        const pastRelevantTickets: Record<string, number> = {};
-        orderSearchData.forEach((order) => {
-          order.tickets.forEach((ticket) => {
-            if (Object.keys(pastRelevantTickets).includes(ticket.eventId)) {
-              pastRelevantTickets[ticket.eventId] += ticket.unitAmount;
-            } else {
-              pastRelevantTickets[ticket.eventId] = ticket.unitAmount;
-            }
+        const orderIds: string[] = fetchUserData.orders;
+        if (orderIds.length) {
+          const fetchOrdersUrl = new URL('http:/localhost:3000/api/orders');
+          orderIds.forEach((orderId) => {
+            fetchOrdersUrl.searchParams.set('id', orderId);
           });
-        });
-        setPastRelevantTickets(pastRelevantTickets);
+          const fetchOrdersResp = await fetch(fetchOrdersUrl);
+          if (!fetchOrdersResp.ok) {
+            throw Error('Unable to retrieve user orders OR us');
+          }
+          const fetchOrdersData = await fetchOrdersResp.json();
+          const pastRelevantTickets: Record<string, number> = {};
+          fetchOrdersData.forEach((order: any) => {
+            order.tickets.forEach((ticket: any) => {
+              if (Object.keys(pastRelevantTickets).includes(ticket.eventId)) {
+                pastRelevantTickets[ticket.eventId] += ticket.unitAmount;
+              } else {
+                pastRelevantTickets[ticket.eventId] = ticket.unitAmount;
+              }
+            });
+          });
+          setPastRelevantTickets(pastRelevantTickets);
+        }
       } catch (error) {
         handleFetchError(error);
       }
@@ -122,7 +130,7 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           tickets: Object.values(tickets),
-          userId: session?.user?.id,
+          userId: session.user.id,
         }), // TODO: Add more fields
       })
         .then((resp) => resp.json())

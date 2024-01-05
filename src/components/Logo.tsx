@@ -1,10 +1,7 @@
-'use client';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import logo from '../../public/static/logo.png';
 
 export default function Logo() {
-  const router = useRouter();
-
   return (
     <div className="flex flex-row">
       <Image
@@ -12,7 +9,7 @@ export default function Logo() {
         className="hidden md:block cursor-pointer"
         height="50"
         width="60"
-        src="/images/logo.png"
+        src={logo}
       />
       <p className="text-logo text-black font-medium">WorldHub</p>
     </div>

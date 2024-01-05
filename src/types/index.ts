@@ -75,9 +75,14 @@ export type Tier = ITier;
 export type Host = IHost;
 export type Order = IOrder;
 
-export type Category = {
+type Category = {
   id: string;
   name: string;
+};
+
+export type SubCategory = Category;
+export type MainCategory = Category & {
+  subCategories: SubCategory[];
 };
 
 // export interface CartItem extends Event {

@@ -9,8 +9,9 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const eventIds = searchParams.getAll('id');
     const category = searchParams.get('category');
+    const subCategory = searchParams.get('subcategory');
 
-    if (eventIds.length && category) {
+    if ((eventIds.length && category) || (eventIds.length && subCategory)) {
       throw Error('Parameters not properly defined');
     }
 
@@ -19,6 +20,8 @@ export async function GET(request: NextRequest) {
       data = await Event.find({ eventId: { $in: eventIds } });
     } else if (category) {
       data = await Event.find({ category: category });
+    } else if (subCategory) {
+      data = await Event.find({ subCategory: subCategory });
     } else {
       data = await Event.find({});
     }

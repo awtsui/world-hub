@@ -1,8 +1,8 @@
 import DateFormatter from '@/components/DateFormatter';
 import ReturnButton from '@/components/ReturnButton';
 import AddTicketButton from '@/components/AddTicketButton';
-import { Event, Tier } from '@/types';
-import { deserialize, getEventsById, serialize } from '@/utils/client-helper';
+import { Event, Host, Tier } from '@/types';
+import { getEventsByIds, getHostById } from '@/utils/client-helper';
 
 type EventPageParams = {
   params: {
@@ -12,7 +12,8 @@ type EventPageParams = {
 
 export default async function EventPage({ params }: EventPageParams) {
   // Replace with data fetching
-  const event: Event = (await getEventsById([params.eventId]))[0];
+  const event: Event = (await getEventsByIds([params.eventId]))[0];
+  const host: Host = await getHostById(event.hostId);
 
   return (
     <div className="px-12 py-4">
@@ -22,7 +23,7 @@ export default async function EventPage({ params }: EventPageParams) {
           <div className="flex flex-col items-center">
             <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
             <p className="mb-2">
-              <strong>Artist: {event.hostId}</strong>
+              <strong>Artist: {host.name}</strong>
             </p>
             <p className="mb-2">
               <DateFormatter date={new Date(event.datetime)} />

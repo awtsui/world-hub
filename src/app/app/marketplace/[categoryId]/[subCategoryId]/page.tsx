@@ -1,31 +1,35 @@
-import { categoryIdToName } from '@/data/marketplace';
+import { categoryIdToName, subCategoryIdToName } from '@/data/marketplace';
 import EventCard from '@/components/EventCard';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Event } from '@/types';
-import { getEventsByCategory } from '@/utils/client-helper';
+import { getEventsBySubCategory } from '@/utils/client-helper';
 
-type CategoryPageParams = {
+type SubCategoryPageParams = {
   params: {
     categoryId: string;
+    subCategoryId: string;
   };
 };
 
-export default async function CategoryPage({ params }: CategoryPageParams) {
+export default async function SubCategoryPage({
+  params,
+}: SubCategoryPageParams) {
   // TODO: Organize events based on subcategory
   // Replace with data fetching
   const categoryName = categoryIdToName[params.categoryId];
+  const subCategoryName = subCategoryIdToName[params.subCategoryId];
 
-  const events: Event[] = await getEventsByCategory(categoryName);
+  const events: Event[] = await getEventsBySubCategory(subCategoryName);
 
   return (
     <div className="px-12 py-4">
       <div className="flex items-center">
-        <Link href="/marketplace" className="text-3xl">
-          Marketplace
+        <Link href={`/marketplace/${params.categoryId}`} className="text-3xl">
+          {categoryName}
         </Link>
         <ChevronRight />
-        {categoryName}
+        <p className="text-4xl">{subCategoryName}</p>
       </div>
       <div className="h-80 text-center">Image</div>
       {events ? (

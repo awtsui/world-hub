@@ -1,21 +1,27 @@
-import { Category, Event } from '@/types';
+import { MainCategory, SubCategory, Event } from '@/types';
 import EventCard from './EventCard';
 import Link from 'next/link';
 
 type CategorySectionProps = {
-  category: Category;
+  category: MainCategory;
+  subCategory?: SubCategory;
   events: Event[] | null;
 };
 
 export default function CategorySection({
   category,
+  subCategory,
   events,
 }: CategorySectionProps) {
   if (!events) return null;
 
-  const filteredEvents = events.filter(
-    (event) => event.category == category.name
-  );
+  const filteredEvents = events.filter((event) => {
+    if (subCategory) {
+      return event.subCategory === subCategory.name;
+    } else {
+      return event.category === category.name;
+    }
+  });
 
   return (
     <div className="flex flex-col">
