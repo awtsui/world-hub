@@ -53,7 +53,7 @@ export function CartProvider({ children }: CartProviderProps) {
       localItems && setTickets(localItems);
     }
     saveJSON(LOCAL_STORAGE_KEY, tickets);
-  }, [LOCAL_STORAGE_KEY, tickets]);
+  }, [tickets]);
 
   const addTicket = useCallback((ticket: Ticket) => {
     const ticketId = ticket.eventId + ':' + ticket.label; // TODO: define ticket id creation, must be deterministic

@@ -3,7 +3,7 @@
 import { Button } from '@/components/Button';
 import { useCart } from '@/context/CartContext';
 import Big from 'big.js';
-import { Delete } from 'lucide-react';
+import { X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CartPage() {
@@ -23,7 +23,9 @@ export default function CartPage() {
             <div key={ticketId} className="flex flex-col">
               <div className="flex items-start justify-between">
                 <div className="flex flex-col">
-                  <p>{ticket.eventTitle}</p>
+                  <Link href={`/event/${ticket.eventId}`}>
+                    {ticket.eventTitle}
+                  </Link>
                   <p>${ticket.price}</p>
                 </div>
                 <div className="flex gap-5">
@@ -35,7 +37,7 @@ export default function CartPage() {
                   variant="ghost"
                   onClick={() => removeTicket(ticket.eventId, ticket.label)}
                 >
-                  <Delete />
+                  <X />
                 </Button>
               </div>
               <hr />

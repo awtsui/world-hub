@@ -13,9 +13,13 @@ export async function GET(request: NextRequest) {
 
     let data;
     if (worldId) {
-      data = await User.find({ worldId: worldId });
+      data = await User.findOne({ worldId: worldId });
     } else if (userId) {
-      data = await User.findById(userId);
+      data = await User.findOne({ userId });
+    }
+
+    if (!data) {
+      throw Error('Unable to retrieve user');
     }
 
     return NextResponse.json(data, {

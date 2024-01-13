@@ -5,10 +5,10 @@ import Image from 'next/image';
 export default function Avatar() {
   return (
     <Image
-      className="rouded-full"
+      className="rounded-full"
       height="30"
       width="30"
-      src="/images/placeholder.png"
+      src="/static/placeholder.png"
       alt="Avatar"
     />
   );
