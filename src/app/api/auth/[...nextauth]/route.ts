@@ -1,10 +1,12 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { Role } from '@/types';
+import { Role } from '@/lib/types';
+import { signIn } from '@/lib/mongodb/utils/hosts';
 
-// if (!process.env.NEXTAUTH_SECRET) {
-//   throw new Error('Please provide process.env.NEXTAUTH_SECRET');
-// }
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+if (!NEXTAUTH_SECRET) {
+  throw new Error('Please provide process.env.NEXTAUTH_SECRET');
+}
 
 export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers/oauth
@@ -20,7 +22,7 @@ export const authOptions: NextAuthOptions = {
           const user = {
             id: credentials.id,
             name: credentials.id,
-            provider: 'worldcoin',
+            provider: 'worldcoinguest',
             role: Role.user,
           };
           return user;
@@ -36,25 +38,43 @@ export const authOptions: NextAuthOptions = {
       authorization: { params: { scope: 'openid' } },
       clientId: `app_${process.env.NEXT_PUBLIC_WLD_CLIENT_ID}`,
       clientSecret: process.env.WLD_CLIENT_SECRET,
+      checks: ['none'],
       idToken: true,
       profile(profile) {
         return {
           id: profile.sub,
           name: profile.sub,
           provider: 'worldcoin',
-          credentialType:
-            profile['https://id.worldcoin.org/beta'].credential_type,
+          verification_level:
+            profile['https://id.worldcoin.org/v1'].verification_level,
           role: Role.user,
         };
       },
     },
+    CredentialsProvider({
+      id: 'hostcredentials',
+      name: 'HostCredentials',
+      credentials: {
+        email: { label: 'email', type: 'text' },
+        password: { label: 'password', type: 'text' },
+      },
+      async authorize(credentials, req) {
+        if (!credentials) return null;
+
+        const { host, error } = await signIn(credentials);
+
+        if (error) return null;
+
+        return host;
+      },
+    }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
         token.id = user.id;
-        token.provider = account?.provider;
+        token.provider = user.provider;
       }
       return token;
     },
@@ -66,6 +86,15 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      } else {
+        // TODO: check if url is an allowed subdomain
+        return url;
+      }
+    },
   },
   pages: {
     signIn: '/auth/signin',
@@ -73,6 +102,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
   },
+  secret: NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);

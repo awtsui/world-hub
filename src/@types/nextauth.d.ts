@@ -3,6 +3,7 @@ import { DefaultSession, DefaultUser } from 'next-auth';
 enum Role {
   user = 'user',
   admin = 'admin',
+  host = 'host',
 }
 
 interface IUser extends DefaultUser {

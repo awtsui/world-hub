@@ -2,6 +2,7 @@
 
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
 
 export default function ReturnButton() {
   const router = useRouter();
@@ -10,8 +11,8 @@ export default function ReturnButton() {
     router.back();
   };
   return (
-    <button onClick={handleClick}>
+    <Button variant="outline" onClick={handleClick}>
       <ChevronLeft />
-    </button>
+    </Button>
   );
 }

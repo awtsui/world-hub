@@ -1,5 +1,5 @@
-import User from '@/models/User';
-import dbConnect from '@/utils/mongoosedb';
+import User from '@/lib/mongodb/models/User';
+import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

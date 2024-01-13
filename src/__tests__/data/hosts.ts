@@ -1,6 +1,6 @@
-import { Host } from '@/types';
+import { HostProfile } from '@/lib/types';
 
-export const hosts: Host[] = [
+export const hosts: HostProfile[] = [
   {
     hostId: '1',
     name: 'Insomniac',

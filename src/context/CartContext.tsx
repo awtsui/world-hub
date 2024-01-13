@@ -1,7 +1,6 @@
 'use client';
 
-import { Ticket } from '@/types';
-import Big from 'big.js';
+import { Ticket } from '@/lib/types';
 import {
   createContext,
   useCallback,

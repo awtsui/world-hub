@@ -1,8 +1,9 @@
 import DateFormatter from '@/components/DateFormatter';
 import ReturnButton from '@/components/ReturnButton';
-import AddTicketButton from '@/components/AddTicketButton';
-import { Event, Host, Tier } from '@/types';
-import { getEventsByIds, getHostById } from '@/utils/client-helper';
+import AddTicketButton from '@/components/app/AddTicketButton';
+import { Event, HostProfile, Tier } from '@/lib/types';
+import { getEventsByIds, getHostProfileById, getVenueById } from '@/lib/utils';
+import Image from 'next/image';
 
 type EventPageParams = {
   params: {
@@ -12,19 +13,33 @@ type EventPageParams = {
 
 export default async function EventPage({ params }: EventPageParams) {
   // Replace with data fetching
-  const event: Event = (await getEventsByIds([params.eventId]))[0];
-  const host: Host = await getHostById(event.hostId);
+  const event = (await getEventsByIds([params.eventId]))[0];
+  const host = await getHostProfileById(event.hostId);
+  const venue = await getVenueById(event.venueId);
 
   return (
     <div className="px-12 py-4">
       <ReturnButton />
-      {event ? (
-        <div className="p-4">
+      <div className="p-4">
+        {event && (
           <div className="flex flex-col items-center">
+            <Image
+              src={event.thumbnailUrl}
+              alt={event.title}
+              width={300}
+              height={300}
+            />
             <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
-            <p className="mb-2">
-              <strong>Artist: {host.name}</strong>
-            </p>
+            {host && (
+              <p className="mb-2">
+                <strong>{host.name}</strong>
+              </p>
+            )}
+            {venue && (
+              <p>
+                {venue.city}, {venue.state} - {venue.name}
+              </p>
+            )}
             <p className="mb-2">
               <DateFormatter date={new Date(event.datetime)} />
             </p>
@@ -40,10 +55,8 @@ export default async function EventPage({ params }: EventPageParams) {
               </div>
             ))}
           </div>
-        </div>
-      ) : (
-        <div>Loading</div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

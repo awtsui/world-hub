@@ -1,7 +1,7 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { Button } from '@/components/Button';
+import { Button } from '@/components/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function AuthPage() {
@@ -10,8 +10,8 @@ export default function AuthPage() {
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
   const guestCallbackUrl =
     callbackUrl !== '/'
-      ? encodeURI(`/auth/verify?callbackUrl=${callbackUrl}`)
-      : '/';
+      ? `/auth/verify?callbackUrl=${callbackUrl}`
+      : '/auth/verify';
 
   function handleGuestClick() {
     router.push(guestCallbackUrl);

@@ -1,6 +1,6 @@
 'use client';
 
-import getStripe from '../../../utils/get-stripejs';
+import getStripe from '../../../lib/stripe/utils/get-stripejs';
 import {
   EmbeddedCheckoutProvider,
   EmbeddedCheckout,
@@ -8,10 +8,14 @@ import {
 import { useCart } from '../../../context/CartContext';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Event, Order, Ticket } from '@/types';
+import { Event } from '@/lib/types';
 import { useRouter } from 'next/navigation';
-import { useAlert } from '@/context/AlertContext';
-import { handleFetchError } from '@/utils/client-helper';
+import { handleFetchError } from '@/lib/client/utils';
+import { useAlertDialog } from '@/context/ModalContext';
+
+// TODO: redo url creation so localhost is not hard coded
+
+// TODO: double check that tickets being purchased to not exceed event ticket quantity
 
 export default function CheckoutPage() {
   const stripePromise = getStripe();
@@ -19,7 +23,7 @@ export default function CheckoutPage() {
   const { tickets, resetCart } = useCart();
   const { data: session } = useSession();
   const router = useRouter();
-  const { setError } = useAlert();
+  const { setError } = useAlertDialog();
   const [eventLimits, setEventLimits] = useState<Record<string, number>>({});
   const [pastRelevantTickets, setPastRelevantTickets] = useState<
     Record<string, number>
@@ -42,7 +46,7 @@ export default function CheckoutPage() {
       .then((data) => {
         const eventLimits: Record<string, number> = {};
         data.forEach((event: Event) => {
-          eventLimits[event.eventId] = event.ticketLimit;
+          eventLimits[event.eventId] = event.purchaseLimit;
         });
         setEventLimits(eventLimits);
       })

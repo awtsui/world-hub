@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/Button';
+import { Button } from '@/components/ui/button';
 import {
   IDKitWidget,
   ISuccessResult,
@@ -8,10 +8,13 @@ import {
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { useAlertDialog } from '@/context/ModalContext';
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
+  const router = useRouter();
+  const { setError, setSuccess } = useAlertDialog();
 
   async function verifyProof(proof: any) {
     const resp = await fetch('/api/worldcoin/verify', {
@@ -36,10 +39,23 @@ export default function VerifyPage() {
     // TODO: Check if user has purchased this event ticket before
     // Send user to checkout page if new
     // Send user to home page with error alert if duplicate
-    await signIn('anonymous', {
-      id: data.nullifier_hash,
-      callbackUrl,
-    });
+    try {
+      const resp = await signIn('anonymous', {
+        redirect: false,
+        id: data.nullifier_hash,
+      });
+      if (!resp) {
+        setError('Failed to verify World ID', 3);
+      } else {
+        if (!resp.ok) {
+          setError('Bad verification!', 3);
+        }
+        setSuccess('Successfully verified with World ID!', 3);
+        router.push(callbackUrl);
+      }
+    } catch (error) {
+      setError(JSON.stringify(error), 3);
+    }
   }
   return (
     <div className="flex items-center justify-center h-screen">

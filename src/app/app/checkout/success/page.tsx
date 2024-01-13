@@ -1,6 +1,5 @@
 'use client';
 
-// import { useAlert } from '@/app/context/AlertContext';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -32,7 +31,7 @@ export default function CheckoutSuccessPage() {
           <h1>Checkout Payment Result</h1>
           <h2>Status: {data.status ?? 'loading...'}</h2>
           <p>
-            Your Checkout Session ID: <code>{sessionId ?? 'loading...'}</code>
+            Your Order Number: <code>{data.order_id}</code>
           </p>
           <p>Payment Status: {data.payment_status}</p>
           <p>Customer Email: {data.customer_email}</p>

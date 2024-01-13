@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
-import { Ticket } from '@/types';
-import dbConnect from '@/utils/mongoosedb';
-import Order from '@/models/Order';
+import { Ticket } from '@/lib/types';
+import dbConnect from '@/lib/mongodb/utils/mongoosedb';
+import Order from '@/lib/mongodb/models/Order';
 import Big from 'big.js';
+import mongoose, { ClientSession } from 'mongoose';
+import { StripeSessionDataRequestBodySchema } from '@/lib/zod/apischema';
 
 const { STRIPE_SECRET_KEY } = process.env;
 if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY not defined');
@@ -25,11 +27,14 @@ export async function GET(request: NextRequest) {
       expand: ['payment_intent', 'customer'],
     });
 
+    const metadata = checkoutSession.metadata;
+
     return NextResponse.json(
       {
         status: checkoutSession.status,
         payment_status: checkoutSession.payment_status,
         customer_email: checkoutSession.customer_details?.email,
+        order_id: checkoutSession.metadata?.orderId,
       },
       { status: 200 }
     );
@@ -42,19 +47,22 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: Request) {
-  try {
-    await dbConnect();
-    const { tickets, userId } = await request.json();
+  await dbConnect();
 
-    if (!tickets.length) {
-      return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
+  const session: ClientSession = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const reqBody = await request.json();
+
+    const validatedReqBody =
+      StripeSessionDataRequestBodySchema.safeParse(reqBody);
+
+    if (!validatedReqBody.success) {
+      throw Error('Invalid request body data');
     }
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User is not authenticated' },
-        { status: 400 }
-      );
-    }
+
+    const { tickets, userId } = validatedReqBody.data;
 
     let lineItems: any[] = [];
     let totalPrice = Big('0.0');
@@ -77,33 +85,47 @@ export async function POST(request: Request) {
       });
     });
 
-    const order = await Order.create({
-      userId,
-      isPaid: false,
-      amount,
-      totalPrice: totalPrice.toNumber(),
-      tickets,
-      email: '',
-    });
+    const order = await Order.create(
+      [
+        {
+          userId,
+          isPaid: false,
+          amount,
+          totalPrice: totalPrice.toNumber(),
+          tickets,
+          email: '',
+        },
+      ],
+      {
+        session,
+      }
+    );
 
     const headerList = headers();
     const originUrl = headerList.get('origin');
 
-    const session = await stripe.checkout.sessions.create({
+    const stripeSession = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       line_items: lineItems,
       mode: 'payment',
       return_url: `${originUrl}/checkout/success?sessionId={CHECKOUT_SESSION_ID}`,
-      metadata: { orderId: order._id.toString() },
+      metadata: { orderId: order[0]._id.toString() },
     });
+
+    await session.commitTransaction();
+
     return NextResponse.json(
-      { clientSecret: session.client_secret },
+      { clientSecret: stripeSession.client_secret },
       { status: 200 }
     );
   } catch (error) {
+    await session.abortTransaction();
+    console.log(error);
     return NextResponse.json(
       { error: `Internal Server Error: ${error}` },
       { status: 500 }
     );
+  } finally {
+    session.endSession();
   }
 }
