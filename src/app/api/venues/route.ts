@@ -1,5 +1,5 @@
-import Venue from '@/models/Venue';
-import dbConnect from '@/utils/mongoosedb';
+import Venue from '@/lib/mongodb/models/Venue';
+import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -7,14 +7,18 @@ export async function GET(request: NextRequest) {
     await dbConnect();
     const searchParams = request.nextUrl.searchParams;
     const venueId = searchParams.get('id');
-    if (!venueId) {
-      throw Error('Parameters not properly defined');
+    let data;
+    if (venueId) {
+      data = await Venue.findOne({ venueId });
+    } else {
+      data = await Venue.find({});
     }
-    const venue = await Venue.find({ venueId });
-    if (!venue) {
-      throw Error(`User with id(${venueId}) may not exist`);
+
+    if (!data) {
+      throw Error('Failed to retrieve venues');
     }
-    return NextResponse.json(venue, { status: 200 });
+
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: `Internal Server Error (/api/venues): ${error}` },

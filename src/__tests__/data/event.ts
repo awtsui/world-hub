@@ -1,5 +1,5 @@
-import { CURRENCIES } from '@/constants';
-import { Event } from '@/types';
+import { CURRENCIES } from '@/lib/constants';
+import { Event } from '@/lib/types';
 import Big from 'big.js';
 
 export const events: Event[] = [
@@ -20,11 +20,11 @@ export const events: Event[] = [
     ticketTiers: [
       {
         label: 'GA',
-        price: new Big(25.0),
+        price: '25.0',
       },
       {
         label: 'VIP',
-        price: new Big(60.0),
+        price: '60.0',
       },
     ],
   },
@@ -46,19 +46,19 @@ export const events: Event[] = [
     ticketTiers: [
       {
         label: 'Sec 100, Row A',
-        price: new Big(20.0),
+        price: '20.0',
       },
       {
         label: 'Sec 200, Row b',
-        price: new Big(30.0),
+        price: '30.0',
       },
       {
         label: 'Sec 300, Row C',
-        price: new Big(40.0),
+        price: '40.0',
       },
       {
         label: 'Sec 400, Row D',
-        price: new Big(50.0),
+        price: '50.0',
       },
     ],
   },
@@ -79,7 +79,7 @@ export const events: Event[] = [
     ticketTiers: [
       {
         label: 'GA',
-        price: new Big(28.0),
+        price: '28.0',
       },
     ],
   },

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/utils/mongoosedb';
+import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 
-import Order from '@/models/Order';
+import Order from '@/lib/mongodb/models/Order';
 
 export async function GET(request: NextRequest) {
+  await dbConnect();
+
   try {
-    await dbConnect();
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
     const orderIds = searchParams.getAll('id');
@@ -21,8 +22,8 @@ export async function GET(request: NextRequest) {
         _id: { $in: orderIds },
       });
     }
-    if (!data.length) {
-      throw Error('Orders may not exist');
+    if (!data) {
+      throw Error('Failed to retrieve orders');
     }
 
     return NextResponse.json(data, {
@@ -35,17 +36,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
-// export async function POST(request: NextRequest) {
-//   // TODO: validate request body
-//   try {
-//     await dbConnect();
-//     const reqBody = await request.json();
-//     return NextResponse.json(await Order.create(reqBody));
-//   } catch (error) {
-//     return NextResponse.json(
-//       { error: 'Internal Server Error' },
-//       { status: 500 }
-//     );
-//   }
-// }

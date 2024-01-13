@@ -1,4 +1,4 @@
-import { Venue } from '@/types';
+import { Venue } from '@/lib/types';
 
 export const venues: Venue[] = [
   {

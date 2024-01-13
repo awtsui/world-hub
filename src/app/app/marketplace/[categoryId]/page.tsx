@@ -1,10 +1,9 @@
-import { categoryIdToName } from '@/data/marketplace';
-import EventCard from '@/components/EventCard';
+import { categoryIdToName } from '@/lib/data';
+import EventCard from '@/components/app/EventCard';
+import { Event } from '@/lib/types';
+import CategoryDropdown from '@/components/app/CategoryDropdown';
+import { getEventsByCategory } from '@/lib/utils';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
-import { Event } from '@/types';
-import { getEventsByCategory } from '@/utils/client-helper';
-import CategoryDropdown from '@/components/CategoryDropdown';
 
 type CategoryPageParams = {
   params: {
@@ -17,7 +16,7 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
   // Replace with data fetching
   const categoryName = categoryIdToName[params.categoryId];
 
-  const events: Event[] = await getEventsByCategory('Concerts');
+  const events: Event[] = await getEventsByCategory(categoryName);
 
   return (
     <div className="px-12 py-4">
@@ -28,9 +27,11 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
       <div className="h-80 text-center">Image</div>
       {events ? (
         <div className="flex flex-wrap gap-3">
-          {events.length > 0 ? (
+          {events.length ? (
             events.map((event) => (
-              <EventCard key={event.eventId} event={event}></EventCard>
+              <Link key={event.eventId} href={`/event/${event.eventId}`}>
+                <EventCard key={event.eventId} event={event} />
+              </Link>
             ))
           ) : (
             <div>No Events</div>

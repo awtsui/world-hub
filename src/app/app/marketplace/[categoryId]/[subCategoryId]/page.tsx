@@ -1,9 +1,9 @@
-import { categoryIdToName, subCategoryIdToName } from '@/data/marketplace';
-import EventCard from '@/components/EventCard';
+import { categoryIdToName, subCategoryIdToName } from '@/lib/data';
+import EventCard from '@/components/app/EventCard';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { Event } from '@/types';
-import { getEventsBySubCategory } from '@/utils/client-helper';
+import { Event } from '@/lib/types';
+import { getEventsBySubCategory } from '@/lib/utils';
 
 type SubCategoryPageParams = {
   params: {
@@ -36,7 +36,9 @@ export default async function SubCategoryPage({
         <div className="flex flex-wrap gap-3">
           {events.length > 0 ? (
             events.map((event) => (
-              <EventCard key={event.eventId} event={event}></EventCard>
+              <Link href={`/event/${event.eventId}`}>
+                <EventCard key={event.eventId} event={event}></EventCard>
+              </Link>
             ))
           ) : (
             <div>No Events</div>

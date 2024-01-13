@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/Button';
+import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import Big from 'big.js';
 import { X } from 'lucide-react';

@@ -1,41 +1,34 @@
-import '@/styles/globals.css';
-import Navbar from '../../components/Navbar';
-import { Kanit } from 'next/font/google';
-import ContextProviders from '@/modules/providers';
-import NextAuthProvider from '../../providers/NextAuthProvider';
-import Alert from '../../components/Alert';
-import NavigationEvents from '../../components/NavigationEvents';
+import AppNavbar from '../../components/app/AppNavbar';
+import NextAuthProvider from '@/providers/NextAuthProvider';
 import { Suspense } from 'react';
+import NavigationEvents from '@/components/app/NavigationEvents';
+import { CartProvider } from '@/context/CartContext';
+import { ModalProvider } from '@/context/ModalContext';
+import SearchDialog from '@/components/app/SearchDialog';
+import CartSheet from '@/components/app/CartSheet';
+import AlertPopup from '@/components/Alert';
+import { Toaster } from '@/components/ui/toaster';
 
-export const metadata = {
-  title: 'WorldHub',
-  description: 'World ID Marketplace',
-};
-
-const font = Kanit({
-  subsets: ['latin'],
-  weight: ['200'],
-});
-
-export default async function RootLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={font.className}>
-        <ContextProviders>
-          <NextAuthProvider>
-            <Alert />
-            <Suspense fallback={null}>
-              <NavigationEvents />
-            </Suspense>
-            <Navbar />
-            <main>{children}</main>
-          </NextAuthProvider>
-        </ContextProviders>
-      </body>
-    </html>
+    <ModalProvider>
+      <CartProvider>
+        <NextAuthProvider>
+          <Suspense fallback={null}>
+            <NavigationEvents />
+          </Suspense>
+          <SearchDialog />
+          <CartSheet />
+          <AlertPopup />
+          <AppNavbar />
+          <div className="relative mt-20">{children}</div>
+          <Toaster />
+        </NextAuthProvider>
+      </CartProvider>
+    </ModalProvider>
   );
 }

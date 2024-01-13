@@ -1,22 +1,31 @@
 'use client';
 
-import { AlertStatus } from '@/types';
-import { useAlert } from '../context/AlertContext';
-import { Button } from './Button';
+import { AlertStatus } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogHeader,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogTitle,
+} from './ui/alert-dialog';
+import { useAlertDialog } from '@/context/ModalContext';
 
-export default function Alert() {
-  const { alert, alertText, clear } = useAlert();
+export default function AlertPopup() {
+  const { alert, alertText, clear } = useAlertDialog();
 
-  if (alert !== AlertStatus.None) {
-    return (
-      <div className="fixed top-10 left-0 w-full h-full flex flex-col items-center justify-start py-10">
-        <div className="flex flex-col bg-white p-4 rounded shadow-md">
-          {alertText}
-          <Button onClick={clear}>Clear</Button>
-        </div>
-      </div>
-    );
-  } else {
-    return null;
-  }
+  return (
+    <AlertDialog onOpenChange={clear} open={alert !== AlertStatus.None}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-center">
+            {alertText}
+          </AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogAction asChild className="items-center">
+          <Button onClick={clear}>Okay</Button>
+        </AlertDialogAction>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }

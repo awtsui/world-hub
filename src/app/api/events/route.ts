@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/utils/mongoosedb';
+import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 
-import Event from '@/models/Event';
+import Event from '@/lib/mongodb/models/Event';
+import { deleteEvent } from '@/lib/mongodb/utils/events';
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,9 +26,11 @@ export async function GET(request: NextRequest) {
     } else {
       data = await Event.find({});
     }
-    if (!data.length) {
-      throw Error(`Events may not exist`);
+
+    if (!data) {
+      throw Error('Failed to retrieve events');
     }
+
     data = data.map((event) => {
       return {
         ...event._doc,
@@ -48,15 +51,27 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  // TODO: validate request body
+export async function DELETE(request: NextRequest) {
   try {
-    await dbConnect();
-    const reqBody = await request.json();
-    return NextResponse.json(await Event.create(reqBody));
+    const searchParams = request.nextUrl.searchParams;
+    const eventId = searchParams.get('id');
+
+    if (!eventId) {
+      throw Error('Parameters not properly defined');
+    }
+
+    const resp = await deleteEvent(eventId);
+    if (!resp.success) {
+      throw Error(resp.error);
+    }
+
+    return NextResponse.json(
+      { message: `Successfully deleted event ${eventId}` },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: `Internal Server Error (/api/events): ${error}` },
       { status: 500 }
     );
   }
