@@ -82,7 +82,7 @@ export async function createEvent(data: EventDataRequestBody) {
     console.log(error);
     return { success: false, error: error as string };
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }
 
@@ -131,6 +131,6 @@ export async function deleteEvent(eventId: string) {
     console.log(error);
     return { success: false, error: error as string };
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }

@@ -3,13 +3,11 @@ import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { TabsContent } from '@radix-ui/react-tabs';
 import UpdateHostProfileForm from './UpdateHostProfileForm';
 
-interface HostSettingsTabsProps {
+interface HostProfileTabsProps {
   hostProfile: HostProfile;
 }
 
-export default function HostSettingsTabs({
-  hostProfile,
-}: HostSettingsTabsProps) {
+export default function HostProfileTabs({ hostProfile }: HostProfileTabsProps) {
   return (
     <Tabs defaultValue="profile" className="w-1/2">
       <TabsList>

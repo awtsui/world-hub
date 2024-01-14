@@ -13,9 +13,7 @@ import { useRouter } from 'next/navigation';
 import { handleFetchError } from '@/lib/client/utils';
 import { useAlertDialog } from '@/context/ModalContext';
 
-// TODO: redo url creation so localhost is not hard coded
-
-// TODO: double check that tickets being purchased to not exceed event ticket quantity
+// TODO: refactor PLEASE
 
 export default function CheckoutPage() {
   const stripePromise = getStripe();
@@ -37,10 +35,9 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     // 2. Gather event ticket restrictions
-    const eventsSearchUrl = new URL('http:/localhost:3000/api/events');
-    eventIds.forEach((id) => {
-      eventsSearchUrl.searchParams.set('id', id);
-    });
+    const eventsSearchUrl = `/api/events?${eventIds
+      .map((id) => `id=${id}`)
+      .join('&')}`;
     fetch(eventsSearchUrl)
       .then((resp) => resp.json())
       .then((data) => {
@@ -55,20 +52,20 @@ export default function CheckoutPage() {
     // 3. Fetch user past orders and filter for events currently in cart
     async function fetchRelevantOrders() {
       try {
-        const fetchUserUrl = new URL('http:/localhost:3000/api/users');
-        fetchUserUrl.searchParams.set('id', session?.user?.id || '');
-        const fetchUserResp = await fetch(fetchUserUrl);
-        if (!fetchUserResp.ok) {
+        const fetchUserProfileResp = await fetch(
+          `/api/users/profile?id=${session!.user!.id || ''}`
+        );
+        if (!fetchUserProfileResp.ok) {
           throw Error('Unable to retrieve user OR user does not exist');
         }
-        const fetchUserData = await fetchUserResp.json();
+        const fetchUserProfileData = await fetchUserProfileResp.json();
 
-        const orderIds: string[] = fetchUserData.orders;
+        const orderIds: string[] = fetchUserProfileData.orders;
         if (orderIds.length) {
-          const fetchOrdersUrl = new URL('http:/localhost:3000/api/orders');
-          orderIds.forEach((orderId) => {
-            fetchOrdersUrl.searchParams.set('id', orderId);
-          });
+          const fetchOrdersUrl = `/api/orders?${orderIds
+            .map((id) => `id=${id}`)
+            .join('&')}`;
+
           const fetchOrdersResp = await fetch(fetchOrdersUrl);
           if (!fetchOrdersResp.ok) {
             throw Error('Unable to retrieve user orders OR us');
@@ -76,7 +73,7 @@ export default function CheckoutPage() {
           const fetchOrdersData = await fetchOrdersResp.json();
           const pastRelevantTickets: Record<string, number> = {};
           fetchOrdersData.forEach((order: any) => {
-            order.tickets.forEach((ticket: any) => {
+            order.ticketData.forEach((ticket: any) => {
               if (Object.keys(pastRelevantTickets).includes(ticket.eventId)) {
                 pastRelevantTickets[ticket.eventId] += ticket.unitAmount;
               } else {
@@ -118,11 +115,7 @@ export default function CheckoutPage() {
     } else {
       setIsEligibleForCheckout(true);
     }
-  }, [
-    JSON.stringify(eventLimits),
-    JSON.stringify(pastRelevantTickets),
-    resetCart,
-  ]);
+  }, [JSON.stringify(eventLimits), JSON.stringify(pastRelevantTickets)]);
 
   useEffect(() => {
     // 6. Request Stripe session
@@ -135,6 +128,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           tickets: Object.values(tickets),
           userId: session.user.id,
+          email: session.user.email ?? '',
         }), // TODO: Add more fields
       })
         .then((resp) => resp.json())
@@ -144,7 +138,7 @@ export default function CheckoutPage() {
   }, [isEligibleForCheckout, session?.user?.id]);
 
   return (
-    <div>
+    <>
       {clientSecret ? (
         <EmbeddedCheckoutProvider
           stripe={stripePromise}
@@ -155,6 +149,6 @@ export default function CheckoutPage() {
       ) : (
         <div>Loading...</div>
       )}
-    </div>
+    </>
   );
 }

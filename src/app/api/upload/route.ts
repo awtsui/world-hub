@@ -109,6 +109,6 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }

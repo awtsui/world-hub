@@ -42,6 +42,7 @@ export const EventFormDataSchema = z.object({
     .object({
       label: z.string(),
       value: z.string(),
+      key: z.string(),
     })
     .array(),
   venueId: z.string().min(1, 'Venue name is required'),
@@ -80,3 +81,7 @@ export const UpdateHostProfileFormSchema = z
   .refine(({ name, biography }) => name !== '' || biography !== '', {
     message: 'One of the fields must be defined',
   });
+
+export const UpdateUserAccountFormSchema = z.object({
+  email: z.string().email(),
+});

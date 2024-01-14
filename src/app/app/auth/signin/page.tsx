@@ -2,18 +2,15 @@
 
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useAlertDialog } from '@/context/ModalContext';
+import { useSearchParams } from 'next/navigation';
 
 export default function SignInPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
-  // const router = useRouter();
-  // const { setError } = useAlertDialog();
 
   function handleSignInWithWorldId() {
     signIn('worldcoin', {
-      callbackUrl: 'http:app.localhost:3000/' + callbackUrl,
+      callbackUrl: `http://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}${callbackUrl}`,
     });
   }
   return (

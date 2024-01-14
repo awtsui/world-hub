@@ -1,8 +1,11 @@
 import dbConnect from '@/lib/mongodb/utils/mongoosedb';
+import { validateTicket } from '@/lib/mongodb/utils/tickets';
+import { TicketValidatorDataRequestBodySchema } from '@/lib/zod/apischema';
 import { NextRequest, NextResponse } from 'next/server';
-import { signUp } from '@/lib/mongodb/utils/hosts';
-import { HostSignUpFormSchema } from '@/lib/zod/schema';
 import mongoose, { ClientSession } from 'mongoose';
+
+// Note: eventId should be provided by scanner automatically
+// Note: user's qrcode should provide ticket hash and tier label
 
 export async function POST(request: NextRequest) {
   await dbConnect();
@@ -11,39 +14,29 @@ export async function POST(request: NextRequest) {
   session.startTransaction();
   try {
     const reqBody = await request.json();
-    const validatedReqBody = HostSignUpFormSchema.safeParse(reqBody);
 
+    const validatedReqBody =
+      TicketValidatorDataRequestBodySchema.safeParse(reqBody);
     if (!validatedReqBody.success) {
-      const { errors } = validatedReqBody.error;
-      return NextResponse.json(
-        {
-          error: { message: 'Invalid request', errors },
-        },
-        { status: 400 }
-      );
+      console.log(validatedReqBody.error.errors);
+      throw Error('Invalid request body');
     }
 
-    const resp = await signUp(validatedReqBody.data, session);
-
+    const resp = await validateTicket(validatedReqBody.data, session);
     if (!resp.success) {
-      throw Error(resp.error);
+      throw Error('Ticket failed validation');
     }
 
     await session.commitTransaction();
 
     return NextResponse.json(
-      {
-        message: 'Host account and profile successfully created!',
-        hostId: resp.hostId,
-      },
-      {
-        status: 200,
-      }
+      { message: 'Successfully validated ticket' },
+      { status: 200 }
     );
   } catch (error) {
     await session.abortTransaction();
     return NextResponse.json(
-      { error: `Internal Server Error (/api/hosts/signup): ${error}` },
+      { error: `Internal Server Error: ${error}` },
       { status: 500 }
     );
   } finally {

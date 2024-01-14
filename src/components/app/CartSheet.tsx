@@ -78,7 +78,14 @@ export default function CartSheet() {
         <SheetFooter>
           <SheetClose asChild>
             <Link href="/cart" className="w-full">
-              <Button className="w-full">View Shopping Cart</Button>
+              <Button variant="secondary" className="w-full">
+                View Shopping Cart
+              </Button>
+            </Link>
+          </SheetClose>
+          <SheetClose asChild>
+            <Link href="/checkout" className="w-full">
+              <Button className="w-full">Checkout</Button>
             </Link>
           </SheetClose>
         </SheetFooter>

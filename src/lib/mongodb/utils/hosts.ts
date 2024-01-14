@@ -1,20 +1,18 @@
 import { HostSignUpFormSchema } from '@/lib/zod/schema';
 import { z } from 'zod';
-import dbConnect from './mongoosedb';
 import Host from '../models/Host';
 import { compareSync, hashSync } from 'bcrypt-ts';
-import { HASH_SALT } from '@/lib/constants';
 import HostProfile from '../models/HostProfile';
 import { Role } from '@/lib/types';
 import { getUniqueHostId } from '@/lib/server/utils';
-import { revalidatePath } from 'next/cache';
-import mongoose, { ClientSession } from 'mongoose';
+import { ClientSession } from 'mongoose';
+import { HOST_HASH_SALT } from '@/lib/constants';
+import dbConnect from './mongoosedb';
 
 type HostSignUpSchema = z.infer<typeof HostSignUpFormSchema>;
 
 export async function signIn(host: Record<'email' | 'password', string>) {
   await dbConnect();
-
   try {
     const email = host.email.trim();
     const password = host.password.trim();
@@ -49,12 +47,7 @@ export async function signIn(host: Record<'email' | 'password', string>) {
   }
 }
 
-export async function signUp(host: HostSignUpSchema) {
-  await dbConnect();
-
-  const session: ClientSession = await mongoose.startSession();
-  session.startTransaction();
-
+export async function signUp(host: HostSignUpSchema, session?: ClientSession) {
   try {
     const name = host.name.trim();
     const email = host.email.trim();
@@ -92,7 +85,7 @@ export async function signUp(host: HostSignUpSchema) {
       return { error: 'Passwords should be identical !' };
 
     // Hash the password.
-    password = hashSync(password, HASH_SALT);
+    password = hashSync(password, HOST_HASH_SALT);
 
     const hostId = await getUniqueHostId();
 
@@ -121,14 +114,9 @@ export async function signUp(host: HostSignUpSchema) {
       { session }
     );
 
-    await session.commitTransaction();
-
     return { success: true, hostId };
   } catch (error) {
-    await session.abortTransaction();
     console.log(error);
     return { success: false, error: error as string };
-  } finally {
-    session.endSession();
   }
 }

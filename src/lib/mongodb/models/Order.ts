@@ -8,7 +8,7 @@ const OrderSchema = new Schema<IOrder>(
     isPaid: Boolean,
     amount: Number,
     totalPrice: Decimal128,
-    tickets: [
+    ticketData: [
       {
         eventId: String,
         eventTitle: String,
@@ -20,6 +20,7 @@ const OrderSchema = new Schema<IOrder>(
     ],
     email: String,
     timestamp: { type: Date, default: Date.now },
+    tickets: [String],
   },
 
   { collection: 'orders' }

@@ -24,7 +24,7 @@ export default function DashboardAnalyticsSection({
 
   const topEvents = events
     .filter((event) => event.ticketsPurchased > 0)
-    .sort((a, b) => (a.ticketsPurchased >= b.ticketsPurchased ? 1 : -1));
+    .sort((a, b) => (a.ticketsPurchased >= b.ticketsPurchased ? -1 : 1));
 
   return (
     <div className="w-full space-y-8">
@@ -66,8 +66,10 @@ export default function DashboardAnalyticsSection({
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <p>{event.title}</p>
-                <p>#{index + 1}</p>
+                <p>
+                  #{index + 1} {event.title}
+                </p>
+                <p>{event.ticketsPurchased}</p>
               </a>
             ))}
           </div>

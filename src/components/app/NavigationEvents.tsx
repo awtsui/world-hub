@@ -1,10 +1,8 @@
 'use client';
 
-import { useAlertDialog } from '@/context/ModalContext';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useToast } from '../ui/use-toast';
 
 export default function NavigationEvents() {
   const pathname = usePathname();

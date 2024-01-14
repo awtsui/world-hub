@@ -30,7 +30,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
 import { Calendar } from '../ui/calendar';
 import { format } from 'date-fns';
-import MultipleSelector from '../ui/multi-select';
+import MultipleSelector, { Option } from '../ui/multi-select';
 import { HostProfile, Venue } from '@/lib/types';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
@@ -126,11 +126,12 @@ export default function EventForm() {
   if (fetchHostsError || fetchVenuesError) return <div>failed to load</div>;
 
   // TODO: build a loading state page
-  if (!hosts || !venues) return <div>loading...</div>;
+  if (!hosts || !venues || !session) return <div>loading...</div>;
 
-  const lineupOptions = hosts.map((host: HostProfile) => ({
+  const lineupOptions: Option[] = hosts.map((host: HostProfile) => ({
     label: host.name,
-    value: host.hostId,
+    value: host.name,
+    key: host.hostId,
   }));
 
   async function handleUploadImage(
@@ -183,12 +184,12 @@ export default function EventForm() {
             subcategory: data.subcategory,
             datetime: data.datetime,
             venueId: data.venueId,
-            lineup: data.lineup.map((host) => host.label),
+            lineup: data.lineup.map((host) => host.key),
             purchaseLimit: data.purchaseLimit,
             ticketTiers: data.ticketTiers,
             ticketQuantity: data.ticketQuantity,
           },
-          id: session?.user?.id,
+          hostId: session?.user?.id,
           mediaId,
         }),
         headers: {
@@ -225,13 +226,13 @@ export default function EventForm() {
   type FieldName = keyof Inputs;
 
   async function next() {
-    const fields = steps[currentStep].fields;
-    const output = await trigger(fields as FieldName[], { shouldFocus: true });
-    if (!output) return;
+    // const fields = steps[currentStep].fields;
+    // const output = await trigger(fields as FieldName[], { shouldFocus: true });
+    // if (!output) return;
     if (currentStep <= steps.length - 1) {
-      if (currentStep === steps.length - 2) {
-        await handleSubmit(processForm)();
-      }
+      // if (currentStep === steps.length - 2) {
+      //   await handleSubmit(processForm)();
+      // }
       setCurrentStep((prev) => prev + 1);
     }
   }

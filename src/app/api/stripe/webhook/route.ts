@@ -4,8 +4,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import User from '@/lib/mongodb/models/User';
 import mongoose, { ClientSession } from 'mongoose';
-import { LineItem } from '@stripe/stripe-js';
 import Event from '@/lib/mongodb/models/Event';
+import UserProfile from '@/lib/mongodb/models/UserProfile';
+import { generateTicket } from '@/lib/mongodb/utils/tickets';
+import { TicketWithData } from '@/lib/types';
 
 const { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } = process.env;
 if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY not defined');
@@ -51,50 +53,72 @@ export async function POST(request: NextRequest) {
         },
         { session }
       );
-      // If user does not exist, create new user entry
-      const user = await User.findOneAndUpdate(
-        { userId: order.userId },
-        { worldId: order.worldId, $push: { orders: metadata.orderId } },
-        { upsert: true, session }
-      );
 
-      // TODO: Fulfill order
-
-      // Increment ticketsPurchased field in each event
-      const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-        event.data.object.id,
-        {
-          expand: ['line_items', 'line_items.data.price.product'],
-        }
-      );
-      const lineItems = sessionWithLineItems.line_items?.data;
-      if (!lineItems) {
-        throw Error('No line items in order to fulfill');
+      if (!order) {
+        throw Error('Order does not exist');
       }
 
-      const updatingEventPromises: Promise<any>[] = [];
+      // Fail if user does not already exist in mongodb
+      const user = await User.findOne(
+        {
+          userId: order.userId,
+        },
+        null,
+        { session }
+      );
 
-      lineItems.forEach((lineItem) => {
-        const lineItemProductdata = lineItem.price?.product as any;
-        if (lineItemProductdata.metadata.eventId) {
-          updatingEventPromises.push(
-            Event.updateOne(
-              {
-                eventId: lineItemProductdata.metadata.eventId,
+      if (!user) {
+        throw Error('User does not exist');
+      }
+
+      const userProfile = await UserProfile.updateOne(
+        { userId: order.userId },
+        { $push: { orders: metadata.orderId } },
+        { session }
+      );
+
+      // Track ticket purchases in individual events
+      const ticketData = order.ticketData;
+      const updateEventPromises: Promise<any>[] = [];
+      ticketData.forEach((data: TicketWithData) => {
+        updateEventPromises.push(
+          Event.updateOne(
+            {
+              eventId: data.eventId,
+            },
+            {
+              $inc: {
+                ticketsPurchased: data.unitAmount,
               },
-              {
-                $inc: {
-                  ticketsPurchased: lineItem.quantity,
-                },
-              },
-              {
-                session,
-              }
-            )
-          );
+            },
+            {
+              session,
+            }
+          )
+        );
+      });
+
+      const updateEventResults = await Promise.allSettled(updateEventPromises);
+      updateEventResults.forEach((result) => {
+        if (result.status === 'rejected') {
+          throw Error('Failed to update all events');
         }
       });
-      await Promise.all(updatingEventPromises);
+
+      const ticketIds = order.tickets;
+      const generateTicketPromises: Promise<any>[] = [];
+      ticketIds.forEach((ticketId: string) => {
+        generateTicketPromises.push(generateTicket({ ticketId }, session));
+      });
+
+      const generateTicketResults = await Promise.allSettled(
+        generateTicketPromises
+      );
+      generateTicketResults.forEach((result) => {
+        if (result.status === 'rejected') {
+          throw Error('Failed to generate all tickets');
+        }
+      });
     }
 
     if (event.type === 'checkout.session.expired') {
@@ -115,6 +139,6 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }

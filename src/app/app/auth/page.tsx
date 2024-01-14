@@ -8,10 +8,7 @@ export default function AuthPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
-  const guestCallbackUrl =
-    callbackUrl !== '/'
-      ? `/auth/verify?callbackUrl=${callbackUrl}`
-      : '/auth/verify';
+  const guestCallbackUrl = `/auth/verify?callbackUrl=${callbackUrl}`;
 
   function handleGuestClick() {
     router.push(guestCallbackUrl);

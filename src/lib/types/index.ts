@@ -38,17 +38,31 @@ export interface IVenue {
 
 export interface IUser {
   userId: string;
-  worldId: string;
+  email: string;
+  isVerified: boolean;
+}
+
+export interface IUserProfile {
+  userId: string;
   orders: string[];
 }
 
 interface ITicket {
   eventId: string;
+  label: string;
+}
+
+interface ITicketWithData extends ITicket {
   eventTitle: string;
   price: string;
   currency: string;
-  label: string;
   unitAmount: number;
+}
+
+export interface ITicketWithHash extends ITicket {
+  hash: string;
+  hasValidated: boolean;
+  isExpired: boolean;
 }
 
 export interface IOrder {
@@ -56,9 +70,10 @@ export interface IOrder {
   isPaid: boolean;
   amount: number;
   totalPrice: Big;
-  tickets: ITicket[];
+  ticketData: ITicketWithData[];
   email: string;
   timestamp: Date;
+  tickets: string[];
 }
 
 export interface IHostProfile {
@@ -79,11 +94,13 @@ export interface IMedia {
 
 export type Event = IEvent;
 export type Venue = IVenue;
-export type Ticket = ITicket;
+export type TicketWithData = ITicketWithData;
+export type TicketWithHash = ITicketWithHash;
 export type Tier = ITier;
 export type HostProfile = IHostProfile;
 export type Order = IOrder;
 export type Media = IMedia;
+export type UserProfile = IUserProfile;
 
 type Category = {
   id: string;

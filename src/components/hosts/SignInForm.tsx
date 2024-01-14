@@ -39,25 +39,17 @@ export default function SignInForm() {
 
   async function processForm(data: Inputs) {
     const { email, password } = data;
-    signIn('hostcredentials', {
+    const resp = await signIn('hostcredentials', {
       redirect: false,
       email,
       password,
-    })
-      .then((resp) => {
-        if (!resp) {
-          throw Error('Sign up failed unexpectedly!');
-        }
-        if (!resp.ok) {
-          throw Error('Bad email or password!');
-        } else {
-          router.push(callbackUrl);
-        }
-      })
-      .catch((error) => {
-        setError(error, 3);
-        reset({ email: '', password: '' });
-      });
+    });
+    if (!resp || !resp.ok) {
+      setError('Failed to sign in', 3);
+      reset({ email: '', password: '' });
+    }
+    router.push(callbackUrl);
+    setSuccess('Successfully signed in', 3);
   }
 
   return (

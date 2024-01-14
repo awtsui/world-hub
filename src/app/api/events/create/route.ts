@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
 
     const validatedReqBody = EventDataRequestBodySchema.safeParse(reqBody);
     if (!validatedReqBody.success) {
+      console.log(validatedReqBody.error);
       throw Error('Invalid request body');
     }
 

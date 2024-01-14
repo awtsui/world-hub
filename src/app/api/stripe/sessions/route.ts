@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
-import { Ticket } from '@/lib/types';
 import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import Order from '@/lib/mongodb/models/Order';
 import Big from 'big.js';
 import mongoose, { ClientSession } from 'mongoose';
 import { StripeSessionDataRequestBodySchema } from '@/lib/zod/apischema';
+import Ticket from '@/lib/mongodb/models/Ticket';
 
 const { STRIPE_SECRET_KEY } = process.env;
 if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY not defined');
@@ -62,9 +62,11 @@ export async function POST(request: Request) {
       throw Error('Invalid request body data');
     }
 
-    const { tickets, userId } = validatedReqBody.data;
+    const { tickets, userId, email } = validatedReqBody.data;
 
-    let lineItems: any[] = [];
+    const newTicketPromises: Promise<any>[] = [];
+
+    const lineItems: any[] = [];
     let totalPrice = Big('0.0');
     let amount = 0;
     tickets.forEach((item: any) => {
@@ -80,10 +82,38 @@ export async function POST(request: Request) {
             name: item.eventTitle,
             metadata: { eventId: item.eventId, label: item.label },
           },
-          unit_amount: ticketAmount.times(100).toNumber(),
+          unit_amount: Big(item.price).times(100).toNumber(),
         },
       });
+      newTicketPromises.push(
+        Ticket.create(
+          Array(item.unitAmount)
+            .fill('_')
+            .map((_) => ({
+              eventId: item.eventId,
+              label: item.label,
+              hash: '',
+              hasValidated: false,
+              isExpired: false,
+            })),
+          { session }
+        )
+      );
     });
+
+    const newTicketResults = await Promise.allSettled(newTicketPromises);
+    const newTickets: any[] = [];
+    newTicketResults.forEach((result) => {
+      if (result.status === 'rejected') {
+        throw Error('Failed to create all tickets');
+      } else {
+        newTickets.push(result.value);
+      }
+    });
+
+    const newTicketIds = newTickets
+      .flat()
+      .map((ticket: any) => ticket._id.toString());
 
     const order = await Order.create(
       [
@@ -92,8 +122,9 @@ export async function POST(request: Request) {
           isPaid: false,
           amount,
           totalPrice: totalPrice.toNumber(),
-          tickets,
+          ticketData: tickets,
           email: '',
+          tickets: newTicketIds,
         },
       ],
       {
@@ -110,6 +141,7 @@ export async function POST(request: Request) {
       mode: 'payment',
       return_url: `${originUrl}/checkout/success?sessionId={CHECKOUT_SESSION_ID}`,
       metadata: { orderId: order[0]._id.toString() },
+      customer_email: email,
     });
 
     await session.commitTransaction();
@@ -126,6 +158,6 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }

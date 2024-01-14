@@ -46,4 +46,21 @@ export const StripeSessionDataRequestBodySchema = z.object({
     .array()
     .nonempty(),
   userId: z.string(),
+  email: z.string().email().optional(),
+});
+
+export const TicketGeneratorDataRequestBodySchema = z.object({
+  ticketId: z.string(),
+});
+
+export const TicketValidatorDataRequestBodySchema = z.object({
+  hash: z
+    .string()
+    .regex(/^.+,\$2a\$[\$\.\/A-Za-z0-9]+$/, 'Hash does not meet schema'),
+  eventId: z.string(),
+});
+
+export const UserAccountDataRequestBodySchema = z.object({
+  email: z.string().email(),
+  userId: z.string(),
 });

@@ -4,8 +4,8 @@ import { IUser } from '@/lib/types';
 const UserSchema = new Schema<IUser>(
   {
     userId: String,
-    worldId: String,
-    orders: [String],
+    email: String,
+    isVerified: Boolean,
   },
   { collection: 'users' }
 );

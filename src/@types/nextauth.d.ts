@@ -9,6 +9,8 @@ enum Role {
 interface IUser extends DefaultUser {
   role?: Role;
   provider?: string;
+  isVerified?: boolean;
+  verificationLevel?: string;
 }
 
 declare module 'next-auth' {

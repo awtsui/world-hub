@@ -1,6 +1,6 @@
 'use client';
 
-import { Ticket } from '@/lib/types';
+import { TicketWithData } from '@/lib/types';
 import {
   createContext,
   useCallback,
@@ -16,7 +16,7 @@ function loadJSON(key: string) {
   if (localStorage[key]) return JSON.parse(localStorage[key] ?? '');
   return '';
 }
-function saveJSON(key: string, data: Record<string, Ticket>) {
+function saveJSON(key: string, data: Record<string, TicketWithData>) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
@@ -29,8 +29,8 @@ export const useCart = () => {
 };
 
 interface CartContext {
-  tickets: Record<string, Ticket>;
-  addTicket: (ticket: Ticket) => void;
+  tickets: Record<string, TicketWithData>;
+  addTicket: (ticket: TicketWithData) => void;
   removeTicket: (eventId: string, ticketLabel: string) => void;
   resetCart: () => void;
 }
@@ -43,7 +43,7 @@ interface CartProviderProps {
 
 export function CartProvider({ children }: CartProviderProps) {
   const firstRender = useRef(true);
-  const [tickets, setTickets] = useState<Record<string, Ticket>>({});
+  const [tickets, setTickets] = useState<Record<string, TicketWithData>>({});
 
   useEffect(() => {
     if (firstRender.current) {
@@ -54,7 +54,7 @@ export function CartProvider({ children }: CartProviderProps) {
     saveJSON(LOCAL_STORAGE_KEY, tickets);
   }, [tickets]);
 
-  const addTicket = useCallback((ticket: Ticket) => {
+  const addTicket = useCallback((ticket: TicketWithData) => {
     const ticketId = ticket.eventId + ':' + ticket.label; // TODO: define ticket id creation, must be deterministic
     setTickets((prev) => {
       if (prev[ticketId]) {
