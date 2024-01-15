@@ -72,7 +72,7 @@ export default function UpdateHostProfileForm({
       });
       // setSuccess('Successfully updated profile', 3);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast({
         title: 'Failed to update profile',
         description: 'Please try again.',

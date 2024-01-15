@@ -207,7 +207,6 @@ export default function EventForm() {
       if (!revalidateEventResp.ok) {
         throw Error('Failed to revalidate event');
       }
-      // const revalidateEventData = await revalidateEventResp.json();
 
       setSuccess(
         `Successfully created event! Your event id is ${createEventData.eventId}`,
@@ -215,7 +214,7 @@ export default function EventForm() {
       );
       setCreationSuccess(true);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError('Failed to create event. Try again.', 3);
     } finally {
       reset();
@@ -226,13 +225,13 @@ export default function EventForm() {
   type FieldName = keyof Inputs;
 
   async function next() {
-    // const fields = steps[currentStep].fields;
-    // const output = await trigger(fields as FieldName[], { shouldFocus: true });
-    // if (!output) return;
+    const fields = steps[currentStep].fields;
+    const output = await trigger(fields as FieldName[], { shouldFocus: true });
+    if (!output) return;
     if (currentStep <= steps.length - 1) {
-      // if (currentStep === steps.length - 2) {
-      //   await handleSubmit(processForm)();
-      // }
+      if (currentStep === steps.length - 2) {
+        await handleSubmit(processForm)();
+      }
       setCurrentStep((prev) => prev + 1);
     }
   }
@@ -741,7 +740,7 @@ export default function EventForm() {
             onClick={next}
             disabled={currentStep === steps.length - 1 || loading}
           >
-            <ChevronRight />
+            {currentStep !== steps.length - 2 ? <ChevronRight /> : 'Complete'}
           </Button>
         </div>
       </div>

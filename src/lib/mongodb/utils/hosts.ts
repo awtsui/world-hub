@@ -116,7 +116,6 @@ export async function signUp(host: HostSignUpSchema, session?: ClientSession) {
 
     return { success: true, hostId };
   } catch (error) {
-    console.log(error);
-    return { success: false, error: error as string };
+    return { success: false, error: JSON.stringify(error) };
   }
 }

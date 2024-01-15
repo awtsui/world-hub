@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: `Internal Server Error (/api/hosts/profiles): ${error}` },
+      { error: `Internal Server Error (/api/users/profiles): ${error}` },
       { status: 500 }
     );
   }

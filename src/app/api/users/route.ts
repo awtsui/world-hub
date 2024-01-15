@@ -2,9 +2,8 @@ import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import { updateUserAccount } from '@/lib/mongodb/utils/users';
 import { UserAccountDataRequestBodySchema } from '@/lib/zod/apischema';
 import mongoose, { ClientSession } from 'mongoose';
+import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
-
-// Note: Endpoint is meant to update user account data (email)
 
 export async function POST(request: NextRequest) {
   await dbConnect();
@@ -13,15 +12,24 @@ export async function POST(request: NextRequest) {
   session.startTransaction();
   try {
     const reqBody = await request.json();
+    const token = await getToken({ req: request });
+    if (!token) {
+      throw Error('Not authorized');
+    }
 
     const validatedReqBody =
       UserAccountDataRequestBodySchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
+      console.error(validatedReqBody.error.errors);
       throw Error('Invalid user profile data');
     }
 
-    const resp = await updateUserAccount(validatedReqBody.data, session);
+    const resp = await updateUserAccount(
+      validatedReqBody.data,
+      token.id,
+      session
+    );
 
     if (!resp.success) {
       throw Error(resp.error);

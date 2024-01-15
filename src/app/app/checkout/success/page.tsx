@@ -59,18 +59,16 @@ export default function CheckoutSuccessPage() {
       </div>
 
       <div className="py-5">
-        {tickets ? (
+        {tickets && (
           <div className="flex flex-wrap gap-5 pt-8">
             {tickets.map((ticket: TicketWithHash) => (
               <TicketViewCard ticket={ticket} />
             ))}
           </div>
-        ) : (
-          <div>Loading...</div>
         )}
       </div>
       <Button onClick={() => router.push('/')} variant={'secondary'}>
-        Go to Marketplace
+        Go back to Marketplace
       </Button>
     </div>
   );

@@ -60,7 +60,7 @@ export default function SignUpForm() {
       setSuccess('Successfully signed up!', 3);
       router.push('/auth/signin');
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError('Failed to sign up', 3);
     } finally {
       reset();

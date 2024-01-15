@@ -12,8 +12,10 @@ export default function LandingPage() {
           <Link href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`}>
             <Button>Explore</Button>
           </Link>
-          <Link href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth`}>
-            <Button variant="secondary">Register</Button>
+          <Link
+            href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/signin`}
+          >
+            <Button variant="secondary">Sign in</Button>
           </Link>
         </div>
       </div>

@@ -1,9 +1,7 @@
 'use client';
 
 import UserProfileTabs from '@/components/app/UserProfileTabs';
-import { fetcher } from '@/lib/client/utils';
 import { useSession } from 'next-auth/react';
-import useSWR from 'swr';
 
 export default function AccountPage() {
   const { data: session } = useSession();

@@ -59,7 +59,6 @@ export default function UpdateUserAccountForm({
       }
 
       await update({ user: { ...data } });
-      // TODO: revalidate user tag if needed
 
       // TODO: refresh and push is not force reloading page
       router.push(pathname);
@@ -68,9 +67,8 @@ export default function UpdateUserAccountForm({
         title: 'Successfully updated profile',
         description: 'Your new profile will be displayed shortly!',
       });
-      // setSuccess('Successfully updated profile', 3);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast({
         title: 'Failed to update profile',
         description: 'Please try again.',

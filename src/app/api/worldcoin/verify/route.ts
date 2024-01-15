@@ -1,3 +1,4 @@
+import { WorldcoinVerificationDataRequestBodySchema } from '@/lib/zod/apischema';
 import { NextResponse } from 'next/server';
 
 const { WLD_BASE_URL, NEXT_PUBLIC_WLD_CLIENT_ID } = process.env;
@@ -6,7 +7,7 @@ if (!WLD_BASE_URL) throw new Error('WLD_BASE_URL not defined');
 if (!NEXT_PUBLIC_WLD_CLIENT_ID)
   throw new Error('NEXT_PUBLIC_WLD_CLIENT_ID not defined');
 
-export type VerifyReply = {
+type VerifyReply = {
   code: string;
   detail?: string;
 };
@@ -15,9 +16,13 @@ export async function POST(request: Request) {
   try {
     // TODO: Add request body schema check
 
-    const proof = await request.json();
-    if (!proof) {
-      return NextResponse.json({ error: 'No proof provided' }, { status: 400 });
+    const reqBody = await request.json();
+
+    const validatedReqBody =
+      WorldcoinVerificationDataRequestBodySchema.safeParse(reqBody);
+    if (!validatedReqBody.success) {
+      console.error(validatedReqBody.error.errors);
+      throw Error('Invalid request body');
     }
 
     const resp = await fetch(
@@ -27,25 +32,26 @@ export async function POST(request: Request) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(proof),
+        body: JSON.stringify(validatedReqBody.data),
       }
     );
+
     const data = await resp.json();
 
     if (!resp.ok) {
-      return NextResponse.json(
-        {
-          code: data.code,
-          detail: data.detail,
-        },
-        { status: resp.status }
-      );
+      console.error({
+        code: data.code,
+        detail: data.detail,
+        status: resp.status,
+      });
+      throw Error('Worldcoin verification failed');
     }
+
     return NextResponse.json(
       {
-        code: 'success',
+        message: 'Successfully verified worldcoin id',
       },
-      { status: resp.status }
+      { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(

@@ -1,7 +1,7 @@
 import { categories } from '@/lib/data';
 import CategorySection from '../../../components/app/CategorySection';
 import { Event } from '@/lib/types';
-import { getAllEvents } from '@/lib/utils';
+import { getAllEvents } from '@/lib/actions';
 
 export default async function MarketplaceHomePage() {
   const events: Event[] = await getAllEvents();

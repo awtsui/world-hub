@@ -2,7 +2,7 @@ import { categoryIdToName } from '@/lib/data';
 import EventCard from '@/components/app/EventCard';
 import { Event } from '@/lib/types';
 import CategoryDropdown from '@/components/app/CategoryDropdown';
-import { getEventsByCategory } from '@/lib/utils';
+import { getEventsByCategory } from '@/lib/actions';
 import Link from 'next/link';
 
 type CategoryPageParams = {

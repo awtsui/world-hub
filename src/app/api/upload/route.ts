@@ -32,7 +32,7 @@ const acceptedFileTypes = [
 const MAX_FILE_SIZE = 1024 * 1024 * 10;
 
 const SESSION_TOKEN_COOKIE =
-  process.env.NODE_ENV == 'development'
+  NODE_ENV == 'development'
     ? 'next-auth.session-token'
     : '__Secure-next-auth.session-token';
 
@@ -103,7 +103,6 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     await session.abortTransaction();
-    console.log(error);
     return NextResponse.json(
       { error: `Internal Server Error (/api/upload): ${error}` },
       { status: 500 }

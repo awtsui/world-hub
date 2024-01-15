@@ -29,7 +29,10 @@ export const authOptions: NextAuthOptions = {
           // Check if user exists. If not, build new user and user profile documents
           const resp = await signUpIfNewUser(credentials.id);
 
-          if (!resp.success) return null;
+          if (!resp.success) {
+            console.error(resp.error);
+            return null;
+          }
 
           const user = {
             id: credentials.id,

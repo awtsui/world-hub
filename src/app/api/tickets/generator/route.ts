@@ -4,7 +4,7 @@ import { TicketGeneratorDataRequestBodySchema } from '@/lib/zod/apischema';
 import mongoose, { ClientSession } from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
 
-// TODO: generate a hashed ticket id, store the ticket info /hashed ticket pair, and return the hashed ticket id
+// Note: This endpoint should not be called directly. Will require admin level authority
 
 export async function POST(request: NextRequest) {
   await dbConnect();
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
       TicketGeneratorDataRequestBodySchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
+      console.error(validatedReqBody.error.errors);
       throw Error('Invalid request body');
     }
 
@@ -38,7 +39,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     await session.abortTransaction();
-    console.log(error);
     return NextResponse.json(
       { error: `Internal Server Error: ${error}` },
       { status: 500 }

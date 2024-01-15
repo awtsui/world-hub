@@ -54,7 +54,7 @@ export async function generateTicket(
 
     return { success: true, hash };
   } catch (error) {
-    return { success: false, error: error as string };
+    return { success: false, error: JSON.stringify(error) };
   }
 }
 
@@ -88,7 +88,6 @@ export async function validateTicket(
 
     return { success: isValid };
   } catch (error) {
-    console.log(error);
-    return { success: false, error: error as string };
+    return { success: false, error: JSON.stringify(error) };
   }
 }

@@ -27,6 +27,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// TODO: implement when venue portal is added
+
 export async function POST(request: NextRequest) {
   try {
     await dbConnect();

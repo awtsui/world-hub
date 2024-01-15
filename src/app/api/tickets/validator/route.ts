@@ -6,6 +6,8 @@ import mongoose, { ClientSession } from 'mongoose';
 
 // Note: eventId should be provided by scanner automatically
 // Note: user's qrcode should provide ticket hash and tier label
+// This endpoint should only be called by an operator
+// TODO: update checks when operator portal is added
 
 export async function POST(request: NextRequest) {
   await dbConnect();
@@ -18,7 +20,7 @@ export async function POST(request: NextRequest) {
     const validatedReqBody =
       TicketValidatorDataRequestBodySchema.safeParse(reqBody);
     if (!validatedReqBody.success) {
-      console.log(validatedReqBody.error.errors);
+      console.error(validatedReqBody.error.errors);
       throw Error('Invalid request body');
     }
 

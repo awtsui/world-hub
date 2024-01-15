@@ -24,7 +24,7 @@ export default function TicketViewCard({ ticket }: TicketViewCardProps) {
     fetcher
   );
 
-  const { Image } = useQRCode();
+  const { Image: QRCodeImage } = useQRCode();
 
   return (
     <Card className="w-80 h-auto">
@@ -37,21 +37,23 @@ export default function TicketViewCard({ ticket }: TicketViewCardProps) {
         )}
       </CardHeader>
       <CardContent className="flex justify-center">
-        <Image
-          text={ticket.hash}
-          options={{
-            type: 'image/jpeg',
-            quality: 0.3,
-            errorCorrectionLevel: 'M',
-            margin: 3,
-            scale: 4,
-            width: 200,
-            color: {
-              dark: '#00000000',
-              light: '#FFFFFFFF',
-            },
-          }}
-        />
+        {ticket.hash && (
+          <QRCodeImage
+            text={ticket.hash}
+            options={{
+              type: 'image/jpeg',
+              quality: 0.3,
+              errorCorrectionLevel: 'M',
+              margin: 3,
+              scale: 4,
+              width: 200,
+              color: {
+                dark: '#00000000',
+                light: '#FFFFFFFF',
+              },
+            }}
+          />
+        )}
       </CardContent>
       <CardFooter className="flex justify-center">
         <Button variant={'outline'}>View as PDF</Button>

@@ -2,7 +2,11 @@ import DateFormatter from '@/components/DateFormatter';
 import ReturnButton from '@/components/ReturnButton';
 import AddTicketButton from '@/components/app/AddTicketButton';
 import { Event, HostProfile, Tier } from '@/lib/types';
-import { getEventsByIds, getHostProfileById, getVenueById } from '@/lib/utils';
+import {
+  getEventsByIds,
+  getHostProfileById,
+  getVenueById,
+} from '@/lib/actions';
 import Image from 'next/image';
 
 type EventPageParams = {

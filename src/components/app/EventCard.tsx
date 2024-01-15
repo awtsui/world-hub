@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '../ui/card';
 import DateFormatter from '../DateFormatter';
-import { getVenueById } from '@/lib/utils';
+import { getVenueById } from '@/lib/actions';
 import { HTMLAttributes } from 'react';
 
 interface EventCardProps extends HTMLAttributes<HTMLDivElement> {

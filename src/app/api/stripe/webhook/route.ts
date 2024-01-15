@@ -22,10 +22,9 @@ export async function POST(request: NextRequest) {
   const session: ClientSession = await mongoose.startSession();
   session.startTransaction();
 
-  const payload = await request.text();
-  const signature = request.headers.get('stripe-signature') ?? '';
-
   try {
+    const payload = await request.text();
+    const signature = request.headers.get('stripe-signature') ?? '';
     const event = stripe.webhooks.constructEvent(
       payload,
       signature,
@@ -133,7 +132,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     await session.abortTransaction();
-    console.log(error);
     return NextResponse.json(
       { error: `Internal Server Error (/api/stripe/webhook): ${error}` },
       { status: 500 }

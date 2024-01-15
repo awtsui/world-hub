@@ -3,6 +3,7 @@ import { updateHostProfile } from '@/lib/mongodb/utils/hostprofiles';
 import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import { HostProfileDataRequestBodySchema } from '@/lib/zod/apischema';
 import mongoose, { ClientSession } from 'mongoose';
+import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -37,15 +38,25 @@ export async function POST(request: NextRequest) {
   session.startTransaction();
   try {
     const reqBody = await request.json();
+    const token = await getToken({ req: request });
+
+    if (!token) {
+      throw Error('Not authorized');
+    }
 
     const validatedReqBody =
       HostProfileDataRequestBodySchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
-      throw Error('Invalid host profile data');
+      console.error(validatedReqBody.error.errors);
+      throw Error('Invalid request body');
     }
 
-    const resp = await updateHostProfile(validatedReqBody.data, session);
+    const resp = await updateHostProfile(
+      validatedReqBody.data,
+      token.id,
+      session
+    );
 
     if (!resp.success) {
       throw Error(resp.error);

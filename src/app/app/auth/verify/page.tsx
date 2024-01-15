@@ -38,7 +38,8 @@ export default function VerifyPage() {
         throw Error(`Failed to verify proof: ${data.code}`);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setError('Failed to verify World ID', 3);
       router.push('/');
     }
   }
@@ -49,12 +50,15 @@ export default function VerifyPage() {
         verificationLevel: data.verification_level,
         callbackUrl,
       });
+
       if (!resp || !resp.ok) {
-        setError('Failed to verify World ID', 3);
+        throw Error('Failed to sign in with worldcoinguest');
       }
+
       setSuccess('Successfully verified with World ID!', 3);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setError('Failed to continue with World ID', 3);
       router.push('/');
     }
   }

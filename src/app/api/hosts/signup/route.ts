@@ -14,13 +14,8 @@ export async function POST(request: NextRequest) {
     const validatedReqBody = HostSignUpFormSchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
-      const { errors } = validatedReqBody.error;
-      return NextResponse.json(
-        {
-          error: { message: 'Invalid request', errors },
-        },
-        { status: 400 }
-      );
+      console.error(validatedReqBody.error.errors);
+      throw Error('Invalid request body');
     }
 
     const resp = await signUp(validatedReqBody.data, session);

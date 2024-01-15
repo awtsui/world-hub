@@ -50,8 +50,7 @@ export async function signUpIfNewUser(userId: string) {
     return { success: true, isVerified: false };
   } catch (error) {
     await session.abortTransaction();
-    console.log(error);
-    return { success: false, error: error as string };
+    return { success: false, error: JSON.stringify(error) };
   } finally {
     await session.endSession();
   }
@@ -59,10 +58,14 @@ export async function signUpIfNewUser(userId: string) {
 
 export async function updateUserAccount(
   data: UserAccountDataRequestBody,
+  tokenId: string,
   session?: ClientSession
 ) {
   const { userId, email } = data;
   try {
+    if (userId !== tokenId) {
+      throw Error('Not authorized to update this user account');
+    }
     const existingUser = await User.findOneAndUpdate(
       { userId },
       { email },
@@ -73,7 +76,6 @@ export async function updateUserAccount(
     }
     return { success: true, userId };
   } catch (error) {
-    console.log(error);
-    return { success: false, error: error as string };
+    return { success: false, error: JSON.stringify(error) };
   }
 }

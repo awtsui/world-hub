@@ -46,15 +46,23 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
 
   async function handleDeleteClick() {
     try {
-      fetch(`/api/events?id=${event.eventId}`, {
+      const deleteEventResp = await fetch(`/api/events?id=${event.eventId}`, {
         method: 'DELETE',
-      })
-        .then((resp) => resp.json())
-        .then((data) => {
-          router.push(pathname);
-          router.refresh();
-          setSuccess('Event successfully deleted', 3);
-        });
+      });
+
+      if (!deleteEventResp.ok) {
+        throw Error('Failed to delete event');
+      }
+
+      const revalidateEventResp = await fetch('/api/revalidate?tag=event');
+
+      if (!revalidateEventResp.ok) {
+        throw Error('Failed to revalidate event');
+      }
+
+      router.push(pathname);
+      router.refresh();
+      setSuccess('Event successfully deleted', 3);
     } catch (error) {
       setError(JSON.stringify(error), 3);
     }

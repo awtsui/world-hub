@@ -3,7 +3,7 @@ import EventCard from '@/components/app/EventCard';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Event } from '@/lib/types';
-import { getEventsBySubCategory } from '@/lib/utils';
+import { getEventsBySubCategory } from '@/lib/actions';
 
 type SubCategoryPageParams = {
   params: {

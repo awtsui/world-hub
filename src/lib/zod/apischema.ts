@@ -64,3 +64,12 @@ export const UserAccountDataRequestBodySchema = z.object({
   email: z.string().email(),
   userId: z.string(),
 });
+
+export const WorldcoinVerificationDataRequestBodySchema = z.object({
+  merkle_root: z.string().startsWith('0x'),
+  nullifier_hash: z.string().startsWith('0x'),
+  proof: z.string().startsWith('0x'),
+  verification_level: z.enum(['orb', 'device']),
+  action: z.string(),
+  signal: z.string(),
+});

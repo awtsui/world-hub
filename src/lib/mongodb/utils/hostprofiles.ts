@@ -9,11 +9,16 @@ type HostProfileDataRequestBody = z.infer<
 
 export async function updateHostProfile(
   data: HostProfileDataRequestBody,
+  tokenId: string,
   session?: ClientSession
 ) {
   const { hostId, name, biography } = data;
 
   try {
+    if (tokenId !== hostId) {
+      throw Error('Not authorized to update this profile');
+    }
+
     const hostProfile = await HostProfile.findOne({ hostId }, null, {
       session,
     });
@@ -44,7 +49,6 @@ export async function updateHostProfile(
 
     return { success: true, hostId };
   } catch (error) {
-    console.log(error);
-    return { success: false, error: error as string };
+    return { success: false, error: JSON.stringify(error) };
   }
 }
