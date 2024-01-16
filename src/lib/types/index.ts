@@ -120,6 +120,7 @@ export enum Role {
   user = 'user',
   admin = 'admin',
   host = 'host',
+  operator = 'operator',
 }
 
 export enum AlertStatus {

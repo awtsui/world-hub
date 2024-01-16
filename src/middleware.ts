@@ -5,6 +5,7 @@ import { withHostsMiddleware } from './middlewares/hostsMiddleware';
 import { withAuthMiddleware } from './middlewares/authMiddleware';
 import { withHomeMiddleware } from './middlewares/homeMiddleware';
 import { withDefaultMiddleware } from './middlewares/defaultMiddleware';
+import { withAdminMiddleware } from './middlewares/adminMiddleware';
 
 /*
  * Match all paths except for:
@@ -22,6 +23,7 @@ const middlewares = [
   withAuthMiddleware,
   withAppMiddleware,
   withHostsMiddleware,
+  withAdminMiddleware,
   withHomeMiddleware,
   withDefaultMiddleware,
 ];

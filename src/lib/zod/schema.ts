@@ -56,7 +56,7 @@ export const EventFormDataSchema = z.object({
   ticketQuantity: z.number().positive('Ticket quantity must be positive'),
 });
 
-export const HostSignUpFormSchema = z
+export const CredentialsSignUpFormSchema = z
   .object({
     name: z.string().min(1, 'Name is required'),
     email: z.string().email('Invalid email address'),
@@ -68,7 +68,7 @@ export const HostSignUpFormSchema = z
     path: ['confirmPassword'], // path of error
   });
 
-export const HostSignInFormSchema = z.object({
+export const CredentialsSignInFormSchema = z.object({
   email: z.string().email('Email address is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });

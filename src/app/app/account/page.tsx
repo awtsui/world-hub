@@ -2,15 +2,19 @@
 
 import UserProfileTabs from '@/components/app/UserProfileTabs';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 
 export default function AccountPage() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+
+  const tab = searchParams.get('tab');
 
   return (
     <div className="px-12 py-4">
       <p className="text-3xl">My Account</p>
       <div className="flex justify-center">
-        {session && session.user && <UserProfileTabs user={session.user} />}
+        <UserProfileTabs user={session?.user} tab={tab} />
       </div>
     </div>
   );

@@ -9,6 +9,13 @@ export const subCategoryIdToName: Record<string, string> = {
   '102': 'Pop',
   '103': 'Hip-Hop',
   '104': 'R&B',
+  '105': 'Country',
+  '106': 'Jazz',
+  '107': 'Rock',
+  '108': 'Reggae',
+  '109': 'Classical',
+  '110': 'House',
+  '111': 'Indie',
 };
 
 type CategoryKeyEnum<T> = { [P in keyof Required<T>]: MainCategory };

@@ -1,9 +1,9 @@
 'use client';
 
-import { HostSignInFormSchema } from '@/lib/zod/schema';
+import { CredentialsSignInFormSchema } from '@/lib/zod/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -13,23 +13,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
+} from './ui/form';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 import Link from 'next/link';
-import { useAlertDialog } from '@/context/ModalContext';
 
-export default function SignInForm() {
-  type Inputs = z.infer<typeof HostSignInFormSchema>;
-  const { setError, setSuccess } = useAlertDialog();
+interface SignInFormProps {
+  accountType: 'host' | 'admin';
+}
+
+export default function SignInForm({ accountType }: SignInFormProps) {
+  type Inputs = z.infer<typeof CredentialsSignInFormSchema>;
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
-  const router = useRouter();
 
   const form = useForm<Inputs>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
-    resolver: zodResolver(HostSignInFormSchema),
+    resolver: zodResolver(CredentialsSignInFormSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -39,17 +40,15 @@ export default function SignInForm() {
 
   async function processForm(data: Inputs) {
     const { email, password } = data;
-    const resp = await signIn('hostcredentials', {
-      redirect: false,
-      email,
-      password,
-    });
-    if (!resp || !resp.ok) {
-      setError('Failed to sign in', 3);
-      reset({ email: '', password: '' });
-    }
-    router.push(callbackUrl);
-    setSuccess('Successfully signed in', 3);
+    signIn(
+      'credentials',
+      {
+        email,
+        password,
+        callbackUrl,
+      },
+      { accountType }
+    );
   }
 
   return (
@@ -95,15 +94,17 @@ export default function SignInForm() {
           Login
         </Button>
       </form>
-      <p className="text-center text-md text-gray-600 mt-5">
-        If you don&apos;t have an account, please
-        <Link
-          className="text-blue-500 hover:underline ml-1"
-          href="/auth/signup"
-        >
-          sign up
-        </Link>
-      </p>
+      {accountType === 'host' && (
+        <p className="text-center text-md text-gray-600 mt-5">
+          If you don&apos;t have an account, please
+          <Link
+            className="text-blue-500 hover:underline ml-1"
+            href="/auth/signup"
+          >
+            sign up
+          </Link>
+        </p>
+      )}
     </Form>
   );
 }

@@ -1,5 +1,5 @@
 'use client';
-import { Event, Ticket, Tier } from '@/lib/types';
+import { Event, TicketWithData, Tier } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '../../context/CartContext';
 import { useAlertDialog, useCartSheet } from '@/context/ModalContext';
@@ -17,7 +17,7 @@ export default function AddTicketButton({ event, tier }: AddTicketButtonProps) {
   const { toast } = useToast();
 
   function addItemToCart(event: Event) {
-    const newTicket: Ticket = {
+    const newTicket: TicketWithData = {
       eventId: event.eventId,
       eventTitle: event.title,
       currency: event.currency,

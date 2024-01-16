@@ -8,6 +8,7 @@ import Event from '@/lib/mongodb/models/Event';
 import UserProfile from '@/lib/mongodb/models/UserProfile';
 import { generateTicket } from '@/lib/mongodb/utils/tickets';
 import { TicketWithData } from '@/lib/types';
+import { revalidateTag } from 'next/cache';
 
 const { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } = process.env;
 if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY not defined');
@@ -118,6 +119,10 @@ export async function POST(request: NextRequest) {
           throw Error('Failed to generate all tickets');
         }
       });
+
+      revalidateTag('order');
+      revalidateTag('user');
+      revalidateTag('userprofile');
     }
 
     if (event.type === 'checkout.session.expired') {

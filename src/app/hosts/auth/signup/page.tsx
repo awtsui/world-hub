@@ -1,5 +1,5 @@
-import SignUpForm from '@/components/hosts/SignUpForm';
+import HostSignUpForm from '@/components/hosts/HostSignUpForm';
 
 export default function HostSignUpPage() {
-  return <SignUpForm />;
+  return <HostSignUpForm />;
 }

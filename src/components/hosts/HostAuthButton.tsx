@@ -11,7 +11,7 @@ const menuItems = [
   {
     icon: User,
     label: 'Profile',
-    url: '/dashboard/settings',
+    url: '/dashboard/settings?tab=profile',
   },
   {
     icon: Plus,

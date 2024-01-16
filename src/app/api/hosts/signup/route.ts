@@ -1,7 +1,7 @@
 import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import { NextRequest, NextResponse } from 'next/server';
 import { signUp } from '@/lib/mongodb/utils/hosts';
-import { HostSignUpFormSchema } from '@/lib/zod/schema';
+import { CredentialsSignUpFormSchema } from '@/lib/zod/schema';
 import mongoose, { ClientSession } from 'mongoose';
 
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   session.startTransaction();
   try {
     const reqBody = await request.json();
-    const validatedReqBody = HostSignUpFormSchema.safeParse(reqBody);
+    const validatedReqBody = CredentialsSignUpFormSchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
       console.error(validatedReqBody.error.errors);
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         message: 'Host account and profile successfully created!',
-        hostId: resp.hostId,
+        hostId: resp.id,
       },
       {
         status: 200,

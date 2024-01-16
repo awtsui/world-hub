@@ -44,23 +44,11 @@ export default function VerifyPage() {
     }
   }
   async function onSuccess(data: ISuccessResult) {
-    try {
-      const resp = await signIn('worldcoinguest', {
-        id: data.nullifier_hash,
-        verificationLevel: data.verification_level,
-        callbackUrl,
-      });
-
-      if (!resp || !resp.ok) {
-        throw Error('Failed to sign in with worldcoinguest');
-      }
-
-      setSuccess('Successfully verified with World ID!', 3);
-    } catch (error) {
-      console.error(error);
-      setError('Failed to continue with World ID', 3);
-      router.push('/');
-    }
+    signIn('worldcoinguest', {
+      id: data.nullifier_hash,
+      verificationLevel: data.verification_level,
+      callbackUrl,
+    });
   }
   return (
     <div className="flex items-center justify-center h-screen">

@@ -1,6 +1,6 @@
 'use client';
 
-import { Settings, User } from 'lucide-react';
+import { Package, User } from 'lucide-react';
 import AuthButton from '../AuthButton';
 
 interface AppAuthButtonProps {
@@ -11,7 +11,12 @@ const menuItems = [
   {
     icon: User,
     label: 'Profile',
-    url: '/account',
+    url: '/account?tab=profile',
+  },
+  {
+    icon: Package,
+    label: 'Orders',
+    url: '/account?tab=orders',
   },
 ];
 

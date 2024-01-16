@@ -22,6 +22,11 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { setError } = useAlertDialog();
 
+  if (tickets && Object.values(tickets).length === 0) {
+    setError('No tickets to checkout', 3);
+    router.push('/marketplace');
+  }
+
   // 1. Gather list of events from user cart
   const eventIds: string[] = Object.values(tickets).map(
     (ticket) => ticket.eventId

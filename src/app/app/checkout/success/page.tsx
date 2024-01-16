@@ -62,7 +62,7 @@ export default function CheckoutSuccessPage() {
         {tickets && (
           <div className="flex flex-wrap gap-5 pt-8">
             {tickets.map((ticket: TicketWithHash) => (
-              <TicketViewCard ticket={ticket} />
+              <TicketViewCard key={ticket.hash} ticket={ticket} />
             ))}
           </div>
         )}

@@ -1,10 +1,9 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { Role } from '@/lib/types';
-import { signIn } from '@/lib/mongodb/utils/hosts';
+import { signIn as signInAsHost } from '@/lib/mongodb/utils/hosts';
 import { signUpIfNewUser } from '@/lib/mongodb/utils/users';
-import { VerificationLevel } from '@worldcoin/idkit';
-import dbConnect from '@/lib/mongodb/utils/mongoosedb';
+import { signIn as signInAsAdmin } from '@/lib/mongodb/utils/admins';
 
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 if (!NEXTAUTH_SECRET) {
@@ -69,8 +68,8 @@ export const authOptions: NextAuthOptions = {
       },
     },
     CredentialsProvider({
-      id: 'hostcredentials',
-      name: 'HostCredentials',
+      id: 'credentials',
+      name: 'Credentials',
       credentials: {
         email: { label: 'email', type: 'text' },
         password: { label: 'password', type: 'text' },
@@ -78,11 +77,37 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         if (!credentials) return null;
 
-        const { host, error } = await signIn(credentials);
+        const accountType = req.query?.['accountType'];
 
-        if (error) return null;
+        if (!accountType) {
+          console.error(
+            'Include accountType in query when attempting to sign in'
+          );
+          return null;
+        }
 
-        return host;
+        let resp;
+        if (accountType === 'host') {
+          resp = await signInAsHost(credentials);
+        } else if (accountType === 'admin') {
+          resp = await signInAsAdmin(credentials);
+        }
+
+        if (!resp) {
+          console.error('Include valid account type when signing in');
+          return null;
+        }
+
+        if (!resp.success) {
+          console.error(resp.error);
+          return null;
+        }
+
+        return {
+          id: resp.id,
+          role: accountType,
+          provider: 'credentials',
+        };
       },
     }),
   ],

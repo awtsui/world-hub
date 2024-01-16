@@ -1,9 +1,38 @@
+import User from '@/lib/mongodb/models/User';
 import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import { updateUserAccount } from '@/lib/mongodb/utils/users';
 import { UserAccountDataRequestBodySchema } from '@/lib/zod/apischema';
 import mongoose, { ClientSession } from 'mongoose';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
+
+// TODO: add authorization to GET
+
+export async function GET(request: NextRequest) {
+  try {
+    await dbConnect();
+    const searchParams = request.nextUrl.searchParams;
+    const userId = searchParams.get('id');
+
+    let data;
+    if (userId) {
+      data = await User.findOne({ userId });
+    } else {
+      data = await User.find({});
+    }
+
+    if (!data) {
+      throw Error('Failed to retrieve users');
+    }
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: `Internal Server Error (/api/users): ${error}` },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   await dbConnect();

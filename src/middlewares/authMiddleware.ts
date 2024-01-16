@@ -1,3 +1,6 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { Role } from '@/lib/types';
+import { getServerSession } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import {
   NextFetchEvent,
@@ -6,37 +9,46 @@ import {
   NextResponse,
 } from 'next/server';
 
-type ApiCall = [string, string[]];
-
-const protectedApiPaths: ApiCall[] = [['/api/revalidate', ['GET']]];
-const protectedHostApiPaths: ApiCall[] = [
-  ['/api/events/create', ['POST']],
-  ['/api/events', ['DELETE']],
-  ['/api/hosts/profile', ['POST']],
-  ['/api/upload', ['GET']],
-];
-const protectedUserApiPaths: ApiCall[] = [
-  ['/api/stripe/sessions', ['GET', 'POST']],
-  ['/api/users', ['POST']],
-  ['/api/users/profile', ['GET']],
+// Endpoint, method, allowed roles
+type EndpointCall = [
+  string,
+  string,
+  ('operator' | 'host' | 'user' | 'admin' | '*')[]
 ];
 
-const protectedAdminApiPaths: ApiCall[] = [
-  ['/api/tickets/generator', ['POST']],
+const protectedEndpoints: EndpointCall[] = [
+  ['/api/revalidate', 'GET', ['*']],
+  ['/api/events/create', 'POST', ['host']],
+  ['/api/events', 'DELETE', ['host']],
+  ['/api/hosts', 'GET', ['admin']],
+  ['/api/hosts/profile', 'POST', ['host']],
+  ['/api/hosts/profile', 'GET', ['host', 'admin']],
+  ['/api/venues', 'GET', ['host', 'admin']],
+  ['/api/venues', 'POST', ['admin']],
+  ['/api/users', 'POST', ['user']],
+  ['/api/users', 'GET', ['admin']],
+  ['/api/users/profile', 'GET', ['user', 'admin']],
+  ['/api/orders', 'GET', ['user', 'admin']],
+  ['/api/stripe/sessions', 'GET', ['user']],
+  ['/api/stripe/sessions', 'POST', ['user']],
+  ['/api/tickets/generator', 'POST', ['admin']],
+  ['/api/tickets/validator', 'POST', ['operator']],
+  ['/api/upload', 'GET', ['host']],
 ];
 
-const protectedOperatorApiPaths: ApiCall[] = [
-  ['/api/tickets/validator', ['POST']],
-];
+function isNotAllowedToCall(path: string, method: string, role?: Role) {
+  return protectedEndpoints.some(([endpoint, endpointMethod, allowedRoles]) => {
+    if (path === endpoint && endpointMethod === method) {
+      if (!role) {
+        return true;
+      }
 
-function isProtected(
-  path: string,
-  method: string,
-  protectedList: typeof protectedUserApiPaths
-) {
-  return protectedList.some(
-    ([endpoint, calls]) => path.startsWith(endpoint) && calls.includes(method)
-  );
+      if (!allowedRoles.includes('*') && !allowedRoles.includes(role)) {
+        return true;
+      }
+    }
+    return false;
+  });
 }
 
 // TODO: handle role based authentication and authorization when communicating with api
@@ -49,50 +61,14 @@ export function withAuthMiddleware(middleware: NextMiddleware) {
       const method = request.method;
       const token = await getToken({ req: request });
 
-      // Requires caller to be authenticated
-      if (isProtected(pathname, method, protectedApiPaths)) {
-        if (!token) {
-          return NextResponse.json(
-            {
-              message: 'Not authorized to make this call',
-            },
-            { status: 401 }
-          );
-        }
-      }
-
-      // Requires caller to possess host credentials
-      if (isProtected(pathname, method, protectedHostApiPaths)) {
-        if (!token || token.role !== 'host') {
-          return NextResponse.json(
-            {
-              message: 'Not authorized to make this call',
-            },
-            { status: 401 }
-          );
-        }
-      }
-
-      // Requires caller to possess user credentials
-      if (isProtected(pathname, method, protectedUserApiPaths)) {
-        if (!token || token.role !== 'user') {
-          return NextResponse.json(
-            {
-              message: 'Not authorized to make this call',
-            },
-            { status: 401 }
-          );
-        }
-      }
-
-      // Requires caller to possess admin credentials
-      if (isProtected(pathname, method, protectedAdminApiPaths)) {
-        // TODO: implement if admin portal is added
-      }
-
-      // Requires caller to possess operator credentials
-      if (isProtected(pathname, method, protectedOperatorApiPaths)) {
-        // TODO: implement if operator portal is added
+      if (isNotAllowedToCall(pathname, method, token?.role)) {
+        return NextResponse.json(
+          {
+            message: 'Not authorized to make this call',
+            role: token?.role,
+          },
+          { status: 401 }
+        );
       }
 
       return NextResponse.next();

@@ -1,5 +1,5 @@
 'use client';
-import { HostSignUpFormSchema } from '@/lib/zod/schema';
+import { CredentialsSignUpFormSchema } from '@/lib/zod/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -17,16 +17,16 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { useAlertDialog } from '@/context/ModalContext';
 
-type Inputs = z.infer<typeof HostSignUpFormSchema>;
+type Inputs = z.infer<typeof CredentialsSignUpFormSchema>;
 
-export default function SignUpForm() {
+export default function HostSignUpForm() {
   const router = useRouter();
   const { setError, setSuccess } = useAlertDialog();
 
   const form = useForm<Inputs>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
-    resolver: zodResolver(HostSignUpFormSchema),
+    resolver: zodResolver(CredentialsSignUpFormSchema),
     defaultValues: {
       name: '',
       email: '',

@@ -37,7 +37,6 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useAlertDialog } from '@/context/ModalContext';
 import Image from 'next/image';
-import { revalidatePath } from 'next/cache';
 
 type Inputs = z.infer<typeof EventFormDataSchema>;
 

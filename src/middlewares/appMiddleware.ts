@@ -6,6 +6,8 @@ import {
   NextFetchEvent,
 } from 'next/server';
 
+// Handles routing to app sub domain
+
 export function withAppMiddleware(middleware: NextMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
     const hostname = request.headers.get('host')!;
