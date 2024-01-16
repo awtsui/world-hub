@@ -8,7 +8,7 @@ import Host from './mongodb/models/Host';
 import HostProfile from './mongodb/models/HostProfile';
 import Venue from './mongodb/models/Venue';
 import Event from './mongodb/models/Event';
-import { EventApprovalStatus } from './types';
+import { EventApprovalStatus, HostApprovalStatus } from './types';
 import { revalidatePath } from 'next/cache';
 
 export async function getEventsByIds(eventIds: string[]) {
@@ -220,7 +220,7 @@ export async function getAllHosts() {
   try {
     const data = await Host.find({});
     const formattedData = data.map((host) => {
-      const { _id, __v, ...rest } = host._doc;
+      const { _id, __v, password, ...rest } = host._doc;
       return {
         ...rest,
       };
@@ -280,5 +280,25 @@ export async function updateEventApprovalStatus(
     revalidatePath('/');
   } catch (error) {
     throw Error(`Unable to update event approval status: ${error}`);
+  }
+}
+
+export async function updateHostAccountApprovalStatus(
+  hostId: string,
+  status: HostApprovalStatus
+) {
+  await dbConnect();
+  try {
+    const host = await Host.findOneAndUpdate(
+      { hostId },
+      { approvalStatus: status }
+    );
+    if (!host) {
+      throw Error('Host does not exist');
+    }
+
+    revalidatePath('/');
+  } catch (error) {
+    throw Error(`Unable to update host account approval status: ${error}`);
   }
 }

@@ -163,7 +163,7 @@ export const defaultEventColumns = [
       }),
       columnHelper.accessor('thumbnailUrl', {
         cell: (info) => (
-          <a target="_blank" href={info.getValue()}>
+          <a rel="noopener noreferrer" target="_blank" href={info.getValue()}>
             <span className="text-sky-500 font-medium hover:text-sky-800">
               Image
             </span>
@@ -301,9 +301,9 @@ export const defaultEventColumns = [
             >
               Copy event ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
             {row.getValue('approvalStatus') === EventApprovalStatus.Pending && (
               <>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     updateEventApprovalStatus(
@@ -326,11 +326,17 @@ export const defaultEventColumns = [
                 </DropdownMenuItem>
               </>
             )}
-            {/* <DropdownMenuItem asChild className="mx-auto">
-              <Button variant={'destructive'} className="h-8 w-20">
-                Delete
-              </Button>
-            </DropdownMenuItem> */}
+            {row.getValue('approvalStatus') ===
+              EventApprovalStatus.Rejected && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild className="mx-auto">
+                  <Button variant={'destructive'} className="h-8 w-20">
+                    Delete
+                  </Button>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );

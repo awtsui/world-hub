@@ -80,10 +80,9 @@ export const authOptions: NextAuthOptions = {
         const accountType = req.query?.['accountType'];
 
         if (!accountType) {
-          console.error(
+          throw Error(
             'Include accountType in query when attempting to sign in'
           );
-          return null;
         }
 
         let resp;
@@ -94,13 +93,11 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (!resp) {
-          console.error('Include valid account type when signing in');
-          return null;
+          throw Error('Include valid account type when signing in');
         }
 
         if (!resp.success) {
-          console.error(resp.error);
-          return null;
+          throw Error(resp.error);
         }
 
         return {

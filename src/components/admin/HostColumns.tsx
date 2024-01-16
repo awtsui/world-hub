@@ -14,6 +14,8 @@ import {
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import { HostApprovalStatus } from '@/lib/types';
+import { updateHostAccountApprovalStatus } from '@/lib/actions';
 
 export type HostColumnData = {
   id: string;
@@ -21,6 +23,7 @@ export type HostColumnData = {
   email: string;
   biography: string;
   events: string[];
+  approvalStatus: HostApprovalStatus;
 };
 
 const columnHelper = createColumnHelper<HostColumnData>();
@@ -63,6 +66,18 @@ export const defaultHostColumns = [
           <DataTableFilterColumnHeader
             column={column}
             title="Id"
+            className="justify-end"
+          />
+        ),
+      }),
+      columnHelper.accessor('approvalStatus', {
+        cell: (info) => (
+          <div className="text-right font-medium">{info.getValue()}</div>
+        ),
+        header: ({ column }) => (
+          <DataTableFilterColumnHeader
+            column={column}
+            title="Approval Status"
             className="justify-end"
           />
         ),
@@ -139,9 +154,41 @@ export const defaultHostColumns = [
             >
               Copy email
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>TODO: View customer</DropdownMenuItem>
-            <DropdownMenuItem>TODO: View payment details</DropdownMenuItem>
+            {row.getValue('approvalStatus') === HostApprovalStatus.Pending && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() =>
+                    updateHostAccountApprovalStatus(
+                      row.getValue('id'),
+                      HostApprovalStatus.Approved
+                    )
+                  }
+                >
+                  Approve
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    updateHostAccountApprovalStatus(
+                      row.getValue('id'),
+                      HostApprovalStatus.Rejected
+                    )
+                  }
+                >
+                  Reject
+                </DropdownMenuItem>
+              </>
+            )}
+            {row.getValue('approvalStatus') === HostApprovalStatus.Rejected && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild className="mx-auto">
+                  <Button variant={'destructive'} className="h-8 w-20">
+                    Delete
+                  </Button>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -42,28 +42,21 @@ export default function HostSignUpForm() {
     // TODO: look into validator to prevent XSS (Cross site scripting) attack
     try {
       const signUpResp = await fetch('/api/hosts/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
       if (!signUpResp.ok) {
         throw Error('Failed to sign up');
       }
-      // const signUpData = await signUpResp.json();
-
-      const revalidateHostResp = await fetch('/api/revalidate?tag=host');
-
-      if (!revalidateHostResp.ok) {
-        throw Error('Failed to revalidate host');
-      }
-      // const revalidateHostData = await revalidateHostResp.json();
+      const signUpData = await signUpResp.json();
 
       setSuccess('Successfully signed up!', 3);
-      router.push('/auth/signin');
+      router.push(`/auth/status?id=${signUpData.hostId}`);
     } catch (error) {
       console.error(error);
       setError('Failed to sign up', 3);
-    } finally {
-      reset();
     }
   }
 

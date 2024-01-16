@@ -1,6 +1,6 @@
 // Display count of unaddressed requests for new events, new host accounts, new venues, and any bug alerts
 
-import { Event } from '@/lib/types';
+import { Event, Host } from '@/lib/types';
 import {
   Card,
   CardContent,
@@ -15,13 +15,19 @@ import { Button } from '../ui/button';
 
 interface DashboardRequestSectionProps {
   events: Event[];
+  hosts: Host[];
 }
 
 export default function DashboardRequestSection({
   events,
+  hosts,
 }: DashboardRequestSectionProps) {
   const eventRequests = events.reduce(
     (total, event) => (event.approvalStatus === 'PENDING' ? total + 1 : total),
+    0
+  );
+  const hostAccountRequests = hosts.reduce(
+    (total, host) => (host.approvalStatus === 'PENDING' ? total + 1 : total),
     0
   );
   return (
@@ -47,7 +53,9 @@ export default function DashboardRequestSection({
             <CardDescription>Approve or reject new hosts</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Label className="text-6xl text-center">TODO</Label>
+            <Label className="text-6xl text-center">
+              {hostAccountRequests}
+            </Label>
           </CardContent>
           <CardFooter className="justify-center">
             <Link href="/dashboard/hosts">

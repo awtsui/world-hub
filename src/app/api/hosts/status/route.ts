@@ -8,22 +8,25 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const hostId = searchParams.get('id');
 
-    let data = await Host.find({});
+    let data;
+    if (hostId) {
+      data = await Host.findOne({ hostId });
+    }
 
     if (!data) {
-      throw Error('Failed to retrieve hosts');
+      throw Error('Failed to retrieve host account status');
     }
 
     // TODO: look into mongoose/mongo config where password is never pulled from db
 
-    data = data.map((host: any) => ({
-      hostId: host.hostId,
-      name: host.name,
-      email: host.email,
-      approvalStatus: host.approvalStatus,
-    }));
+    const formattedData = {
+      hostId: data.hostId,
+      name: data.name,
+      email: data.email,
+      approvalStatus: data.approvalStatus,
+    };
 
-    return NextResponse.json(data, { status: 200 });
+    return NextResponse.json(formattedData, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: `Internal Server Error (/api/hosts): ${error}` },

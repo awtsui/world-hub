@@ -13,6 +13,12 @@ export enum EventApprovalStatus {
   Pending = 'PENDING',
 }
 
+export enum HostApprovalStatus {
+  Approved = 'APPROVED',
+  Rejected = 'REJECTED',
+  Pending = 'PENDING',
+}
+
 export interface IEvent {
   eventId: string;
   title: string;
@@ -82,6 +88,13 @@ export interface IOrder {
   timestamp: Date;
   tickets: string[];
 }
+export interface IHost {
+  hostId: string;
+  name: string;
+  email: string;
+  password?: string;
+  approvalStatus: HostApprovalStatus;
+}
 
 export interface IHostProfile {
   hostId: string;
@@ -104,6 +117,7 @@ export type Venue = IVenue;
 export type TicketWithData = ITicketWithData;
 export type TicketWithHash = ITicketWithHash;
 export type Tier = ITier;
+export type Host = IHost;
 export type HostProfile = IHostProfile;
 export type Order = IOrder;
 export type Media = IMedia;

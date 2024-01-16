@@ -21,6 +21,7 @@ export default async function AdminManageHostsPage() {
       email: hosts[i].email,
       biography: corrHostProfile.biography,
       events: corrHostProfile.events,
+      approvalStatus: hosts[i].approvalStatus,
     });
   }
 

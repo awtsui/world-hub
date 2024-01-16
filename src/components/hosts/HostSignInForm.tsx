@@ -13,17 +13,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useAlertDialog } from '@/context/ModalContext';
 
-interface SignInFormProps {
-  accountType: 'host' | 'admin';
-}
-
-export default function SignInForm({ accountType }: SignInFormProps) {
+export default function HostSignInForm() {
   type Inputs = z.infer<typeof CredentialsSignInFormSchema>;
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
@@ -50,12 +46,18 @@ export default function SignInForm({ accountType }: SignInFormProps) {
         email,
         password,
       },
-      { accountType }
+      { accountType: 'host' }
     );
     if (resp?.status == 200) {
       router.push(callbackUrl);
     } else {
-      setError('Failed to sign in. Try Again');
+      console.log(resp?.error);
+      if (resp?.error === 'Account has not been approved') {
+        setError(resp.error);
+        router.push('/auth/status');
+      } else {
+        setError('Failed to sign in. Try Again');
+      }
     }
   }
 
@@ -102,17 +104,15 @@ export default function SignInForm({ accountType }: SignInFormProps) {
           Login
         </Button>
       </form>
-      {accountType === 'host' && (
-        <p className="text-center text-md text-gray-600 mt-5">
-          If you don&apos;t have an account, please
-          <Link
-            className="text-blue-500 hover:underline ml-1"
-            href="/auth/signup"
-          >
-            sign up
-          </Link>
-        </p>
-      )}
+      <p className="text-center text-md text-gray-600 mt-5">
+        If you don&apos;t have an account, please
+        <Link
+          className="text-blue-500 hover:underline ml-1"
+          href="/auth/signup"
+        >
+          sign up
+        </Link>
+      </p>
     </Form>
   );
 }

@@ -7,6 +7,7 @@ import { getUniqueHostId } from '@/lib/server/utils';
 import { ClientSession } from 'mongoose';
 import { HOST_HASH_SALT } from '@/lib/constants';
 import dbConnect from './mongoosedb';
+import { HostApprovalStatus } from '@/lib/types';
 
 type CredentialsSignUpForm = z.infer<typeof CredentialsSignUpFormSchema>;
 
@@ -31,6 +32,11 @@ export async function signIn(form: Record<'email' | 'password', string>) {
     if (!existingHost) {
       throw Error('Account does not exist');
     }
+
+    if (existingHost.approvalStatus !== HostApprovalStatus.Approved) {
+      throw Error('Account has not been approved');
+    }
+
     if (!compareSync(password, existingHost.password)) {
       throw Error('Bad password!');
     }
@@ -39,7 +45,7 @@ export async function signIn(form: Record<'email' | 'password', string>) {
       id: existingHost.hostId,
     };
   } catch (error) {
-    return { success: false, error: JSON.stringify(error) };
+    return { success: false, error: (error as Error).message };
   }
 }
 
@@ -95,6 +101,7 @@ export async function signUp(
           name,
           email,
           password,
+          approvalStatus: HostApprovalStatus.Pending,
         },
       ],
       { session }
