@@ -7,6 +7,12 @@ interface ITier {
   price: string;
 }
 
+export enum EventApprovalStatus {
+  Approved = 'APPROVED',
+  Rejected = 'REJECTED',
+  Pending = 'PENDING',
+}
+
 export interface IEvent {
   eventId: string;
   title: string;
@@ -24,6 +30,7 @@ export interface IEvent {
   ticketTiers: ITier[];
   ticketsPurchased: number;
   ticketQuantity: number;
+  approvalStatus: EventApprovalStatus;
 }
 
 export interface IVenue {

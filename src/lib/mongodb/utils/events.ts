@@ -9,6 +9,7 @@ import { EventDataRequestBodySchema } from '@/lib/zod/apischema';
 import getS3Client from '@/lib/aws-s3/s3client';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import mongoose, { ClientSession } from 'mongoose';
+import { EventApprovalStatus } from '@/lib/types';
 
 const { AWS_S3_BUCKET_NAME } = process.env;
 
@@ -60,6 +61,7 @@ export async function createEvent(
           ticketTiers: event.ticketTiers,
           ticketsPurchased: 0,
           ticketQuantity: event.ticketQuantity,
+          approvalStatus: EventApprovalStatus.Pending,
         },
       ],
       { session }

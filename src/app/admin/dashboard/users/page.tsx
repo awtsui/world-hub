@@ -23,7 +23,7 @@ export default async function AdminManageUsersPage() {
   }
 
   return (
-    <div className="container mx-auto px-12 py-4">
+    <div className="px-12 py-4">
       <div className="">
         <p className="text-3xl">Manage Users</p>
       </div>

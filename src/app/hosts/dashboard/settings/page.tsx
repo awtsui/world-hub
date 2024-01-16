@@ -21,7 +21,7 @@ export default function HostDashboardSettingsPage() {
     <div className="px-12 py-4">
       <p className="text-3xl">My Settings</p>
       <div className="flex justify-center">
-        <HostProfileTabs hostProfile={profileData} tab={tab} />
+        {profileData && <HostProfileTabs hostProfile={profileData} tab={tab} />}
       </div>
     </div>
   );

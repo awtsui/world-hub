@@ -1,5 +1,5 @@
 import { Schema, model, models } from 'mongoose';
-import { IEvent } from '@/lib/types';
+import { EventApprovalStatus, IEvent } from '@/lib/types';
 import { Decimal128 } from 'mongodb';
 
 const EventSchema = new Schema<IEvent>(
@@ -25,6 +25,11 @@ const EventSchema = new Schema<IEvent>(
     ],
     ticketsPurchased: Number,
     ticketQuantity: Number,
+    approvalStatus: {
+      type: String,
+      enum: EventApprovalStatus,
+      default: EventApprovalStatus.Pending,
+    },
   },
   { collection: 'events' }
 );

@@ -8,6 +8,8 @@ import Host from './mongodb/models/Host';
 import HostProfile from './mongodb/models/HostProfile';
 import Venue from './mongodb/models/Venue';
 import Event from './mongodb/models/Event';
+import { EventApprovalStatus } from './types';
+import { revalidatePath } from 'next/cache';
 
 export async function getEventsByIds(eventIds: string[]) {
   await dbConnect();
@@ -35,11 +37,12 @@ export async function getEventsByIds(eventIds: string[]) {
   }
 }
 
-export async function getEventsByCategory(categoryName: string) {
+export async function getApprovedEventsByCategory(categoryName: string) {
   await dbConnect();
   try {
     const data = await Event.find({
       category: categoryName,
+      approvalStatus: EventApprovalStatus.Approved,
     });
     const formattedData = data.map((event: any) => {
       const { _id, __v, ...rest } = event._doc;
@@ -59,11 +62,36 @@ export async function getEventsByCategory(categoryName: string) {
   }
 }
 
-export async function getEventsBySubCategory(subCategoryName: string) {
+export async function getApprovedEventsBySubCategory(subCategoryName: string) {
   await dbConnect();
   try {
     const data = await Event.find({
       subCategory: subCategoryName,
+      approvalStatus: EventApprovalStatus.Approved,
+    });
+    const formattedData = data.map((event: any) => {
+      const { _id, __v, ...rest } = event._doc;
+      return {
+        ...rest,
+        ticketTiers: event.ticketTiers.map((tier: any) => {
+          return {
+            label: tier.label,
+            price: tier.price.toString(),
+          };
+        }),
+      };
+    });
+    return formattedData;
+  } catch (error) {
+    throw new Error(`Unable to fetch events by category: ${error}`);
+  }
+}
+
+export async function getApprovedEvents() {
+  await dbConnect();
+  try {
+    const data = await Event.find({
+      approvalStatus: EventApprovalStatus.Approved,
     });
     const formattedData = data.map((event: any) => {
       const { _id, __v, ...rest } = event._doc;
@@ -232,5 +260,25 @@ export async function getAllVenues() {
     return formattedData;
   } catch (error) {
     throw new Error(`Unable to fetch venues: ${error}`);
+  }
+}
+
+export async function updateEventApprovalStatus(
+  eventId: string,
+  status: EventApprovalStatus
+) {
+  await dbConnect();
+  try {
+    const event = await Event.findOneAndUpdate(
+      { eventId },
+      { approvalStatus: status }
+    );
+    if (!event) {
+      throw Error('Event does not exist');
+    }
+
+    revalidatePath('/');
+  } catch (error) {
+    throw Error(`Unable to update event approval status: ${error}`);
   }
 }

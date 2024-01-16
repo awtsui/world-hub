@@ -2,15 +2,18 @@
 // The Admin website is going to provide any tools/analytics to provide real time service
 
 import DashboardRequestSection from '@/components/admin/DashboardRequestSection';
+import { getAllEvents } from '@/lib/actions';
 
 export default async function AdminDashboardPage() {
+  const events = await getAllEvents();
+
   return (
-    <div className="container mx-auto px-12 py-4">
-      <div className="">
-        <p className="text-3xl">Admin Dashboard</p>
-      </div>
-      <div className="p-2">
-        <DashboardRequestSection />
+    <div className="px-12 py-4 w-full">
+      <p className="text-3xl">Admin Dashboard</p>
+      <div className="flex flex-col items-center">
+        <div className="py-8">
+          <DashboardRequestSection events={events} />
+        </div>
       </div>
     </div>
   );

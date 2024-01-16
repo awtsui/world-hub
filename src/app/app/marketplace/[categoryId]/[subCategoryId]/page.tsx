@@ -3,7 +3,7 @@ import EventCard from '@/components/app/EventCard';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Event } from '@/lib/types';
-import { getEventsBySubCategory } from '@/lib/actions';
+import { getApprovedEventsBySubCategory } from '@/lib/actions';
 
 type SubCategoryPageParams = {
   params: {
@@ -20,7 +20,7 @@ export default async function SubCategoryPage({
   const categoryName = categoryIdToName[params.categoryId];
   const subCategoryName = subCategoryIdToName[params.subCategoryId];
 
-  const events: Event[] = await getEventsBySubCategory(subCategoryName);
+  const events: Event[] = await getApprovedEventsBySubCategory(subCategoryName);
 
   return (
     <div className="px-12 py-4">

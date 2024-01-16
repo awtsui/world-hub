@@ -1,10 +1,10 @@
 import { categories } from '@/lib/data';
 import CategorySection from '../../../components/app/CategorySection';
 import { Event } from '@/lib/types';
-import { getAllEvents } from '@/lib/actions';
+import { getApprovedEvents } from '@/lib/actions';
 
 export default async function MarketplaceHomePage() {
-  const events: Event[] = await getAllEvents();
+  const events: Event[] = await getApprovedEvents();
   // TODO: populate page with all events
   return (
     <div className="flex flex-col px-12 py-4">

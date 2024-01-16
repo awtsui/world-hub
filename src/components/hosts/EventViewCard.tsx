@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Event, Venue } from '@/lib/types';
+import { Event, EventApprovalStatus, Venue } from '@/lib/types';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import DateFormatter from '../DateFormatter';
@@ -68,10 +68,20 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
     }
   }
 
+  const borderColor =
+    event.approvalStatus === EventApprovalStatus.Rejected
+      ? 'border-red-600'
+      : event.approvalStatus === EventApprovalStatus.Pending
+      ? 'border-amber-400'
+      : 'border-green-500';
+
   return (
-    <Card {...props} className="w-80 h-auto">
+    <Card {...props} className={`w-80 h-auto border-2 ${borderColor}`}>
       <CardHeader>
-        <CardTitle>{event.title}</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>{event.title}</CardTitle>
+          <p className={`font-medium`}>{event.approvalStatus}</p>
+        </div>
         {venueData && (
           <CardDescription>
             {venueData.city}, {venueData.state} - {venueData.name}
@@ -93,13 +103,6 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
         />
       </CardContent>
       <CardFooter className="flex justify-between">
-        <a
-          target="_blank"
-          href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/event/${event.eventId}`}
-          rel="noopener noreferrer"
-        >
-          <Button variant="outline">View in Marketplace</Button>
-        </a>
         <Dialog>
           <DialogTrigger asChild>
             <Button>Edit</Button>
@@ -149,6 +152,15 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        {event.approvalStatus === EventApprovalStatus.Approved && (
+          <a
+            target="_blank"
+            href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/event/${event.eventId}`}
+            rel="noopener noreferrer"
+          >
+            <Button variant="outline">View in Marketplace</Button>
+          </a>
+        )}
       </CardFooter>
     </Card>
   );

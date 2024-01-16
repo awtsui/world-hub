@@ -17,6 +17,8 @@ import {
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import { EventApprovalStatus } from '@/lib/types';
+import { updateEventApprovalStatus } from '@/lib/actions';
 
 export type EventColumnData = {
   id: string;
@@ -40,6 +42,7 @@ export type EventColumnData = {
   ];
   ticketsPurchased: number;
   ticketQuantity: number;
+  approvalStatus: EventApprovalStatus;
 };
 
 const columnHelper = createColumnHelper<EventColumnData>();
@@ -82,6 +85,18 @@ export const defaultEventColumns = [
           <DataTableFilterColumnHeader
             column={column}
             title="Id"
+            className="justify-end"
+          />
+        ),
+      }),
+      columnHelper.accessor('approvalStatus', {
+        cell: (info) => (
+          <div className="text-right font-medium">{info.getValue()}</div>
+        ),
+        header: ({ column }) => (
+          <DataTableFilterColumnHeader
+            column={column}
+            title="Approval Status"
             className="justify-end"
           />
         ),
@@ -287,8 +302,35 @@ export const defaultEventColumns = [
               Copy event ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>TODO: View customer</DropdownMenuItem>
-            <DropdownMenuItem>TODO: View payment details</DropdownMenuItem>
+            {row.getValue('approvalStatus') === EventApprovalStatus.Pending && (
+              <>
+                <DropdownMenuItem
+                  onClick={() =>
+                    updateEventApprovalStatus(
+                      row.getValue('id'),
+                      EventApprovalStatus.Approved
+                    )
+                  }
+                >
+                  Approve
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    updateEventApprovalStatus(
+                      row.getValue('id'),
+                      EventApprovalStatus.Rejected
+                    )
+                  }
+                >
+                  Reject
+                </DropdownMenuItem>
+              </>
+            )}
+            {/* <DropdownMenuItem asChild className="mx-auto">
+              <Button variant={'destructive'} className="h-8 w-20">
+                Delete
+              </Button>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

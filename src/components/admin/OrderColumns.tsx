@@ -31,6 +31,8 @@ export type OrderColumnData = {
   timestamp: Date;
 };
 
+// TODO: include ticket data and ticket ids
+
 const columnHelper = createColumnHelper<OrderColumnData>();
 
 export const defaultOrderColumns = [
