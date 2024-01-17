@@ -28,6 +28,8 @@ export default function HostApprovalStatusPage() {
   const { setSuccess } = useAlertDialog();
   const router = useRouter();
 
+  // TODO: May not need useEffect here
+
   useEffect(() => {
     if (
       accountData &&

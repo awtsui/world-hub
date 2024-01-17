@@ -3,8 +3,8 @@ import { AspectRatio } from '../ui/aspect-ratio';
 
 export default function AppLogo() {
   return (
-    <div className="w-[190px] h-auto">
-      <AspectRatio ratio={3 / 1}>
+    <div className="w-[200px] h-auto">
+      <AspectRatio ratio={7 / 2}>
         <Image
           alt="logo"
           className="cursor-pointer object-cover"

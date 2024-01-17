@@ -1,4 +1,5 @@
 import Big from 'big.js';
+import { LucideIcon } from 'lucide-react';
 
 // Interfaces for Mongoose
 
@@ -133,9 +134,11 @@ export type MainCategory = Category & {
   subCategories: SubCategory[];
 };
 
-// export interface CartItem extends Event {
-//   unitAmount: number;
-// }
+export type MenuItem = {
+  icon: LucideIcon;
+  label: string;
+  url: string;
+};
 
 export enum Role {
   user = 'user',

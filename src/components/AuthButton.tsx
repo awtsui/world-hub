@@ -13,13 +13,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuGroup,
 } from './ui/dropdown-menu';
-import { LogOut, LucideIcon } from 'lucide-react';
-
-type MenuItem = {
-  label: string;
-  icon: LucideIcon;
-  url: string;
-};
+import { LogOut } from 'lucide-react';
+import { MenuItem } from '@/lib/types';
 
 interface AuthButtonProps {
   signInCallbackUrl?: string;
@@ -60,7 +55,7 @@ export default function AuthButton({
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {menuItems && (
+            {menuItems && !!menuItems.length && (
               <>
                 <DropdownMenuGroup>
                   {menuItems.map((menuItem) => (
