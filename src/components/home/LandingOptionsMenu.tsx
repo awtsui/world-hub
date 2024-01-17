@@ -3,8 +3,9 @@
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { Button } from '../ui/button';
 
-export default function HostDashboardOptionsMenu({
+export default function LandingOptionsMenu({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
@@ -12,28 +13,22 @@ export default function HostDashboardOptionsMenu({
 
   const routes = [
     {
-      label: 'Dashboard',
-      href: '/dashboard',
+      label: 'Home',
+      href: '/',
       color: 'text-sky-500',
-      active: pathname === '/dashboard',
+      active: pathname === '/',
     },
     {
-      label: 'Events',
-      href: '/dashboard/events',
+      label: 'About',
+      href: '/about',
       color: 'text-sky-500',
-      active: pathname === '/dashboard/events',
+      active: pathname === '/about',
     },
     {
-      label: 'Analytics',
-      href: '/dashboard/analytics',
+      label: 'Contact',
+      href: '/contact',
       color: 'text-sky-500',
-      active: pathname === '/dashboard/analytics',
-    },
-    {
-      label: 'Settings',
-      href: '/dashboard/settings',
-      color: 'text-gray-500',
-      active: pathname === '/dashboard/settings',
+      active: pathname === '/contact',
     },
   ];
   return (
@@ -55,6 +50,9 @@ export default function HostDashboardOptionsMenu({
           {route.label}
         </Link>
       ))}
+      <a href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/signin`}>
+        <Button>Sign In</Button>
+      </a>
     </div>
   );
 }

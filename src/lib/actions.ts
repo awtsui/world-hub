@@ -302,3 +302,32 @@ export async function updateHostAccountApprovalStatus(
     throw Error(`Unable to update host account approval status: ${error}`);
   }
 }
+
+export async function deleteRejectedEvent(eventId: string) {
+  await dbConnect();
+  try {
+    const event = await Event.findOne({ eventId });
+    if (event.approvalStatus !== EventApprovalStatus.Rejected) {
+      throw Error('Event must be rejected before deleted');
+    }
+    await Event.deleteOne({ eventId });
+    revalidatePath('/');
+  } catch (error) {
+    throw Error(`Unable to delete rejected event: ${error}`);
+  }
+}
+
+export async function deleteRejectedHost(hostId: string) {
+  await dbConnect();
+  try {
+    const host = await Host.findOne({ hostId });
+    if (host.approvalStatus !== HostApprovalStatus.Rejected) {
+      throw Error('Host must be rejected before deleted');
+    }
+    await Host.deleteOne({ hostId });
+    await HostProfile.deleteOne({ hostId });
+    revalidatePath('/');
+  } catch (error) {
+    throw Error(`Unable to delete rejected host: ${error}`);
+  }
+}

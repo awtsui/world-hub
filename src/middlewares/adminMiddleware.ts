@@ -45,7 +45,7 @@ export function withAdminMiddleware(middleware: NextMiddleware) {
           return NextResponse.redirect(new URL('/dashboard', request.url));
         }
         const url = new URL('/auth/signin', request.url);
-        url.searchParams.set('callbackUrl', path);
+        url.searchParams.set('callbackUrl', '/dashboard');
         return NextResponse.redirect(url);
       }
 

@@ -18,7 +18,7 @@ import {
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { EventApprovalStatus } from '@/lib/types';
-import { updateEventApprovalStatus } from '@/lib/actions';
+import { deleteRejectedEvent, updateEventApprovalStatus } from '@/lib/actions';
 
 export type EventColumnData = {
   id: string;
@@ -331,7 +331,11 @@ export const defaultEventColumns = [
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="mx-auto">
-                  <Button variant={'destructive'} className="h-8 w-20">
+                  <Button
+                    variant={'destructive'}
+                    className="h-8 w-20"
+                    onClick={() => deleteRejectedEvent(row.getValue('id'))}
+                  >
                     Delete
                   </Button>
                 </DropdownMenuItem>

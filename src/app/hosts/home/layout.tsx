@@ -8,7 +8,7 @@ export default async function HostsLandingLayout({
   return (
     <>
       <HostLandingNavbar />
-      <div className="relative mt-20">{children}</div>
+      <div className="relative pt-20">{children}</div>
     </>
   );
 }

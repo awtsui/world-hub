@@ -8,7 +8,7 @@ export default async function AdminDashboardLayout({
   return (
     <>
       <AdminDashboardNavbar />
-      <div className="relative mt-20">{children}</div>
+      <div className="relative pt-20">{children}</div>
     </>
   );
 }

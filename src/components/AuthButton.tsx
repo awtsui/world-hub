@@ -77,13 +77,13 @@ export default function AuthButton({
               </>
             )}
             <DropdownMenuItem onClick={handleSignOut}>
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-2 h-4 w-4 text-md" />
               <span>Sign Out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Button variant="ghost" onClick={handleSignIn}>
+        <Button className="text-md" variant="ghost" onClick={handleSignIn}>
           Log in
         </Button>
       )}

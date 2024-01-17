@@ -77,7 +77,7 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
 
   return (
     <Card {...props} className={`w-80 h-auto border-2 ${borderColor}`}>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <div className="flex justify-between">
           <CardTitle>{event.title}</CardTitle>
           <p className={`font-medium`}>{event.approvalStatus}</p>
@@ -91,15 +91,13 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
           <DateFormatter date={new Date(event.datetime)} />
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative w-full h-52">
         <Image
           src={event.thumbnailUrl}
           alt={event.title}
-          layout="responsive"
-          objectFit="cover"
-          className="w-auto h-auto"
-          width={1}
-          height={1}
+          fill
+          className="px-3"
+          style={{ objectFit: 'contain' }}
         />
       </CardContent>
       <CardFooter className="flex justify-between">

@@ -1,5 +1,5 @@
-import SignInForm from '@/components/SignInForm';
+import HostSignInForm from '@/components/hosts/HostSignInForm';
 
 export default function HostSignInPage() {
-  return <SignInForm accountType="host" />;
+  return <HostSignInForm />;
 }

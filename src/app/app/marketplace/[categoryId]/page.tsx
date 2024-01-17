@@ -20,7 +20,7 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
 
   return (
     <div className="px-12 py-4">
-      <div className="flex items-center gap-10">
+      <div className="flex items-center gap-5">
         <p className="text-3xl">{categoryName}</p>
         <CategoryDropdown categoryId={params.categoryId} />
       </div>

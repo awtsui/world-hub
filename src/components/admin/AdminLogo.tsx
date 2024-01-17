@@ -1,9 +1,9 @@
 import Image from 'next/image';
 
-export default function AuthLogo() {
+export default function AdminLogo() {
   return (
     <div className="flex flex-row items-center">
-      <div className="relative w-8 h-8 mr-4">
+      <div className="relative w-8 h-8 mr-2">
         <Image
           alt="logo"
           className="hidden md:block cursor-pointer"
@@ -12,7 +12,7 @@ export default function AuthLogo() {
         />
       </div>
 
-      <p className="text-xl font-medium">WorldHub for Admin</p>
+      <p className="text-3xl font-bold">WorldHub for Admin</p>
     </div>
   );
 }

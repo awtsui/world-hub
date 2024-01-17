@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { signUp } from '@/lib/mongodb/utils/hosts';
 import { CredentialsSignUpFormSchema } from '@/lib/zod/schema';
 import mongoose, { ClientSession } from 'mongoose';
-import { revalidateTag } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   await dbConnect();
@@ -24,8 +23,6 @@ export async function POST(request: NextRequest) {
     if (!resp.success) {
       throw Error(resp.error);
     }
-
-    revalidateTag('host');
 
     await session.commitTransaction();
 

@@ -19,14 +19,16 @@ import useSWR from 'swr';
 export default function HostApprovalStatusPage() {
   const searchParams = useSearchParams();
   const hostId = searchParams.get('id');
-  const { data: accountData, error } = useSWR(
-    hostId ? `/api/hosts/status?id=${hostId}` : '',
-    fetcher
-  );
+  const {
+    data: accountData,
+    isLoading,
+    error,
+  } = useSWR(hostId ? `/api/hosts/status?id=${hostId}` : '', fetcher);
 
-  if (error || !accountData) {
-    return <div>Loading...</div>;
+  if ((accountData && accountData.error) || !accountData) {
+    return <div>Account not found</div>;
   }
+
   return (
     <div className="w-screen h-screen">
       <div className="flex h-full justify-center items-center">

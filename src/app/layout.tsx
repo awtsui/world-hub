@@ -17,8 +17,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head></head>
+    <html lang="en" className={font.className}>
       <body>{children}</body>
     </html>
   );

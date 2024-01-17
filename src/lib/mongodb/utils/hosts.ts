@@ -3,11 +3,16 @@ import { z } from 'zod';
 import Host from '../models/Host';
 import { compareSync, hashSync } from 'bcrypt-ts';
 import HostProfile from '../models/HostProfile';
-import { getUniqueHostId } from '@/lib/server/utils';
+import {
+  getUniqueAdminId,
+  getUniqueEventId,
+  getUniqueHostId,
+} from '@/lib/server/utils';
 import { ClientSession } from 'mongoose';
 import { HOST_HASH_SALT } from '@/lib/constants';
 import dbConnect from './mongoosedb';
 import { HostApprovalStatus } from '@/lib/types';
+import { revalidateTag } from 'next/cache';
 
 type CredentialsSignUpForm = z.infer<typeof CredentialsSignUpFormSchema>;
 
@@ -33,8 +38,9 @@ export async function signIn(form: Record<'email' | 'password', string>) {
       throw Error('Account does not exist');
     }
 
+    // TODO: Refactor - currently sneaking in host id into error string to send user into status awaiting page
     if (existingHost.approvalStatus !== HostApprovalStatus.Approved) {
-      throw Error('Account has not been approved');
+      throw Error(`Account has not been approved,${existingHost.hostId}`);
     }
 
     if (!compareSync(password, existingHost.password)) {
@@ -119,6 +125,8 @@ export async function signUp(
       ],
       { session }
     );
+
+    revalidateTag('host');
 
     return { success: true, id: hostId };
   } catch (error) {

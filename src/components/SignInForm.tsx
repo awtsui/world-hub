@@ -61,58 +61,60 @@ export default function SignInForm({ accountType }: SignInFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(processForm)} className="w-full space-y-6">
-        <div className="space-y-2">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem id="email">
-                <FormLabel>Email Address</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="name@address.com"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your password"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <Button className="w-full mt-6" type="submit">
-          Login
-        </Button>
-      </form>
-      {accountType === 'host' && (
-        <p className="text-center text-md text-gray-600 mt-5">
-          If you don&apos;t have an account, please
-          <Link
-            className="text-blue-500 hover:underline ml-1"
-            href="/auth/signup"
-          >
-            sign up
-          </Link>
-        </p>
-      )}
+      <div className="w-[600px] mx-auto">
+        <form onSubmit={handleSubmit(processForm)} className="space-y-6">
+          <div className="space-y-2">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem id="email">
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="name@address.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your password"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button className="w-full mt-6" type="submit">
+            Sign In
+          </Button>
+        </form>
+        {accountType === 'host' && (
+          <p className="text-center text-md text-gray-600 mt-5">
+            If you don&apos;t have an account, please
+            <Link
+              className="text-blue-500 hover:underline ml-1"
+              href="/auth/signup"
+            >
+              sign up
+            </Link>
+          </p>
+        )}
+      </div>
     </Form>
   );
 }

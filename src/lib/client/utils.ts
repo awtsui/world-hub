@@ -23,3 +23,11 @@ export function truncateString(str: string, num: number) {
   }
   return str.slice(0, num) + '...';
 }
+
+export function formatPrice(price: string) {
+  const formatted = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(parseFloat(price));
+  return formatted;
+}

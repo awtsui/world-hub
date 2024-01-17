@@ -24,12 +24,15 @@ export default async function SubCategoryPage({
 
   return (
     <div className="px-12 py-4">
-      <div className="flex items-center">
-        <Link href={`/marketplace/${params.categoryId}`} className="text-3xl">
+      <div className="flex items-center gap-2">
+        <Link
+          href={`/marketplace/${params.categoryId}`}
+          className="text-3xl font-normal"
+        >
           {categoryName}
         </Link>
         <ChevronRight />
-        <p className="text-4xl">{subCategoryName}</p>
+        <p className="text-3xl font-bold">{subCategoryName}</p>
       </div>
       <div className="h-80 text-center">Image</div>
       {events ? (

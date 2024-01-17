@@ -1,6 +1,7 @@
 import Admin from '../mongodb/models/Admin';
 import Event from '../mongodb/models/Event';
 import Host from '../mongodb/models/Host';
+import HostProfile from '../mongodb/models/HostProfile';
 import dbConnect from '../mongodb/utils/mongoosedb';
 
 let hostId = -1;
@@ -9,19 +10,25 @@ let adminId = -1;
 
 async function getLargestHostId() {
   dbConnect();
-  const host = await Host.findOne({}).sort({ hostId: -1 }).exec();
+  const host = await Host.findOne({})
+    .sort({ hostId: -1 })
+    .collation({ locale: 'en_US', numericOrdering: true });
   return host ? host.hostId : 0;
 }
 
 async function getLargestEventId() {
   dbConnect();
-  const event = await Event.findOne({}).sort({ eventId: -1 }).exec();
+  const event = await Event.findOne({})
+    .sort({ eventId: -1 })
+    .collation({ locale: 'en_US', numericOrdering: true });
   return event ? event.eventId : 0;
 }
 
 async function getLargestAdminId() {
   dbConnect();
-  const admin = await Admin.findOne({}).sort({ adminId: -1 }).exec();
+  const admin = await Admin.findOne({})
+    .sort({ adminId: -1 })
+    .collation({ locale: 'en_US', numericOrdering: true });
   return admin ? admin.adminId : 0;
 }
 

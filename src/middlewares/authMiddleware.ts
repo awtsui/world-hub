@@ -60,7 +60,6 @@ export function withAuthMiddleware(middleware: NextMiddleware) {
     if (pathname.startsWith('/api')) {
       const method = request.method;
       const token = await getToken({ req: request });
-
       if (isNotAllowedToCall(pathname, method, token?.role)) {
         return NextResponse.json(
           {

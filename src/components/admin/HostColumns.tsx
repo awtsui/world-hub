@@ -15,7 +15,10 @@ import {
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { HostApprovalStatus } from '@/lib/types';
-import { updateHostAccountApprovalStatus } from '@/lib/actions';
+import {
+  deleteRejectedHost,
+  updateHostAccountApprovalStatus,
+} from '@/lib/actions';
 
 export type HostColumnData = {
   id: string;
@@ -183,7 +186,11 @@ export const defaultHostColumns = [
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="mx-auto">
-                  <Button variant={'destructive'} className="h-8 w-20">
+                  <Button
+                    variant={'destructive'}
+                    className="h-8 w-20"
+                    onClick={() => deleteRejectedHost(row.getValue('id'))}
+                  >
                     Delete
                   </Button>
                 </DropdownMenuItem>

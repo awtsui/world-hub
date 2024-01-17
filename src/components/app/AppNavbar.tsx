@@ -7,7 +7,7 @@ import SearchMenu from './SearchMenu';
 export default function AppNavbar() {
   return (
     <nav className="border-b fixed w-full z-10 top-0 left-0 bg-white">
-      <div className="flex h-16 items-center px-4">
+      <div className="flex h-16 items-center px-12">
         <Link href="/marketplace">
           <AppLogo />
         </Link>
