@@ -10,20 +10,34 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { useAlertDialog } from '@/context/ModalContext';
 import { fetcher } from '@/lib/client/utils';
 import { HostApprovalStatus } from '@/lib/types';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import useSWR from 'swr';
 
 export default function HostApprovalStatusPage() {
   const searchParams = useSearchParams();
   const hostId = searchParams.get('id');
-  const {
-    data: accountData,
-    isLoading,
-    error,
-  } = useSWR(hostId ? `/api/hosts/status?id=${hostId}` : '', fetcher);
+  const { data: accountData } = useSWR(
+    hostId ? `/api/hosts/status?id=${hostId}` : '',
+    fetcher
+  );
+  const { setSuccess } = useAlertDialog();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      accountData &&
+      Object.keys(accountData).includes('approvalStatus') &&
+      accountData.approvalStatus === HostApprovalStatus.Approved
+    ) {
+      setSuccess('Your account has been approved!', 3);
+      router.push('/auth/signin');
+    }
+  }, [JSON.stringify(accountData)]);
 
   if ((accountData && accountData.error) || !accountData) {
     return <div>Account not found</div>;

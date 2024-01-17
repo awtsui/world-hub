@@ -2,6 +2,12 @@
 
 import { ReactNode } from 'react';
 import { useToast } from './ui/use-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 
 interface ClipboardProps {
   text: string;
@@ -23,8 +29,18 @@ export default function CopyToClipboard({
     navigator.clipboard.writeText(text);
   }
   return (
-    <div className={`${className} cursor-pointer`} onClick={onClick}>
-      {children}
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger
+          className={`${className} cursor-pointer`}
+          onClick={onClick}
+        >
+          {children}
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Click to copy</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

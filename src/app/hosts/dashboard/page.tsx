@@ -14,35 +14,34 @@ export default function HostDashboardPage() {
     fetcher
   );
 
-  const fetchEventsUrl = profileData
-    ? `/api/events?${profileData.events
-        .map((eventId: any) => `id=${eventId}`)
-        .join('&')}`
-    : '';
+  const fetchEventsUrl =
+    profileData && profileData.events.length
+      ? `/api/events?${profileData.events
+          .map((eventId: any) => `id=${eventId}`)
+          .join('&')}`
+      : '';
 
-  const { data: events } = useSWR(fetchEventsUrl, fetcher);
+  const { data: events } = useSWR(fetchEventsUrl, fetcher, {
+    fallbackData: [],
+  });
 
   return (
     <>
-      {events ? (
-        <div className="px-12 py-4">
-          <p className="text-3xl">My Dashboard</p>
-          <div className="flex py-10">
-            <div className="flex flex-col w-full">
-              {/* <UpcomingEventsCarousel events={events} /> */}
-              <div>Dashboard Feed</div>
-            </div>
-            <div className="flex flex-col ml-auto w-1/3">
-              <DashboardAnalyticsSection
-                hostProfile={profileData}
-                events={events}
-              />
-            </div>
+      <div className="px-12 py-4">
+        <p className="text-3xl">My Dashboard</p>
+        <div className="flex py-10">
+          <div className="flex flex-col w-full">
+            {/* <UpcomingEventsCarousel events={events} /> */}
+            <div>Dashboard Feed</div>
+          </div>
+          <div className="flex flex-col ml-auto w-1/3">
+            <DashboardAnalyticsSection
+              hostProfile={profileData}
+              events={events}
+            />
           </div>
         </div>
-      ) : (
-        <div>Loading...</div>
-      )}
+      </div>
     </>
   );
 }

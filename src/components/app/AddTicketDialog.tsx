@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -31,13 +32,14 @@ export default function AddTicketDialog({ event }: AddTicketDialogProps) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {event.title}: {event.subTitle}
-          </DialogTitle>
+          <DialogTitle className="text-2xl">{event.title}</DialogTitle>
+          <DialogDescription className="text-md">
+            {event.subTitle}
+          </DialogDescription>
         </DialogHeader>
-        <div className="px-2">
+        <div>
           <p>Tickets Available</p>
-          <div className="py-5">
+          <div className="py-5 space-y-3">
             {event.ticketTiers.map((tier) => (
               <Button
                 key={tier.label}

@@ -23,7 +23,7 @@ const protectedEndpoints: EndpointCall[] = [
   ['/api/hosts', 'GET', ['admin']],
   ['/api/hosts/profile', 'POST', ['host']],
   ['/api/hosts/profile', 'GET', ['host', 'admin']],
-  ['/api/venues', 'GET', ['host', 'admin']],
+  ['/api/venues', 'GET', ['user', 'host', 'admin']],
   ['/api/venues', 'POST', ['admin']],
   ['/api/users', 'POST', ['user']],
   ['/api/users', 'GET', ['admin']],
@@ -51,7 +51,9 @@ function isNotAllowedToCall(path: string, method: string, role?: Role) {
   });
 }
 
-// TODO: handle role based authentication and authorization when communicating with api
+const allowedDomains = ['locahost:3000'];
+
+// Handle role based authentication and authorization when communicating with api
 
 export function withAuthMiddleware(middleware: NextMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {

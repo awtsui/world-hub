@@ -85,3 +85,11 @@ export const UpdateHostProfileFormSchema = z
 export const UpdateUserAccountFormSchema = z.object({
   email: z.string().email(),
 });
+
+export const ContactFormSchema = z.object({
+  name: z.string(),
+  subject: z.string(),
+  company: z.string().optional(),
+  email: z.string(),
+  message: z.string(),
+});

@@ -1,12 +1,11 @@
 import { MainCategory, SubCategory, Event } from '@/lib/types';
-import EventCard from './EventCard';
 import Link from 'next/link';
 import EventsCarousel from '../EventsCarousel';
 
 type CategorySectionProps = {
   category: MainCategory;
   subCategory?: SubCategory;
-  events: Event[] | null;
+  events: Event[];
 };
 
 export default function CategorySection({
@@ -14,8 +13,6 @@ export default function CategorySection({
   subCategory,
   events,
 }: CategorySectionProps) {
-  if (!events) return null;
-
   const filteredEvents = events.filter((event) => {
     if (subCategory) {
       return event.subCategory === subCategory.name;
@@ -29,7 +26,7 @@ export default function CategorySection({
       {filteredEvents.length > 0 && (
         <div className="pb-8">
           <Link
-            className="text-xl font-medium"
+            className="text-3xl font-medium"
             href={`/marketplace/${category.id}`}
           >
             {category.name}

@@ -10,16 +10,17 @@ import { Event } from '@/lib/types';
 export default function HostDashboardEventsPage() {
   const { data: session } = useSession();
 
-  const { data: profileData } = useSWR(
+  const { data: profileData, isLoading } = useSWR(
     session?.user?.id ? `/api/hosts/profile?id=${session.user.id}` : '',
     fetcher
   );
 
-  const fetchEventsUrl = profileData
-    ? `/api/events?${profileData.events
-        .map((eventId: any) => `id=${eventId}`)
-        .join('&')}`
-    : '';
+  const fetchEventsUrl =
+    profileData && profileData.events.length
+      ? `/api/events?${profileData.events
+          .map((eventId: any) => `id=${eventId}`)
+          .join('&')}`
+      : '';
 
   const { data: events } = useSWR(fetchEventsUrl, fetcher, {
     fallbackData: [],

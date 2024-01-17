@@ -15,13 +15,14 @@ interface EventsCarouselProps {
 
 export default function EventsCarousel({ events }: EventsCarouselProps) {
   return (
-    <Carousel orientation="horizontal" className="w-full">
+    <Carousel
+      opts={{ loop: true, align: 'start' }}
+      orientation="horizontal"
+      className="w-full"
+    >
       <CarouselContent className="-ml-1">
         {events.map((event) => (
-          <CarouselItem
-            key={event.eventId}
-            className="pl-2 md:basis-1/3 lg:basis-1/5"
-          >
+          <CarouselItem key={event.eventId} className="pl-2 basis-auto">
             <Link key={event.eventId} href={`/event/${event.eventId}`}>
               <EventCard event={event} />
             </Link>

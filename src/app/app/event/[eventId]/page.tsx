@@ -4,12 +4,13 @@ import {
   getVenueById,
 } from '@/lib/actions';
 import Image from 'next/image';
-import { Calendar, Clock, MapPin } from 'lucide-react';
+import { Calendar, Clock, MapPin, User } from 'lucide-react';
 import { formatDate } from '@/lib/client/utils';
 import GoogleMapView from '@/components/app/GoogleMapView';
 import CopyToClipboard from '@/components/CopyToClipboard';
-import { Button } from '@/components/ui/button';
 import AddTicketDialog from '@/components/app/AddTicketDialog';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import Link from 'next/link';
 
 type EventPageParams = {
   params: {
@@ -32,7 +33,7 @@ export default async function EventPage({ params }: EventPageParams) {
 
   return (
     <div className="mx-auto w-3/5">
-      <div className="relative w-full h-80 overflow-hidden">
+      <AspectRatio ratio={20 / 8}>
         <Image
           src={event.thumbnailUrl}
           alt={event.eventId}
@@ -40,20 +41,25 @@ export default async function EventPage({ params }: EventPageParams) {
           style={{ objectFit: 'cover', borderRadius: '20px' }}
           className="rounded-lg"
         />
-        <div className="absolute z-20 bottom-0 left-0 right-0 px-12 py-6 rounded-b-lg">
-          <p className="text-white text-3xl font-extrabold ">{host.name}</p>
-        </div>
-      </div>
+      </AspectRatio>
       <div className="flex pt-6 px-12 justify-center gap-5 md:gap-20 lg:gap-36">
         <div className="flex flex-col w-auto">
           <div className="pb-4">
-            <p className="text-3xl font-extrabold">
-              {event.title}: {event.subTitle}
-            </p>
-            <p className="text-lg">{event.subCategory}</p>
+            <p className="text-4xl font-bold">{event.title}</p>
+            <p className="text-xl">{event.subTitle}</p>
           </div>
-          <p className="py-4">{event.description}</p>
-          <div className="flex flex-col gap-2 py-4">
+          <div className="py-4">
+            <p className="text-md">{event.subCategory}</p>
+            <p className="text-md">{event.description}</p>
+          </div>
+          <div className="flex flex-col gap-2 py-2">
+            <p className="text-xl font-bold py-2">Information</p>
+            <div className="flex gap-3 items-center">
+              <User />
+              <Link href={`/host/${host.hostId}`}>
+                <p className="text-md hover:text-green-500">{host.name}</p>
+              </Link>
+            </div>
             <div className="flex gap-3 items-center">
               <MapPin />
               <CopyToClipboard text={venueAddress}>
@@ -76,13 +82,17 @@ export default async function EventPage({ params }: EventPageParams) {
           </div>
         </div>
         <div className="flex flex-col w-auto">
-          <p className="text-xl font-bold">Event location</p>
-          <div className="pt-4">
+          <p className="text-xl font-bold py-2">Event location</p>
+          <div className="py-2">
             <GoogleMapView address={venueAddress} />
           </div>
-          <div className="pt-5">
-            <p className="text-xl font-bold">Parking</p>
-            <p>{venue.parking}</p>
+          <div className="py-2">
+            <p className="text-xl font-bold py-2">Parking</p>
+            <ul>
+              {venue.parking.map((instruction: any) => (
+                <li key={instruction}>{instruction}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
