@@ -5,11 +5,10 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from '../ui/card';
 import DateFormatter from '../DateFormatter';
-import { getVenueById } from '@/lib/actions';
+import { getHostProfileById, getVenueById } from '@/lib/actions';
 import { HTMLAttributes } from 'react';
 import { AspectRatio } from '../ui/aspect-ratio';
 
@@ -19,6 +18,11 @@ interface EventCardProps extends HTMLAttributes<HTMLDivElement> {
 
 export default async function EventCard({ event, ...props }: EventCardProps) {
   const venue = await getVenueById(event.venueId);
+  const hostProfile = await getHostProfileById(event.hostId);
+
+  if (!venue || !hostProfile) {
+    return null;
+  }
 
   return (
     <div className="w-[300px] h-auto flex-none">
@@ -36,13 +40,11 @@ export default async function EventCard({ event, ...props }: EventCardProps) {
         <CardFooter className="flex flex-col items-start px-3 pb-3 pt-0">
           <DateFormatter date={new Date(event.datetime)} />
           <CardTitle>
-            {event.lineup[0]}: {event.title}
+            {hostProfile.name}: {event.title}
           </CardTitle>
-          {venue && (
-            <CardDescription>
-              {venue.city}, {venue.state} - {venue.name}
-            </CardDescription>
-          )}
+          <CardDescription>
+            {venue.city}, {venue.state} - {venue.name}
+          </CardDescription>
         </CardFooter>
       </Card>
     </div>

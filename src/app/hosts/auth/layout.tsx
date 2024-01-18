@@ -8,7 +8,7 @@ export default async function HostsAuthLayout({
   return (
     <>
       <HostAuthNavbar />
-      <div className="relative pt-20 h-screen">{children}</div>
+      <div className="relative pt-16 h-screen">{children}</div>
     </>
   );
 }

@@ -9,7 +9,7 @@ export default function SearchMenu() {
 
   return (
     <Button variant="outline" className="gap-5" onClick={onSearchOpen}>
-      <span className="text-md">Search for an event...</span>
+      <span className="text-md">Search WorldHub...</span>
       <SearchIcon />
     </Button>
   );

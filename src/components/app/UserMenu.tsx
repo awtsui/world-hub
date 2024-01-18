@@ -7,7 +7,7 @@ export default function UserMenu() {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-5">
       <AppAuthButton signInCallbackUrl={pathname} />
       <CartButton />
     </div>

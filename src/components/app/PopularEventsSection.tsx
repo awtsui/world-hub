@@ -10,12 +10,19 @@ export default function PopularEventsSection({
   events,
 }: PopularEventsSectionProps) {
   const popularEvents = events
-    .toSorted((a, b) => (a.ticketsPurchased > b.ticketsPurchased ? -1 : 1))
+    .toSorted((a, b) => (a.totalSold > b.totalSold ? -1 : 1))
     .slice(0, 10);
 
   return (
-    <div className="px-5 py-5">
-      {popularEvents.length > 0 && <EventsCarousel events={popularEvents} />}
+    <div className="flex flex-col px-5 py-3">
+      <p className="text-2xl font-bold pl-3">Trending</p>
+      {popularEvents.length > 0 ? (
+        <div className="pt-2">
+          <EventsCarousel events={popularEvents} />
+        </div>
+      ) : (
+        <div>No Events</div>
+      )}
     </div>
   );
 }

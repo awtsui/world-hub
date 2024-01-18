@@ -1,9 +1,15 @@
+import { Metadata } from 'next';
 import './global.css';
 import { Kanit } from 'next/font/google';
+import { ErrorBoundary } from 'next/dist/client/components/error-boundary';
+import RootError from './error';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'WorldHub',
   description: 'World ID Marketplace',
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 const font = Kanit({
@@ -18,7 +24,9 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en" className={font.className}>
-      <body>{children}</body>
+      <body>
+        <ErrorBoundary errorComponent={RootError}>{children}</ErrorBoundary>
+      </body>
     </html>
   );
 }

@@ -7,7 +7,7 @@ import {
 } from '@stripe/react-stripe-js';
 import { useCart } from '../../../context/CartContext';
 import { useSession } from 'next-auth/react';
-import { Event } from '@/lib/types';
+import { Event, WorldIdVerificationLevel } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { useAlertDialog } from '@/context/ModalContext';
 import useFetchEvents from '@/hooks/useFetchEvents';
@@ -27,18 +27,37 @@ export default function CheckoutPage() {
     router.push('/marketplace');
   }
 
+  if (!session) {
+    return <div>Loading...</div>;
+  }
+
   // 1. Gather list of events from user cart
   const eventIds: string[] = Object.values(tickets).map(
     (ticket) => ticket.eventId
   );
 
-  // 2. Gather event ticket restrictions
+  // 2. Gather event ticket restrictions and redirect if user verification level does not meet the events requirements
   const { events } = useFetchEvents({ eventIds });
 
+  let isValidVerification = true;
   const eventLimits: Record<string, number> = {};
   events.forEach((event: Event) => {
     eventLimits[event.eventId] = event.purchaseLimit;
+    if (
+      event.verificationLevel === WorldIdVerificationLevel.Orb &&
+      session.user &&
+      (!session.user.verificationLevel ||
+        session.user.verificationLevel === WorldIdVerificationLevel.Device)
+    ) {
+      isValidVerification = false;
+    }
   });
+
+  if (!isValidVerification) {
+    setError('User does not meet event verification requirements', 3);
+    resetCart();
+    router.push('/marketplace');
+  }
 
   // 3. Fetch user past orders and filter for events currently in cart
   const { profile } = useFetchProfile({ userId: session?.user?.id });

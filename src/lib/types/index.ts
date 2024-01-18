@@ -6,6 +6,8 @@ import { LucideIcon } from 'lucide-react';
 interface ITier {
   label: string;
   price: string;
+  quantity: number;
+  ticketsPurchased: number;
 }
 
 export enum EventApprovalStatus {
@@ -35,9 +37,9 @@ export interface IEvent {
   lineup: string[];
   purchaseLimit: number;
   ticketTiers: ITier[];
-  ticketsPurchased: number;
-  ticketQuantity: number;
   approvalStatus: EventApprovalStatus;
+  totalSold: number;
+  verificationLevel: WorldIdVerificationLevel;
 }
 
 export interface IVenue {
@@ -152,4 +154,9 @@ export enum AlertStatus {
   Notif = 'NOTIF',
   Error = 'ERROR',
   None = 'NONE',
+}
+
+export enum WorldIdVerificationLevel {
+  Orb = 'orb',
+  Device = 'device',
 }

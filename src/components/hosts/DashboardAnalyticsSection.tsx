@@ -18,13 +18,13 @@ export default function DashboardAnalyticsSection({
     0
   );
   const ticketsSold = events.reduce(
-    (total, event) => total + event.ticketsPurchased,
+    (total, event) => total + event.totalSold,
     0
   );
 
   const topEvents = events
-    .filter((event) => event.ticketsPurchased > 0)
-    .sort((a, b) => (a.ticketsPurchased >= b.ticketsPurchased ? -1 : 1));
+    .filter((event) => event.totalSold > 0)
+    .sort((a, b) => (a.totalSold >= b.totalSold ? -1 : 1));
 
   return (
     <div className="w-full space-y-8">
@@ -69,7 +69,7 @@ export default function DashboardAnalyticsSection({
                 <p>
                   #{index + 1} {event.title}
                 </p>
-                <p>{event.ticketsPurchased}</p>
+                <p>{event.totalSold}</p>
               </a>
             ))}
           </div>

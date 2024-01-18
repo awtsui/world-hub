@@ -9,6 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useAlertDialog } from '@/context/ModalContext';
+import Image from 'next/image';
 
 // TODO: add toasts for verification success and any errors
 
@@ -60,7 +61,22 @@ export default function VerifyPage() {
         handleVerify={verifyProof}
         verification_level={VerificationLevel.Device}
       >
-        {({ open }) => <Button onClick={open}>Verify with World ID</Button>}
+        {({ open }) => (
+          <Button
+            onClick={open}
+            variant={'outline'}
+            className="bg-white text-black text-xl gap-5 py-6 px-6"
+          >
+            <Image
+              src="/wld-logo.png"
+              alt="World ID Logo"
+              width={30}
+              height={30}
+              className="object-cover"
+            />
+            Verify with World ID
+          </Button>
+        )}
       </IDKitWidget>
     </div>
   );

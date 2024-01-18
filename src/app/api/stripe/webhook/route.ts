@@ -85,10 +85,12 @@ export async function POST(request: NextRequest) {
           Event.updateOne(
             {
               eventId: data.eventId,
+              'ticketTiers.label': data.label,
             },
             {
               $inc: {
-                ticketsPurchased: data.unitAmount,
+                'ticketTiers.$.ticketsPurchased': data.unitAmount,
+                totalSold: data.unitAmount,
               },
             },
             {

@@ -1,3 +1,4 @@
+import { VerificationLevel } from '@worldcoin/idkit';
 import { z } from 'zod';
 
 const MAX_FILE_SIZE = 1024 * 1024 * 10;
@@ -51,9 +52,10 @@ export const EventFormDataSchema = z.object({
     .object({
       label: z.string().min(1, 'Ticket tier label is required'),
       price: z.number().multipleOf(0.01, 'Invalid price'),
+      quantity: z.number().positive('Ticket quantity must be positive'),
     })
     .array(),
-  ticketQuantity: z.number().positive('Ticket quantity must be positive'),
+  verificationLevel: z.enum(['orb', 'device']),
 });
 
 export const CredentialsSignUpFormSchema = z

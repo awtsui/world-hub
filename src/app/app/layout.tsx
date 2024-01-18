@@ -25,7 +25,7 @@ export default async function AppLayout({
           <CartSheet />
           <AlertPopup />
           <AppNavbar />
-          <div className="relative pt-20 h-screen">{children}</div>
+          <div className="relative pt-16 h-screen">{children}</div>
           <Toaster />
         </NextAuthProvider>
       </CartProvider>

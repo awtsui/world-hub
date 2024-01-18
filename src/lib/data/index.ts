@@ -34,7 +34,7 @@ export const categories: CategoryKeyEnum<typeof categoryIdToName> = {
         id: '102',
       },
       {
-        name: 'Hip Hop',
+        name: 'Hip-Hop',
         id: '103',
       },
       {

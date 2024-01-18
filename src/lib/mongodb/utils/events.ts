@@ -58,10 +58,13 @@ export async function createEvent(
           venueId: event.venueId,
           lineup: event.lineup,
           purchaseLimit: event.purchaseLimit,
-          ticketTiers: event.ticketTiers,
-          ticketsPurchased: 0,
-          ticketQuantity: event.ticketQuantity,
+          ticketTiers: event.ticketTiers.map((ticketTier) => ({
+            ...ticketTier,
+            ticketsPurchased: 0,
+          })),
           approvalStatus: EventApprovalStatus.Pending,
+          totalSold: 0,
+          verificationLevel: event.verificationLevel,
         },
       ],
       { session }

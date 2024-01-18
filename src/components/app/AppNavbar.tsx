@@ -12,7 +12,7 @@ export default function AppNavbar() {
           <AppLogo />
         </Link>
         <OptionsMenu className="mx-6" />
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-5">
           <SearchMenu />
           <UserMenu />
         </div>

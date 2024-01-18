@@ -47,7 +47,7 @@ export default function AddTicketButton({
 
   return (
     <Button
-      disabled={event.ticketsPurchased >= event.ticketQuantity}
+      disabled={tier.ticketsPurchased >= tier.quantity}
       onClick={() => addItemToCart()}
     >
       Add to Cart

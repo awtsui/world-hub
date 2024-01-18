@@ -1,23 +1,10 @@
-import {
-  EventColumnData,
-  defaultEventColumns,
-} from '@/components/admin/EventColumns';
+import { defaultEventColumns } from '@/components/admin/EventColumns';
 import { DataTable } from '@/components/ui/data-table';
 import { getAllEvents } from '@/lib/actions';
+import { Event } from '@/lib/types';
 
 export default async function AdminManageEventsPage() {
   const events = await getAllEvents();
-
-  const eventsIsFetched: boolean = events && !!events.length;
-  const eventData: EventColumnData[] = eventsIsFetched
-    ? events.map((event: any) => {
-        const { eventId, ...rest } = event;
-        return {
-          ...rest,
-          id: event.eventId,
-        };
-      })
-    : [];
 
   return (
     <div className="px-12 py-4">
@@ -26,7 +13,7 @@ export default async function AdminManageEventsPage() {
       </div>
 
       <div className="p-2">
-        <DataTable columns={defaultEventColumns} data={eventData} />
+        <DataTable columns={defaultEventColumns} data={events ?? []} />
       </div>
     </div>
   );

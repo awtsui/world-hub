@@ -23,20 +23,32 @@ export default function CategoryDropdown({
 
   return (
     <div className="relative inline-block text-left">
-      <DropdownMenu>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex items-center gap-1">
-            <p className="text-lg">Categories</p>
-            <ChevronDown />
+          <Button
+            variant="ghost"
+            className={`flex items-center gap-1 border-white border-2 bg-slate-900 hover:bg-slate-500 ${
+              isOpen && 'bg-slate-500'
+            }`}
+          >
+            <p className="text-lg text-white">Categories</p>
+            <ChevronDown color="white" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="grid grid-cols-3 gap-3">
+        <DropdownMenuContent
+          align={'start'}
+          className="grid grid-cols-3 gap-3 bg-slate-900"
+        >
           {categoryInfo.subCategories.map((subcategory) => (
-            <DropdownMenuItem key={subcategory.name} asChild>
+            <DropdownMenuItem
+              key={subcategory.name}
+              asChild
+              className="text-md"
+            >
               <Link
                 href={`/marketplace/${categoryId}/${subcategory.id}`}
                 key={subcategory.id}
-                className="text-md hover:underline"
+                className="text-white hover:underline"
               >
                 {subcategory.name}
               </Link>

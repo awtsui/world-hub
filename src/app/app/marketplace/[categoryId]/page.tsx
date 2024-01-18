@@ -1,9 +1,10 @@
-import { categoryIdToName } from '@/lib/data';
-import EventCard from '@/components/app/EventCard';
+import { categories, categoryIdToName } from '@/lib/data';
 import { Event } from '@/lib/types';
 import CategoryDropdown from '@/components/app/CategoryDropdown';
 import { getApprovedEventsByCategory } from '@/lib/actions';
-import Link from 'next/link';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import Image from 'next/image';
+import CategorySection from '@/components/app/CategorySection';
 
 type CategoryPageParams = {
   params: {
@@ -14,32 +15,48 @@ type CategoryPageParams = {
 export default async function CategoryPage({ params }: CategoryPageParams) {
   // TODO: Organize events based on subcategory
   // Replace with data fetching
-  const categoryName = categoryIdToName[params.categoryId];
+
+  const { categoryId } = params;
+  const categoryName = categoryIdToName[categoryId];
+  const category = categories[categoryId];
+  const subCategories = categories[categoryId].subCategories;
 
   const events: Event[] = await getApprovedEventsByCategory(categoryName);
 
+  if (!events) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="px-12 py-4">
-      <div className="flex items-center gap-5">
-        <p className="text-3xl">{categoryName}</p>
-        <CategoryDropdown categoryId={params.categoryId} />
-      </div>
-      <div className="h-80 text-center">Image</div>
-      {events ? (
-        <div className="flex flex-wrap gap-3">
-          {events.length ? (
-            events.map((event) => (
-              <Link key={event.eventId} href={`/event/${event.eventId}`}>
-                <EventCard key={event.eventId} event={event} />
-              </Link>
-            ))
-          ) : (
-            <div>No Events</div>
-          )}
+    <div className="pb-12">
+      <div className="relative">
+        <AspectRatio ratio={3 / 1} className="w-full">
+          <Image
+            src="/homebg2.png"
+            alt="category-bg"
+            fill
+            className="object-cover "
+          />
+        </AspectRatio>
+        <div className="absolute top-10 left-14">
+          <div className="flex items-center gap-10">
+            <p className="text-5xl text-white font-bold">{categoryName}</p>
+            <div className="mt-2">
+              <CategoryDropdown categoryId={params.categoryId} />
+            </div>
+          </div>
         </div>
-      ) : (
-        <div>Loading...</div>
-      )}
+      </div>
+      <div className="px-12 py-4">
+        {Object.values(subCategories).map((subCategory) => (
+          <CategorySection
+            key={subCategory.id}
+            category={category}
+            subCategory={subCategory}
+            events={events}
+          />
+        ))}
+      </div>
     </div>
   );
 }

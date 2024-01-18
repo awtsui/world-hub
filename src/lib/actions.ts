@@ -23,12 +23,12 @@ export async function getEventsByIds(eventIds: string[]) {
       const { _id, __v, ...rest } = event._doc;
       return {
         ...rest,
-        ticketTiers: event.ticketTiers.map((tier: any) => {
-          return {
-            label: tier.label,
-            price: tier.price.toString(),
-          };
-        }),
+        ticketTiers: event.ticketTiers.map((tier: any) => ({
+          label: tier.label,
+          price: tier.price.toString(),
+          quantity: tier.quantity,
+          ticketsPurchased: tier.ticketsPurchased,
+        })),
       };
     });
     return formattedData;
@@ -274,11 +274,12 @@ export async function updateEventApprovalStatus(
       { approvalStatus: status }
     );
     if (!event) {
-      throw Error('Event does not exist');
+      throw Error(`Event (${eventId}) does not exist`);
     }
 
     revalidatePath('/');
   } catch (error) {
+    console.error(error);
     throw Error(`Unable to update event approval status: ${error}`);
   }
 }

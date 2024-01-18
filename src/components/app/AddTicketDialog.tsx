@@ -1,6 +1,6 @@
 'use client';
 
-import { Event, Tier } from '@/lib/types';
+import { Event, Tier, WorldIdVerificationLevel } from '@/lib/types';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -15,6 +15,7 @@ import {
 import { formatPrice } from '@/lib/client/utils';
 import { useState } from 'react';
 import AddTicketButton from './AddTicketButton';
+import { useSession } from 'next-auth/react';
 
 interface AddTicketDialogProps {
   event: Event;
@@ -22,11 +23,20 @@ interface AddTicketDialogProps {
 
 export default function AddTicketDialog({ event }: AddTicketDialogProps) {
   const [selectedTicket, setSelectedTicket] = useState<Tier | null>(null);
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const isValidVerificationLevel =
+    !(
+      event.verificationLevel === WorldIdVerificationLevel.Orb &&
+      session?.user?.verificationLevel === WorldIdVerificationLevel.Device
+    ) || !session;
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setSelectedTicket(null)}>
+        <Button
+          onClick={() => setSelectedTicket(null)}
+          disabled={!isValidVerificationLevel}
+        >
           Purchase a ticket
         </Button>
       </DialogTrigger>

@@ -4,13 +4,22 @@ import {
   getVenueById,
 } from '@/lib/actions';
 import Image from 'next/image';
-import { Calendar, Clock, MapPin, User } from 'lucide-react';
+import {
+  Calendar,
+  CheckCircle,
+  Clock,
+  MapPin,
+  Smartphone,
+  User,
+} from 'lucide-react';
 import { formatDate } from '@/lib/client/utils';
 import GoogleMapView from '@/components/app/GoogleMapView';
 import CopyToClipboard from '@/components/CopyToClipboard';
 import AddTicketDialog from '@/components/app/AddTicketDialog';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Link from 'next/link';
+import { WorldIdVerificationLevel } from '@/lib/types';
+import VerificationLevelIcon from '@/components/app/VerificationLevelIcon';
 
 type EventPageParams = {
   params: {
@@ -32,7 +41,7 @@ export default async function EventPage({ params }: EventPageParams) {
   const [date, time] = formatDate(new Date(event.datetime)).split(' at ');
 
   return (
-    <div className="mx-auto w-3/5">
+    <div className="mx-auto w-3/5 pb-12">
       <AspectRatio ratio={20 / 8}>
         <Image
           src={event.thumbnailUrl}
@@ -44,9 +53,14 @@ export default async function EventPage({ params }: EventPageParams) {
       </AspectRatio>
       <div className="flex pt-6 px-12 justify-center gap-5 md:gap-20 lg:gap-36">
         <div className="flex flex-col w-auto">
-          <div className="pb-4">
-            <p className="text-4xl font-bold">{event.title}</p>
-            <p className="text-xl">{event.subTitle}</p>
+          <div className="pb-4 flex justify-between items-center">
+            <div className="flex flex-col">
+              <p className="text-4xl font-bold">{event.title}</p>
+              <p className="text-xl">{event.subTitle}</p>
+            </div>
+            <VerificationLevelIcon
+              verificationLevel={event.verificationLevel}
+            />
           </div>
           <div className="py-4">
             <p className="text-md">{event.subCategory}</p>

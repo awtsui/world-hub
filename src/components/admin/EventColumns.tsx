@@ -1,6 +1,6 @@
 'use client';
 
-import { formatDate, truncateString } from '@/lib/client/utils';
+import { formatDate, formatPrice, truncateString } from '@/lib/client/utils';
 import { Checkbox } from '@radix-ui/react-checkbox';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
@@ -17,35 +17,10 @@ import {
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
-import { EventApprovalStatus } from '@/lib/types';
+import { Event, EventApprovalStatus } from '@/lib/types';
 import { deleteRejectedEvent, updateEventApprovalStatus } from '@/lib/actions';
 
-export type EventColumnData = {
-  id: string;
-  title: string;
-  subTitle: string;
-  hostId: string;
-  category: string;
-  subCategory: string;
-  thumbnailUrl: string;
-  datetime: Date;
-  currency: string;
-  description: string;
-  venueId: string;
-  lineup: string[];
-  purchaseLimit: number;
-  ticketTiers: [
-    {
-      label: string;
-      price: string;
-    }
-  ];
-  ticketsPurchased: number;
-  ticketQuantity: number;
-  approvalStatus: EventApprovalStatus;
-};
-
-const columnHelper = createColumnHelper<EventColumnData>();
+const columnHelper = createColumnHelper<Event>();
 
 export const defaultEventColumns = [
   columnHelper.display({
@@ -75,7 +50,7 @@ export const defaultEventColumns = [
     header: () => <div>Events</div>,
     enableHiding: false,
     columns: [
-      columnHelper.accessor('id', {
+      columnHelper.accessor('eventId', {
         cell: (info) => (
           <div className="text-right font-medium">
             {truncateString(info.getValue() as string, 8)}
@@ -237,42 +212,37 @@ export const defaultEventColumns = [
           return (
             <>
               {ticketTiers.map((tier: any) => {
-                const price = parseFloat(tier.price);
-                const formatted = new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                }).format(price);
                 return (
                   <div key={tier.label} className="text-right font-medium">
-                    {tier.label}-{formatted}
+                    {tier.label}-{formatPrice(tier.price)}
                   </div>
                 );
               })}
             </>
           );
         },
-        header: () => <div className="text-right">Events</div>,
+        header: () => <div className="text-right">Ticket Tiers</div>,
       }),
-      columnHelper.accessor('ticketsPurchased', {
+      columnHelper.accessor('totalSold', {
         cell: (info) => (
           <div className="text-right font-medium">{info.getValue()}</div>
         ),
         header: ({ column }) => (
           <DataTableSortColumnHeader
             column={column}
-            title="Tickets Purchased"
+            title="Total Sold"
             className="justify-end"
           />
         ),
       }),
-      columnHelper.accessor('ticketQuantity', {
+      columnHelper.accessor('verificationLevel', {
         cell: (info) => (
           <div className="text-right font-medium">{info.getValue()}</div>
         ),
         header: ({ column }) => (
-          <DataTableSortColumnHeader
+          <DataTableFilterColumnHeader
             column={column}
-            title="Ticket Quantity"
+            title="Verification Level"
             className="justify-end"
           />
         ),
@@ -297,7 +267,7 @@ export const defaultEventColumns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(event.id)}
+              onClick={() => navigator.clipboard.writeText(event.eventId)}
             >
               Copy event ID
             </DropdownMenuItem>
@@ -307,7 +277,7 @@ export const defaultEventColumns = [
                 <DropdownMenuItem
                   onClick={() =>
                     updateEventApprovalStatus(
-                      row.getValue('id'),
+                      row.getValue('eventId'),
                       EventApprovalStatus.Approved
                     )
                   }
@@ -317,7 +287,7 @@ export const defaultEventColumns = [
                 <DropdownMenuItem
                   onClick={() =>
                     updateEventApprovalStatus(
-                      row.getValue('id'),
+                      row.getValue('eventId'),
                       EventApprovalStatus.Rejected
                     )
                   }
@@ -334,7 +304,7 @@ export const defaultEventColumns = [
                   <Button
                     variant={'destructive'}
                     className="h-8 w-20"
-                    onClick={() => deleteRejectedEvent(row.getValue('id'))}
+                    onClick={() => deleteRejectedEvent(row.getValue('eventId'))}
                   >
                     Delete
                   </Button>

@@ -14,18 +14,9 @@ import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { truncateString } from '@/lib/client/utils';
 import { DataTableFilterColumnHeader } from '../ui/data-table';
+import { Venue } from '@/lib/types';
 
-export type VenueColumnData = {
-  id: string;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  zipcode: string;
-  parking: string[];
-};
-
-const columnHelper = createColumnHelper<VenueColumnData>();
+const columnHelper = createColumnHelper<Venue>();
 
 export const defaultVenueColumns = [
   columnHelper.display({
@@ -55,7 +46,7 @@ export const defaultVenueColumns = [
     header: () => <div>Venues</div>,
     enableHiding: false,
     columns: [
-      columnHelper.accessor('id', {
+      columnHelper.accessor('venueId', {
         cell: (info) => (
           <div className="text-right font-medium">
             {truncateString(info.getValue() as string, 8)}
@@ -167,7 +158,7 @@ export const defaultVenueColumns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(venue.id)}
+              onClick={() => navigator.clipboard.writeText(venue.venueId)}
             >
               Copy venue ID
             </DropdownMenuItem>
