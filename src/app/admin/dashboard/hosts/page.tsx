@@ -22,6 +22,7 @@ export default async function AdminManageHostsPage() {
       biography: corrHostProfile.biography,
       events: corrHostProfile.events,
       approvalStatus: hosts[i].approvalStatus,
+      mediaId: corrHostProfile.mediaId,
     });
   }
 

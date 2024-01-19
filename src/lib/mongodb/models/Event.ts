@@ -14,7 +14,7 @@ const EventSchema = new Schema<IEvent>(
     hostId: String,
     category: String,
     subCategory: String,
-    thumbnailUrl: String,
+    mediaId: String,
     datetime: Date,
     currency: String,
     description: String,

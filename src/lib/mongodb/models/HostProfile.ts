@@ -6,6 +6,7 @@ const HostProfileSchema = new Schema<IHostProfile>(
     hostId: String,
     name: String,
     biography: String,
+    mediaId: String,
     events: [String],
   },
 

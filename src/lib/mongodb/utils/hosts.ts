@@ -120,6 +120,7 @@ export async function signUp(
           hostId,
           name,
           biography: '',
+          mediaId: '',
           events: [],
         },
       ],

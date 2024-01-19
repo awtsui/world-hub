@@ -136,15 +136,19 @@ export const defaultEventColumns = [
           />
         ),
       }),
-      columnHelper.accessor('thumbnailUrl', {
+      columnHelper.accessor('mediaId', {
         cell: (info) => (
-          <a rel="noopener noreferrer" target="_blank" href={info.getValue()}>
-            <span className="text-sky-500 font-medium hover:text-sky-800">
-              Image
-            </span>
-          </a>
+          <div className="text-right font-medium">
+            {truncateString(info.getValue() as string, 8)}
+          </div>
         ),
-        header: () => <p className="text-right font-medium">Thumbnail URL</p>,
+        header: ({ column }) => (
+          <DataTableFilterColumnHeader
+            column={column}
+            title="Media ID"
+            className="justify-end"
+          />
+        ),
       }),
       columnHelper.accessor('datetime', {
         cell: (info) => {

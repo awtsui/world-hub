@@ -10,6 +10,7 @@ import Venue from './mongodb/models/Venue';
 import Event from './mongodb/models/Event';
 import { EventApprovalStatus, HostApprovalStatus } from './types';
 import { revalidatePath } from 'next/cache';
+import Media from './mongodb/models/Media';
 
 export async function getEventsByIds(eventIds: string[]) {
   await dbConnect();
@@ -141,7 +142,7 @@ export async function getHostProfileById(hostId: string) {
     const formattedData = { ...rest };
     return formattedData;
   } catch (error) {
-    throw new Error(`Unable to fetch host by id: ${error}`);
+    throw new Error(`Unable to fetch host profile by id: ${error}`);
   }
 }
 
@@ -153,7 +154,19 @@ export async function getVenueById(venueId: string) {
     const formattedData = { ...rest };
     return formattedData;
   } catch (error) {
-    throw new Error(`Unable to fetch host by id: ${error}`);
+    throw new Error(`Unable to fetch venue by id: ${error}`);
+  }
+}
+
+export async function getMediaById(mediaId: string) {
+  await dbConnect();
+  try {
+    const data = await Media.findById(mediaId);
+    const { _id, __v, ...rest } = data._doc;
+    const formattedData = { ...rest };
+    return formattedData;
+  } catch (error) {
+    throw new Error(`Unable to fetch media by id: ${error}`);
   }
 }
 

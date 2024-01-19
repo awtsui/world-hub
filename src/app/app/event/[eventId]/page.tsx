@@ -1,6 +1,7 @@
 import {
   getEventsByIds,
   getHostProfileById,
+  getMediaById,
   getVenueById,
 } from '@/lib/actions';
 import Image from 'next/image';
@@ -32,8 +33,9 @@ export default async function EventPage({ params }: EventPageParams) {
   const event = (await getEventsByIds([params.eventId]))[0];
   const host = await getHostProfileById(event.hostId);
   const venue = await getVenueById(event.venueId);
+  const media = await getMediaById(event.mediaId);
 
-  if (!event || !host || !venue) {
+  if (!event || !host || !venue || !media) {
     return <div>Loading...</div>;
   }
 
@@ -44,7 +46,7 @@ export default async function EventPage({ params }: EventPageParams) {
     <div className="mx-auto w-3/5 pb-12">
       <AspectRatio ratio={20 / 8}>
         <Image
-          src={event.thumbnailUrl}
+          src={media.url}
           alt={event.eventId}
           fill
           style={{ objectFit: 'cover', borderRadius: '20px' }}

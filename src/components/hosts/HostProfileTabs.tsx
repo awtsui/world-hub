@@ -5,6 +5,10 @@ import { TabsContent } from '@radix-ui/react-tabs';
 import UpdateHostProfileForm from './UpdateHostProfileForm';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { fetcher } from '@/lib/client/utils';
+import useSWR from 'swr';
+import ProfilePictureDropdownMenu from './ProfilePictureDropdownMenu';
+import ChangeProfilePictureDialog from './ChangeProfilePictureDialog';
 
 interface HostProfileTabsProps {
   hostProfile: HostProfile;
@@ -18,6 +22,12 @@ export default function HostProfileTabs({
   const [tabValue, setTabValue] = useState(tab ?? 'profile');
   const router = useRouter();
   const pathname = usePathname();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const { data: media } = useSWR(
+    `/api/medias?id=${hostProfile.mediaId}`,
+    fetcher
+  );
 
   useEffect(() => {
     if (tab) {
@@ -29,6 +39,10 @@ export default function HostProfileTabs({
     setTabValue(value);
     router.push(`${pathname}?tab=${value}`);
   };
+
+  if (!media) {
+    return null;
+  }
 
   return (
     <Tabs
@@ -42,7 +56,18 @@ export default function HostProfileTabs({
         <TabsTrigger value="notifications">Notifications</TabsTrigger>
       </TabsList>
       <TabsContent value="profile">
-        <UpdateHostProfileForm hostProfile={hostProfile} />
+        <div className="pt-6">
+          <ProfilePictureDropdownMenu
+            media={media}
+            setIsDialogOpen={setIsDialogOpen}
+          />
+          <ChangeProfilePictureDialog
+            isDialogOpen={isDialogOpen}
+            setIsDialogOpen={setIsDialogOpen}
+            hostProfile={hostProfile}
+          />
+          <UpdateHostProfileForm hostProfile={hostProfile} />
+        </div>
       </TabsContent>
       <TabsContent value="notifications">
         <div>Notifications Tab (Not implemented)</div>

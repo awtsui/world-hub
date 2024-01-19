@@ -27,6 +27,7 @@ export type HostColumnData = {
   biography: string;
   events: string[];
   approvalStatus: HostApprovalStatus;
+  mediaId: string;
 };
 
 const columnHelper = createColumnHelper<HostColumnData>();
@@ -116,6 +117,20 @@ export const defaultHostColumns = [
           </div>
         ),
         header: () => <p className="text-right font-medium">Biography</p>,
+      }),
+      columnHelper.accessor('mediaId', {
+        cell: (info) => (
+          <div className="text-right font-medium">
+            {truncateString(info.getValue() as string, 8)}
+          </div>
+        ),
+        header: ({ column }) => (
+          <DataTableFilterColumnHeader
+            column={column}
+            title="Media Id"
+            className="justify-end"
+          />
+        ),
       }),
       columnHelper.accessor('events', {
         cell: (info) => {

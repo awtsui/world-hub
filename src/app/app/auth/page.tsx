@@ -22,7 +22,7 @@ export default function AuthPage() {
           label="Sign In with Worldcoin"
         />
         <p>OR</p>
-        <Button onClick={handleGuestClick} className="text-xl px-16 py-6">
+        <Button onClick={handleGuestClick} className="text-lg px-16 py-6">
           Continue as Guest
         </Button>
       </div>

@@ -27,7 +27,6 @@ interface UpdateHostProfileFormProps {
 export default function UpdateHostProfileForm({
   hostProfile,
 }: UpdateHostProfileFormProps) {
-  const { setError, setSuccess } = useAlertDialog();
   const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
@@ -46,7 +45,10 @@ export default function UpdateHostProfileForm({
     try {
       const updateProfileResp = await fetch('/api/hosts/profile', {
         body: JSON.stringify({
-          ...data,
+          profile: {
+            name: data.name,
+            biography: data.biography,
+          },
           hostId: hostProfile.hostId,
         }),
         headers: { 'Content-Type': 'application/json' },
@@ -71,13 +73,13 @@ export default function UpdateHostProfileForm({
         description: 'Your new profile will be displayed shortly!',
       });
       // setSuccess('Successfully updated profile', 3);
+      reset();
     } catch (error) {
       console.error(error);
       toast({
         title: 'Failed to update profile',
         description: 'Please try again.',
       });
-      reset();
     }
   }
   return (

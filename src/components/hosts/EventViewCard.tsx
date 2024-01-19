@@ -39,10 +39,9 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { data: venueData } = useSWR(
-    `/api/venues?id=${event.venueId}`,
-    fetcher
-  );
+  const { data: venue } = useSWR(`/api/venues?id=${event.venueId}`, fetcher);
+
+  const { data: media } = useSWR(`/api/medias?id=${event.mediaId}`, fetcher);
 
   async function handleDeleteClick() {
     try {
@@ -75,6 +74,10 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
       ? 'border-amber-400'
       : 'border-green-500';
 
+  if (!venue || !media) {
+    return null;
+  }
+
   return (
     <Card {...props} className={`w-80 h-auto border-2 ${borderColor}`}>
       <CardHeader className="pb-2">
@@ -82,9 +85,9 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
           <CardTitle>{event.title}</CardTitle>
           <p className={`font-medium`}>{event.approvalStatus}</p>
         </div>
-        {venueData && (
+        {venue && (
           <CardDescription>
-            {venueData.city}, {venueData.state} - {venueData.name}
+            {venue.city}, {venue.state} - {venue.name}
           </CardDescription>
         )}
         <CardDescription>
@@ -93,7 +96,7 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
       </CardHeader>
       <CardContent className="relative w-full h-52">
         <Image
-          src={event.thumbnailUrl}
+          src={media.url}
           alt={event.title}
           fill
           className="px-3"

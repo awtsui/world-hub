@@ -8,7 +8,7 @@ export default async function LandingLayout({
   return (
     <>
       <LandingNavbar />
-      <div className="fixed">{children}</div>
+      <div className="h-screen">{children}</div>
     </>
   );
 }

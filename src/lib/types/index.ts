@@ -29,7 +29,7 @@ export interface IEvent {
   hostId: string;
   category: string;
   subCategory: string;
-  thumbnailUrl: string;
+  mediaId: string;
   datetime: Date;
   currency: string;
   description: string;
@@ -103,12 +103,12 @@ export interface IHostProfile {
   hostId: string;
   name: string;
   biography: string;
+  mediaId: String;
   events: string[];
 }
 
 export interface IMedia {
-  userId: string;
-  eventId: string;
+  description: string;
   type: string;
   url: string;
 }

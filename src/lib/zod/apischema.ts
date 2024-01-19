@@ -27,12 +27,19 @@ export const EventDataRequestBodySchema = z.object({
 export const HostProfileDataRequestBodySchema = z
   .object({
     hostId: z.string(),
-    name: z.string(),
-    biography: z.string(),
+    profile: z.object({
+      name: z.string().optional(),
+      biography: z.string().optional(),
+      mediaId: z.string().optional(),
+    }),
   })
-  .refine(({ name, biography }) => name !== '' || biography !== '', {
-    message: 'One of the fields must be defined',
-  });
+  .refine(
+    ({ profile }) =>
+      profile.name !== '' || profile.biography !== '' || profile.mediaId !== '',
+    {
+      message: 'One of the fields must be defined',
+    }
+  );
 
 export const StripeSessionDataRequestBodySchema = z.object({
   tickets: z

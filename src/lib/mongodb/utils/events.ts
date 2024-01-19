@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import dbConnect from './mongoosedb';
 import Event from '../models/Event';
 import { getUniqueEventId } from '@/lib/server/utils';
 import { CURRENCIES } from '@/lib/constants';
@@ -8,7 +7,7 @@ import Media from '../models/Media';
 import { EventDataRequestBodySchema } from '@/lib/zod/apischema';
 import getS3Client from '@/lib/aws-s3/s3client';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
-import mongoose, { ClientSession } from 'mongoose';
+import { ClientSession } from 'mongoose';
 import { EventApprovalStatus } from '@/lib/types';
 
 const { AWS_S3_BUCKET_NAME } = process.env;
@@ -34,10 +33,11 @@ export async function createEvent(
     const media = await Media.findByIdAndUpdate(
       mediaId,
       {
-        eventId,
+        description: 'Event banner image',
       },
       { session }
     );
+
     if (!media) {
       throw Error('Media file can not be found');
     }
@@ -51,7 +51,7 @@ export async function createEvent(
           hostId,
           category: event.category,
           subCategory: event.subcategory,
-          thumbnailUrl: media.url,
+          mediaId: media._id.toString(),
           datetime: event.datetime,
           currency: CURRENCIES.USD,
           description: event.description.trim(),
@@ -94,28 +94,21 @@ export async function deleteEvent(
   session?: ClientSession
 ) {
   try {
-    const event = await Event.findOneAndDelete({ eventId }, { session });
-
-    if (!event) {
-      throw Error('Unable to delete event');
-    }
+    const event = await Event.findOne({ eventId }, null, { session });
 
     if (event.hostId !== tokenId) {
       throw Error('Not authorized to delete this event');
     }
 
-    const hostProfile = await HostProfile.findOneAndUpdate(
+    await Event.deleteOne({ eventId });
+
+    await HostProfile.updateOne(
       { hostId: event.hostId },
       { $pull: { events: eventId } },
       { session }
     );
 
-    const media = await Media.findOneAndDelete(
-      {
-        eventId,
-      },
-      { session }
-    );
+    const media = await Media.findByIdAndDelete(event.mediaId, { session });
 
     if (!media) {
       throw Error('Unable to delete media');

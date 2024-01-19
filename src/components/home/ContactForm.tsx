@@ -39,10 +39,10 @@ export default function ContactForm() {
 
   return (
     <Form {...form}>
-      <div className="w-auto mx-auto">
-        <form onSubmit={handleSubmit(processForm)} className="space-y-6">
+      <div>
+        <form onSubmit={handleSubmit(processForm)} className="space-y-4">
           <div className="flex flex-col gap-2">
-            <div className="flex gap-4">
+            <div className="flex gap-2">
               <FormField
                 control={form.control}
                 name="name"
@@ -74,7 +74,7 @@ export default function ContactForm() {
                 )}
               />
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-2">
               <FormField
                 control={form.control}
                 name="company"

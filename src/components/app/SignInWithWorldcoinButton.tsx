@@ -22,7 +22,7 @@ export default function WorldcoinButton({
     <Button
       onClick={onClick}
       variant={'outline'}
-      className="bg-white text-black text-xl gap-5 py-6 px-6"
+      className="bg-white text-black text-lg gap-5 py-6 px-6"
     >
       <Image
         src="/wld-logo.png"

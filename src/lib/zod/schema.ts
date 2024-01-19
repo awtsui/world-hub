@@ -11,32 +11,21 @@ const ACCEPTED_IMAGE_TYPES = [
 
 export const ImageFileSchema = z
   .any()
-  .refine((files) => files?.length == 1, 'Image is required.')
   .refine(
-    (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+    (file) => file && file?.size <= MAX_FILE_SIZE,
     `Max file size is 10MB.`
   )
   .refine(
-    (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+    (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
     '.jpg, .jpeg, .png and .webp files are accepted.'
   );
-
-// export const ImageUploadSchema = z.object({
-//   file: ImageFileSchema,
-// });
 
 export const EventFormDataSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   subTitle: z.string().optional(),
   category: z.string().min(1, 'Category is required'),
   subcategory: z.string().min(1, 'Subcategory is required'),
-  thumbnailImage: z
-    .any()
-    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 10MB.`)
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
+  thumbnailImage: ImageFileSchema,
   datetime: z.coerce.date(),
   description: z.string().min(1, 'Description is required'),
   lineup: z

@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { HostProfileDataRequestBodySchema } from '@/lib/zod/apischema';
 import HostProfile from '../models/HostProfile';
 import { ClientSession } from 'mongoose';
+import Media from '../models/Media';
+import { deleteMedia } from './medias';
 
 type HostProfileDataRequestBody = z.infer<
   typeof HostProfileDataRequestBodySchema
@@ -12,7 +14,7 @@ export async function updateHostProfile(
   tokenId: string,
   session?: ClientSession
 ) {
-  const { hostId, name, biography } = data;
+  const { hostId, profile } = data;
 
   try {
     if (tokenId !== hostId) {
@@ -27,23 +29,45 @@ export async function updateHostProfile(
       throw Error('Host does not exist');
     }
 
-    if (name) {
+    if (profile.name) {
       await HostProfile.updateOne(
         { hostId },
         {
-          name,
+          name: profile.name,
         },
         { session }
       );
     }
 
-    if (biography) {
+    if (profile.biography) {
       await HostProfile.updateOne(
         { hostId },
         {
-          biography,
+          biography: profile.biography,
         },
         { session }
+      );
+    }
+
+    if (profile.mediaId) {
+      if (hostProfile.mediaId) {
+        const deleteMediaResp = await deleteMedia(hostProfile.mediaId, session);
+        if (!deleteMediaResp.success) {
+          throw Error('Failed to delete media');
+        }
+      }
+      const media = await Media.findById(profile.mediaId);
+
+      if (!media) {
+        throw Error('Media does not exist');
+      }
+
+      await HostProfile.updateOne(
+        { hostId },
+        { mediaId: profile.mediaId },
+        {
+          session,
+        }
       );
     }
 

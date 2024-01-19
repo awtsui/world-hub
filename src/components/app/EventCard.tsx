@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '../ui/card';
 import DateFormatter from '../DateFormatter';
-import { getHostProfileById, getVenueById } from '@/lib/actions';
+import { getHostProfileById, getMediaById, getVenueById } from '@/lib/actions';
 import { HTMLAttributes } from 'react';
 import { AspectRatio } from '../ui/aspect-ratio';
 
@@ -19,8 +19,9 @@ interface EventCardProps extends HTMLAttributes<HTMLDivElement> {
 export default async function EventCard({ event, ...props }: EventCardProps) {
   const venue = await getVenueById(event.venueId);
   const hostProfile = await getHostProfileById(event.hostId);
+  const media = await getMediaById(event.mediaId);
 
-  if (!venue || !hostProfile) {
+  if (!venue || !hostProfile || !media) {
     return null;
   }
 
@@ -30,7 +31,7 @@ export default async function EventCard({ event, ...props }: EventCardProps) {
         <CardContent className="px-3 pt-3 pb-2">
           <AspectRatio ratio={16 / 9}>
             <Image
-              src={event.thumbnailUrl}
+              src={media.url}
               alt={event.title}
               fill
               className="object-cover"
