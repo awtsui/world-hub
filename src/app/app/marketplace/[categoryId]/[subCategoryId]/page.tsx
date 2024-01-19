@@ -3,7 +3,9 @@ import EventCard from '@/components/app/EventCard';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Event } from '@/lib/types';
-import { getEventsBySubCategory } from '@/lib/utils';
+import { getApprovedEventsBySubCategory } from '@/lib/actions';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import Image from 'next/image';
 
 type SubCategoryPageParams = {
   params: {
@@ -20,23 +22,41 @@ export default async function SubCategoryPage({
   const categoryName = categoryIdToName[params.categoryId];
   const subCategoryName = subCategoryIdToName[params.subCategoryId];
 
-  const events: Event[] = await getEventsBySubCategory(subCategoryName);
+  const events: Event[] = await getApprovedEventsBySubCategory(subCategoryName);
+
+  if (!events) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="px-12 py-4">
-      <div className="flex items-center">
-        <Link href={`/marketplace/${params.categoryId}`} className="text-3xl">
-          {categoryName}
-        </Link>
-        <ChevronRight />
-        <p className="text-4xl">{subCategoryName}</p>
+    <div className="pb-12">
+      <div className="relative">
+        <AspectRatio ratio={3 / 1} className="w-full">
+          <Image
+            src="/homebg2.png"
+            alt="category-bg"
+            fill
+            className="object-cover "
+          />
+        </AspectRatio>
+        <div className="absolute top-10 left-14">
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/marketplace/${params.categoryId}`}
+              className="text-3xl text-white"
+            >
+              {categoryName}
+            </Link>
+            <ChevronRight color="white" className="w-5 h-5" />
+            <p className="text-5xl font-bold text-white">{subCategoryName}</p>
+          </div>
+        </div>
       </div>
-      <div className="h-80 text-center">Image</div>
-      {events ? (
+      <div className="px-12 py-8">
         <div className="flex flex-wrap gap-3">
           {events.length > 0 ? (
             events.map((event) => (
-              <Link href={`/event/${event.eventId}`}>
+              <Link key={event.eventId} href={`/event/${event.eventId}`}>
                 <EventCard key={event.eventId} event={event}></EventCard>
               </Link>
             ))
@@ -44,9 +64,7 @@ export default async function SubCategoryPage({
             <div>No Events</div>
           )}
         </div>
-      ) : (
-        <div>Loading...</div>
-      )}
+      </div>
     </div>
   );
 }

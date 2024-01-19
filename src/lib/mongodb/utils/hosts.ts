@@ -1,23 +1,26 @@
-import { HostSignUpFormSchema } from '@/lib/zod/schema';
+import { CredentialsSignUpFormSchema } from '@/lib/zod/schema';
 import { z } from 'zod';
-import dbConnect from './mongoosedb';
 import Host from '../models/Host';
 import { compareSync, hashSync } from 'bcrypt-ts';
-import { HASH_SALT } from '@/lib/constants';
 import HostProfile from '../models/HostProfile';
-import { Role } from '@/lib/types';
-import { getUniqueHostId } from '@/lib/server/utils';
-import { revalidatePath } from 'next/cache';
-import mongoose, { ClientSession } from 'mongoose';
+import {
+  getUniqueAdminId,
+  getUniqueEventId,
+  getUniqueHostId,
+} from '@/lib/server/utils';
+import { ClientSession } from 'mongoose';
+import { HOST_HASH_SALT } from '@/lib/constants';
+import dbConnect from './mongoosedb';
+import { HostApprovalStatus } from '@/lib/types';
+import { revalidateTag } from 'next/cache';
 
-type HostSignUpSchema = z.infer<typeof HostSignUpFormSchema>;
+type CredentialsSignUpForm = z.infer<typeof CredentialsSignUpFormSchema>;
 
-export async function signIn(host: Record<'email' | 'password', string>) {
+export async function signIn(form: Record<'email' | 'password', string>) {
   await dbConnect();
-
   try {
-    const email = host.email.trim();
-    const password = host.password.trim();
+    const email = form.email.trim();
+    const password = form.password.trim();
 
     // Check if email and password are not empty.
     if (email === '' || password === '')
@@ -31,35 +34,36 @@ export async function signIn(host: Record<'email' | 'password', string>) {
 
     const existingHost = await Host.findOne({ email: email });
 
-    if (existingHost) {
-      if (!compareSync(password, existingHost.password)) {
-        throw { error: 'Bad password!' };
-      }
-      return {
-        host: {
-          id: existingHost.hostId,
-          role: Role.host,
-          provider: 'hostcredentials',
-        },
-      };
+    if (!existingHost) {
+      throw Error('Account does not exist');
     }
-    throw { error: 'Account does not exist' };
+
+    // TODO: Refactor - currently sneaking in host id into error string to send user into status awaiting page
+    if (existingHost.approvalStatus !== HostApprovalStatus.Approved) {
+      throw Error(`Account has not been approved,${existingHost.hostId}`);
+    }
+
+    if (!compareSync(password, existingHost.password)) {
+      throw Error('Bad password!');
+    }
+    return {
+      success: true,
+      id: existingHost.hostId,
+    };
   } catch (error) {
-    return { error, host: null };
+    return { success: false, error: (error as Error).message };
   }
 }
 
-export async function signUp(host: HostSignUpSchema) {
-  await dbConnect();
-
-  const session: ClientSession = await mongoose.startSession();
-  session.startTransaction();
-
+export async function signUp(
+  form: CredentialsSignUpForm,
+  session?: ClientSession
+) {
   try {
-    const name = host.name.trim();
-    const email = host.email.trim();
-    let password = host.password.trim();
-    const confirmPassword = host.confirmPassword.trim();
+    const name = form.name.trim();
+    const email = form.email.trim();
+    let password = form.password.trim();
+    const confirmPassword = form.confirmPassword.trim();
 
     // Check if name is empty;
     if (name === '') return { error: 'Name must not be empty !' };
@@ -92,7 +96,7 @@ export async function signUp(host: HostSignUpSchema) {
       return { error: 'Passwords should be identical !' };
 
     // Hash the password.
-    password = hashSync(password, HASH_SALT);
+    password = hashSync(password, HOST_HASH_SALT);
 
     const hostId = await getUniqueHostId();
 
@@ -103,6 +107,7 @@ export async function signUp(host: HostSignUpSchema) {
           name,
           email,
           password,
+          approvalStatus: HostApprovalStatus.Pending,
         },
       ],
       { session }
@@ -115,20 +120,17 @@ export async function signUp(host: HostSignUpSchema) {
           hostId,
           name,
           biography: '',
+          mediaId: '',
           events: [],
         },
       ],
       { session }
     );
 
-    await session.commitTransaction();
+    revalidateTag('host');
 
-    return { success: true, hostId };
+    return { success: true, id: hostId };
   } catch (error) {
-    await session.abortTransaction();
-    console.log(error);
-    return { success: false, error: error as string };
-  } finally {
-    session.endSession();
+    return { success: false, error: JSON.stringify(error) };
   }
 }

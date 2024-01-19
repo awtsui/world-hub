@@ -2,16 +2,17 @@
 
 import { Plus, Settings, User } from 'lucide-react';
 import AuthButton from '../AuthButton';
+import { MenuItem } from '@/lib/types';
 
 interface HostAuthButtonProps {
   signInCallbackUrl?: string;
   signOutCallbackUrl?: string;
 }
-const menuItems = [
+const menuItems: MenuItem[] = [
   {
     icon: User,
     label: 'Profile',
-    url: '/dashboard/settings',
+    url: '/dashboard/settings?tab=profile',
   },
   {
     icon: Plus,

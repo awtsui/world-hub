@@ -18,7 +18,7 @@ export default function OptionsMenu({
       <Link
         href="/marketplace"
         className={cn(
-          'text-sm font-medium transition-colors hover:text-primary',
+          'text-md font-medium transition-colors hover:text-primary',
           pathname === '/marketplace'
             ? 'text-black dark:text-white'
             : 'text-muted-foreground'
@@ -31,7 +31,7 @@ export default function OptionsMenu({
           key={category.id}
           href={`/marketplace/${category.id}`}
           className={cn(
-            'text-sm font-medium transition-colors hover:text-primary',
+            'text-md font-medium transition-colors hover:text-primary',
             pathname === `/marketplace/${category.id}`
               ? 'text-black dark:text-white'
               : 'text-muted-foreground'

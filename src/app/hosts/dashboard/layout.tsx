@@ -8,7 +8,7 @@ export default async function HostsDashboardLayout({
   return (
     <>
       <HostDashboardNavbar />
-      <div className="relative mt-20">{children}</div>
+      <div className="relative pt-16 h-screen">{children}</div>
     </>
   );
 }

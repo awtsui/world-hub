@@ -3,6 +3,13 @@ import { categories, categoryIdToName } from '@/lib/data';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 type CategoryDropdownProps = {
   categoryId: string;
@@ -16,43 +23,39 @@ export default function CategoryDropdown({
 
   return (
     <div className="relative inline-block text-left">
-      <button
-        type="button"
-        className="flex items-center"
-        id="options-menu"
-        aria-haspopup="true"
-        aria-expanded="true"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <p className="text-lg">Categories</p>
-        <ChevronDown />
-      </button>
-
-      {isOpen && (
-        <div className="origin-top-right absolute left-0 mt-2 w-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-          <div
-            className="py-1"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="options-menu"
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className={`flex items-center gap-1 border-white border-2 bg-slate-900 hover:bg-slate-500 ${
+              isOpen && 'bg-slate-500'
+            }`}
           >
-            {categoryInfo.subCategories.map((subcategory) => (
+            <p className="text-lg text-white">Categories</p>
+            <ChevronDown color="white" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align={'start'}
+          className="grid grid-cols-3 gap-3 bg-slate-900"
+        >
+          {categoryInfo.subCategories.map((subcategory) => (
+            <DropdownMenuItem
+              key={subcategory.name}
+              asChild
+              className="text-md"
+            >
               <Link
                 href={`/marketplace/${categoryId}/${subcategory.id}`}
                 key={subcategory.id}
+                className="text-white hover:underline"
               >
-                <button
-                  key={subcategory.id}
-                  className="block px-4 py-2 text-md whitespace-nowrap text-gray-700 hover:underline hover:text-gray-900"
-                  role="menuitem"
-                >
-                  {subcategory.name}
-                </button>
+                {subcategory.name}
               </Link>
-            ))}
-          </div>
-        </div>
-      )}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

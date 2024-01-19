@@ -1,18 +1,15 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import AuthButton from '../AuthButton';
 import CartButton from './CartButton';
-
-// import SessionPoke from '../SessionPoke';
+import AppAuthButton from './AppAuthButton';
 
 export default function UserMenu() {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-2">
-      <AuthButton signInCallbackUrl={pathname} />
+    <div className="flex items-center gap-5">
+      <AppAuthButton signInCallbackUrl={pathname} />
       <CartButton />
-      {/* <SessionPoke /> */}
     </div>
   );
 }

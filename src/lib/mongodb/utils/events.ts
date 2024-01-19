@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import dbConnect from './mongoosedb';
 import Event from '../models/Event';
 import { getUniqueEventId } from '@/lib/server/utils';
 import { CURRENCIES } from '@/lib/constants';
@@ -8,7 +7,8 @@ import Media from '../models/Media';
 import { EventDataRequestBodySchema } from '@/lib/zod/apischema';
 import getS3Client from '@/lib/aws-s3/s3client';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
-import mongoose, { ClientSession } from 'mongoose';
+import { ClientSession } from 'mongoose';
+import { EventApprovalStatus } from '@/lib/types';
 
 const { AWS_S3_BUCKET_NAME } = process.env;
 
@@ -16,24 +16,28 @@ if (!AWS_S3_BUCKET_NAME) throw new Error('AWS_S3_BUCKET_NAME not defined');
 
 type EventDataRequestBody = z.infer<typeof EventDataRequestBodySchema>;
 
-export async function createEvent(data: EventDataRequestBody) {
-  await dbConnect();
-
-  const session: ClientSession = await mongoose.startSession();
-  session.startTransaction();
-
+export async function createEvent(
+  data: EventDataRequestBody,
+  tokenId: string,
+  session?: ClientSession
+) {
   const { event, hostId, mediaId } = data;
 
   try {
+    if (tokenId !== hostId) {
+      throw Error('Not authorized to create this event');
+    }
+
     const eventId = await getUniqueEventId();
 
     const media = await Media.findByIdAndUpdate(
       mediaId,
       {
-        eventId,
+        description: 'Event banner image',
       },
       { session }
     );
+
     if (!media) {
       throw Error('Media file can not be found');
     }
@@ -47,16 +51,20 @@ export async function createEvent(data: EventDataRequestBody) {
           hostId,
           category: event.category,
           subCategory: event.subcategory,
-          thumbnailUrl: media.url,
+          mediaId: media._id.toString(),
           datetime: event.datetime,
           currency: CURRENCIES.USD,
           description: event.description.trim(),
           venueId: event.venueId,
           lineup: event.lineup,
           purchaseLimit: event.purchaseLimit,
-          ticketTiers: event.ticketTiers,
-          ticketsPurchased: 0,
-          ticketQuantity: event.ticketQuantity,
+          ticketTiers: event.ticketTiers.map((ticketTier) => ({
+            ...ticketTier,
+            ticketsPurchased: 0,
+          })),
+          approvalStatus: EventApprovalStatus.Pending,
+          totalSold: 0,
+          verificationLevel: event.verificationLevel,
         },
       ],
       { session }
@@ -74,43 +82,33 @@ export async function createEvent(data: EventDataRequestBody) {
       { session }
     );
 
-    await session.commitTransaction();
-
     return { success: true, eventId };
   } catch (error) {
-    await session.abortTransaction();
-    console.log(error);
-    return { success: false, error: error as string };
-  } finally {
-    session.endSession();
+    return { success: false, error: JSON.stringify(error) };
   }
 }
 
-export async function deleteEvent(eventId: string) {
-  await dbConnect();
-
-  const session: ClientSession = await mongoose.startSession();
-  session.startTransaction();
-
+export async function deleteEvent(
+  eventId: string,
+  tokenId: string,
+  session?: ClientSession
+) {
   try {
-    const event = await Event.findOneAndDelete({ eventId }, { session });
+    const event = await Event.findOne({ eventId }, null, { session });
 
-    if (!event) {
-      throw Error('Unable to delete event');
+    if (event.hostId !== tokenId) {
+      throw Error('Not authorized to delete this event');
     }
 
-    const hostProfile = await HostProfile.findOneAndUpdate(
+    await Event.deleteOne({ eventId });
+
+    await HostProfile.updateOne(
       { hostId: event.hostId },
       { $pull: { events: eventId } },
       { session }
     );
 
-    const media = await Media.findOneAndDelete(
-      {
-        eventId,
-      },
-      { session }
-    );
+    const media = await Media.findByIdAndDelete(event.mediaId, { session });
 
     if (!media) {
       throw Error('Unable to delete media');
@@ -123,14 +121,8 @@ export async function deleteEvent(eventId: string) {
     });
     await s3Client.send(deleteObjectCommand);
 
-    await session.commitTransaction();
-
     return { success: true };
   } catch (error) {
-    await session.abortTransaction();
-    console.log(error);
-    return { success: false, error: error as string };
-  } finally {
-    session.endSession();
+    return { success: false, error: JSON.stringify(error) };
   }
 }

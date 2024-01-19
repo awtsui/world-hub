@@ -10,23 +10,26 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { useSearchDialog } from '@/context/ModalContext';
-import { Event } from '@/lib/types';
+import { fetcher } from '@/lib/client/utils';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 export default function SearchDialog() {
   const { isSearchOpen, onSearchClose } = useSearchDialog();
-  const [events, setEvents] = useState<Event[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    fetch('/api/events')
-      .then((resp) => resp.json())
-      .then((data) => setEvents(data));
-  }, []);
+  const { data: events } = useSWR('/api/events', fetcher, { fallbackData: [] });
+  const { data: hostProfiles } = useSWR('/api/hosts/profile', fetcher, {
+    fallbackData: [],
+  });
 
-  function handleOnSelect(eventId: string) {
+  function handleOnSelectEvent(eventId: string) {
     router.push(`/event/${eventId}`);
+    onSearchClose();
+  }
+
+  function handleOnSelectHost(hostId: string) {
+    router.push(`/host/${hostId}`);
     onSearchClose();
   }
 
@@ -41,16 +44,34 @@ export default function SearchDialog() {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Events">
-          {events.length &&
-            events.map((event) => (
+          {events.length ? (
+            events.map((event: any) => (
               <CommandItem
                 key={event.eventId}
-                onSelect={() => handleOnSelect(event.eventId)}
+                onSelect={() => handleOnSelectEvent(event.eventId)}
                 value={event.title}
               >
                 {event.title}
               </CommandItem>
-            ))}
+            ))
+          ) : (
+            <div>Loading...</div>
+          )}
+        </CommandGroup>
+        <CommandGroup heading="Hosts">
+          {hostProfiles.length ? (
+            hostProfiles.map((profile: any) => (
+              <CommandItem
+                key={profile.hostId}
+                onSelect={() => handleOnSelectHost(profile.hostId)}
+                value={profile.name}
+              >
+                {profile.name}
+              </CommandItem>
+            ))
+          ) : (
+            <div>Loading...</div>
+          )}
         </CommandGroup>
         <CommandSeparator />
       </CommandList>

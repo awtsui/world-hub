@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 export interface Option {
   value: string;
   label: string;
+  key: string;
   disable?: boolean;
   /** fixed option that can't be removed. */
   fixed?: boolean;
@@ -226,7 +227,10 @@ const MultipleSelector = React.forwardRef<
               return;
             }
             setInputValue('');
-            const newOptions = [...selected, { value, label: value }];
+            const newOptions = [
+              ...selected,
+              { value, label: value, key: value },
+            ];
             setSelected(newOptions);
             onChange?.(newOptions);
           }}

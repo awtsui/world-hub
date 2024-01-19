@@ -31,10 +31,10 @@ const acceptedFileTypes = [
 
 const MAX_FILE_SIZE = 1024 * 1024 * 10;
 
-const SESSION_TOKEN_COOKIE =
-  process.env.NODE_ENV == 'development'
-    ? 'next-auth.session-token'
-    : '__Secure-next-auth.session-token';
+// const SESSION_TOKEN_COOKIE =
+//   NODE_ENV == 'development'
+//     ? 'next-auth.session-token'
+//     : '__Secure-next-auth.session-token';
 
 function generateFileName(bytes = 32) {
   return crypto.randomBytes(bytes).toString('hex');
@@ -46,13 +46,6 @@ export async function GET(request: NextRequest) {
   const session: ClientSession = await mongoose.startSession();
   session.startTransaction();
   try {
-    const cookies = request.cookies;
-    const isAuthorized = !!cookies.get(SESSION_TOKEN_COOKIE);
-
-    if (!isAuthorized) {
-      throw Error('Not authorized');
-    }
-
     const searchParams = request.nextUrl.searchParams;
     const fileType = searchParams.get('type');
     const fileSize = searchParams.get('size');
@@ -87,7 +80,6 @@ export async function GET(request: NextRequest) {
     const newMedia = await Media.create(
       [
         {
-          userId: hostId,
           type: fileType,
           url: presignedUrl.split('?')[0],
         },
@@ -98,17 +90,16 @@ export async function GET(request: NextRequest) {
     await session.commitTransaction();
 
     return NextResponse.json(
-      { presignedUrl, mediaId: newMedia[0].id.toString() },
+      { presignedUrl, mediaId: newMedia[0]._id.toString() },
       { status: 200 }
     );
   } catch (error) {
     await session.abortTransaction();
-    console.log(error);
     return NextResponse.json(
       { error: `Internal Server Error (/api/upload): ${error}` },
       { status: 500 }
     );
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }

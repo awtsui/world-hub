@@ -1,12 +1,11 @@
 import { MainCategory, SubCategory, Event } from '@/lib/types';
-import EventCard from './EventCard';
 import Link from 'next/link';
 import EventsCarousel from '../EventsCarousel';
 
 type CategorySectionProps = {
   category: MainCategory;
   subCategory?: SubCategory;
-  events: Event[] | null;
+  events: Event[];
 };
 
 export default function CategorySection({
@@ -14,27 +13,29 @@ export default function CategorySection({
   subCategory,
   events,
 }: CategorySectionProps) {
-  if (!events) return null;
+  const isCategory = !subCategory;
 
   const filteredEvents = events.filter((event) => {
-    if (subCategory) {
-      return event.subCategory === subCategory.name;
-    } else {
+    if (isCategory) {
       return event.category === category.name;
+    } else {
+      return event.subCategory === subCategory.name;
     }
   });
 
   return (
     <div className="flex flex-col">
       {filteredEvents.length > 0 && (
-        <div className="pb-8">
+        <div className="px-5 py-3">
           <Link
-            className="text-xl font-medium"
-            href={`/marketplace/${category.id}`}
+            className="text-2xl font-bold pl-3"
+            href={`/marketplace/${category.id}${
+              !isCategory ? `/${subCategory.id}` : ''
+            }`}
           >
-            {category.name}
+            {isCategory ? category.name : subCategory.name}
           </Link>
-          <div className="px-5 py-5">
+          <div className="pt-2">
             <EventsCarousel events={filteredEvents} />
           </div>
         </div>

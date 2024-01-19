@@ -1,56 +1,78 @@
 import { z } from 'zod';
 import { HostProfileDataRequestBodySchema } from '@/lib/zod/apischema';
-import dbConnect from './mongoosedb';
 import HostProfile from '../models/HostProfile';
-import mongoose, { ClientSession } from 'mongoose';
+import { ClientSession } from 'mongoose';
+import Media from '../models/Media';
+import { deleteMedia } from './medias';
 
 type HostProfileDataRequestBody = z.infer<
   typeof HostProfileDataRequestBodySchema
 >;
 
-export async function updateHostProfile(data: HostProfileDataRequestBody) {
-  await dbConnect();
-
-  const session: ClientSession = await mongoose.startSession();
-  session.startTransaction();
-
-  const { hostId, name, biography } = data;
+export async function updateHostProfile(
+  data: HostProfileDataRequestBody,
+  tokenId: string,
+  session?: ClientSession
+) {
+  const { hostId, profile } = data;
 
   try {
-    const hostProfile = await HostProfile.findOne({ hostId });
+    if (tokenId !== hostId) {
+      throw Error('Not authorized to update this profile');
+    }
+
+    const hostProfile = await HostProfile.findOne({ hostId }, null, {
+      session,
+    });
 
     if (!hostProfile) {
       throw Error('Host does not exist');
     }
 
-    if (name) {
+    if (profile.name) {
       await HostProfile.updateOne(
         { hostId },
         {
-          name,
+          name: profile.name,
         },
         { session }
       );
     }
 
-    if (biography) {
+    if (profile.biography) {
       await HostProfile.updateOne(
         { hostId },
         {
-          biography,
+          biography: profile.biography,
         },
         { session }
       );
     }
 
-    await session.commitTransaction();
+    if (profile.mediaId) {
+      if (hostProfile.mediaId) {
+        const deleteMediaResp = await deleteMedia(hostProfile.mediaId, session);
+        if (!deleteMediaResp.success) {
+          throw Error('Failed to delete media');
+        }
+      }
+      const media = await Media.findById(profile.mediaId);
+
+      if (!media) {
+        throw Error('Media does not exist');
+      }
+
+      await HostProfile.updateOne(
+        { hostId },
+        { mediaId: profile.mediaId },
+        {
+          session,
+        }
+      );
+    }
 
     return { success: true, hostId };
   } catch (error) {
-    await session.abortTransaction();
-    console.log(error);
-    return { success: false, error: error as string };
-  } finally {
-    session.endSession();
+    return { success: false, error: JSON.stringify(error) };
   }
 }

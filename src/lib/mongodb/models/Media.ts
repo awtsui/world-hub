@@ -3,8 +3,7 @@ import { Schema, model, models } from 'mongoose';
 
 const MediaSchema = new Schema<IMedia>(
   {
-    userId: String,
-    eventId: String,
+    description: String,
     type: String,
     url: String,
   },

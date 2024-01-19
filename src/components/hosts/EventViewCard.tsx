@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Event, Venue } from '@/lib/types';
+import { Event, EventApprovalStatus, Venue } from '@/lib/types';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import DateFormatter from '../DateFormatter';
@@ -39,59 +39,71 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { data: venueData } = useSWR(
-    `/api/venues?id=${event.venueId}`,
-    fetcher
-  );
+  const { data: venue } = useSWR(`/api/venues?id=${event.venueId}`, fetcher);
+
+  const { data: media } = useSWR(`/api/medias?id=${event.mediaId}`, fetcher);
 
   async function handleDeleteClick() {
     try {
-      fetch(`/api/events?id=${event.eventId}`, {
+      const deleteEventResp = await fetch(`/api/events?id=${event.eventId}`, {
         method: 'DELETE',
-      })
-        .then((resp) => resp.json())
-        .then((data) => {
-          router.push(pathname);
-          router.refresh();
-          setSuccess('Event successfully deleted', 3);
-        });
+      });
+
+      if (!deleteEventResp.ok) {
+        throw Error('Failed to delete event');
+      }
+
+      const revalidateEventResp = await fetch('/api/revalidate?tag=event');
+
+      if (!revalidateEventResp.ok) {
+        throw Error('Failed to revalidate event');
+      }
+
+      router.push(pathname);
+      router.refresh();
+      setSuccess('Event successfully deleted', 3);
     } catch (error) {
       setError(JSON.stringify(error), 3);
     }
   }
 
+  const borderColor =
+    event.approvalStatus === EventApprovalStatus.Rejected
+      ? 'border-red-600'
+      : event.approvalStatus === EventApprovalStatus.Pending
+      ? 'border-amber-400'
+      : 'border-green-500';
+
+  if (!venue || !media) {
+    return null;
+  }
+
   return (
-    <Card {...props} className="w-80 h-auto">
-      <CardHeader>
-        <CardTitle>{event.title}</CardTitle>
-        {venueData && (
+    <Card {...props} className={`w-80 h-auto border-2 ${borderColor}`}>
+      <CardHeader className="pb-2">
+        <div className="flex justify-between">
+          <CardTitle>{event.title}</CardTitle>
+          <p className={`font-medium`}>{event.approvalStatus}</p>
+        </div>
+        {venue && (
           <CardDescription>
-            {venueData.city}, {venueData.state} - {venueData.name}
+            {venue.city}, {venue.state} - {venue.name}
           </CardDescription>
         )}
         <CardDescription>
           <DateFormatter date={new Date(event.datetime)} />
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative w-full h-52">
         <Image
-          src={event.thumbnailUrl}
+          src={media.url}
           alt={event.title}
-          layout="responsive"
-          objectFit="cover"
-          className="w-auto h-auto"
-          width={1}
-          height={1}
+          fill
+          className="px-3"
+          style={{ objectFit: 'contain' }}
         />
       </CardContent>
       <CardFooter className="flex justify-between">
-        <a
-          target="_blank"
-          href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/event/${event.eventId}`}
-          rel="noopener noreferrer"
-        >
-          <Button variant="outline">View in Marketplace</Button>
-        </a>
         <Dialog>
           <DialogTrigger asChild>
             <Button>Edit</Button>
@@ -141,6 +153,15 @@ export default function EventViewCard({ event, ...props }: EventViewCardProps) {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        {event.approvalStatus === EventApprovalStatus.Approved && (
+          <a
+            target="_blank"
+            href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/event/${event.eventId}`}
+            rel="noopener noreferrer"
+          >
+            <Button variant="outline">View in Marketplace</Button>
+          </a>
+        )}
       </CardFooter>
     </Card>
   );

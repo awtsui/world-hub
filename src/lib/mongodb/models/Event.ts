@@ -1,5 +1,9 @@
 import { Schema, model, models } from 'mongoose';
-import { IEvent } from '@/lib/types';
+import {
+  EventApprovalStatus,
+  IEvent,
+  WorldIdVerificationLevel,
+} from '@/lib/types';
 import { Decimal128 } from 'mongodb';
 
 const EventSchema = new Schema<IEvent>(
@@ -10,7 +14,7 @@ const EventSchema = new Schema<IEvent>(
     hostId: String,
     category: String,
     subCategory: String,
-    thumbnailUrl: String,
+    mediaId: String,
     datetime: Date,
     currency: String,
     description: String,
@@ -21,10 +25,21 @@ const EventSchema = new Schema<IEvent>(
       {
         label: String,
         price: Decimal128,
+        quantity: Number,
+        ticketsPurchased: Number,
       },
     ],
-    ticketsPurchased: Number,
-    ticketQuantity: Number,
+    approvalStatus: {
+      type: String,
+      enum: EventApprovalStatus,
+      default: EventApprovalStatus.Pending,
+    },
+    totalSold: Number,
+    verificationLevel: {
+      type: String,
+      enum: WorldIdVerificationLevel,
+      default: WorldIdVerificationLevel.Orb,
+    },
   },
   { collection: 'events' }
 );

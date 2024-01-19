@@ -6,145 +6,106 @@ import {
   EmbeddedCheckout,
 } from '@stripe/react-stripe-js';
 import { useCart } from '../../../context/CartContext';
-import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Event } from '@/lib/types';
+import { Event, WorldIdVerificationLevel } from '@/lib/types';
 import { useRouter } from 'next/navigation';
-import { handleFetchError } from '@/lib/client/utils';
 import { useAlertDialog } from '@/context/ModalContext';
-
-// TODO: redo url creation so localhost is not hard coded
-
-// TODO: double check that tickets being purchased to not exceed event ticket quantity
+import useFetchEvents from '@/hooks/useFetchEvents';
+import useFetchProfile from '@/hooks/useFetchProfile';
+import useFetchOrders from '@/hooks/useFetchOrders';
+import useFetchStripeSession from '@/hooks/useFetchStripeSession';
 
 export default function CheckoutPage() {
   const stripePromise = getStripe();
-  const [clientSecret, setClientSecret] = useState('');
   const { tickets, resetCart } = useCart();
   const { data: session } = useSession();
   const router = useRouter();
   const { setError } = useAlertDialog();
-  const [eventLimits, setEventLimits] = useState<Record<string, number>>({});
-  const [pastRelevantTickets, setPastRelevantTickets] = useState<
-    Record<string, number>
-  >({});
-  const [isEligibleForCheckout, setIsEligibleForCheckout] = useState(false);
+
+  if (tickets && Object.values(tickets).length === 0) {
+    setError('No tickets to checkout', 3);
+    router.push('/marketplace');
+  }
+
+  if (!session) {
+    return <div>Loading...</div>;
+  }
 
   // 1. Gather list of events from user cart
   const eventIds: string[] = Object.values(tickets).map(
     (ticket) => ticket.eventId
   );
 
-  useEffect(() => {
-    // 2. Gather event ticket restrictions
-    const eventsSearchUrl = new URL('http:/localhost:3000/api/events');
-    eventIds.forEach((id) => {
-      eventsSearchUrl.searchParams.set('id', id);
-    });
-    fetch(eventsSearchUrl)
-      .then((resp) => resp.json())
-      .then((data) => {
-        const eventLimits: Record<string, number> = {};
-        data.forEach((event: Event) => {
-          eventLimits[event.eventId] = event.purchaseLimit;
-        });
-        setEventLimits(eventLimits);
-      })
-      .catch((error) => handleFetchError(error));
+  // 2. Gather event ticket restrictions and redirect if user verification level does not meet the events requirements
+  const { events } = useFetchEvents({ eventIds });
 
-    // 3. Fetch user past orders and filter for events currently in cart
-    async function fetchRelevantOrders() {
-      try {
-        const fetchUserUrl = new URL('http:/localhost:3000/api/users');
-        fetchUserUrl.searchParams.set('id', session?.user?.id || '');
-        const fetchUserResp = await fetch(fetchUserUrl);
-        if (!fetchUserResp.ok) {
-          throw Error('Unable to retrieve user OR user does not exist');
-        }
-        const fetchUserData = await fetchUserResp.json();
-
-        const orderIds: string[] = fetchUserData.orders;
-        if (orderIds.length) {
-          const fetchOrdersUrl = new URL('http:/localhost:3000/api/orders');
-          orderIds.forEach((orderId) => {
-            fetchOrdersUrl.searchParams.set('id', orderId);
-          });
-          const fetchOrdersResp = await fetch(fetchOrdersUrl);
-          if (!fetchOrdersResp.ok) {
-            throw Error('Unable to retrieve user orders OR us');
-          }
-          const fetchOrdersData = await fetchOrdersResp.json();
-          const pastRelevantTickets: Record<string, number> = {};
-          fetchOrdersData.forEach((order: any) => {
-            order.tickets.forEach((ticket: any) => {
-              if (Object.keys(pastRelevantTickets).includes(ticket.eventId)) {
-                pastRelevantTickets[ticket.eventId] += ticket.unitAmount;
-              } else {
-                pastRelevantTickets[ticket.eventId] = ticket.unitAmount;
-              }
-            });
-          });
-          setPastRelevantTickets(pastRelevantTickets);
-        }
-      } catch (error) {
-        handleFetchError(error);
-      }
+  let isValidVerification = true;
+  const eventLimits: Record<string, number> = {};
+  events.forEach((event: Event) => {
+    eventLimits[event.eventId] = event.purchaseLimit;
+    if (
+      event.verificationLevel === WorldIdVerificationLevel.Orb &&
+      session.user &&
+      (!session.user.verificationLevel ||
+        session.user.verificationLevel === WorldIdVerificationLevel.Device)
+    ) {
+      isValidVerification = false;
     }
-    if (session?.user?.id) {
-      fetchRelevantOrders();
-    }
-  }, [session?.user?.id]);
+  });
 
-  useEffect(() => {
-    // 4. Verify if user is not making any invalid purchases
-    const remainingTicketLimits: Record<string, number> = {};
-    Object.entries(pastRelevantTickets).forEach(([key, value]) => {
-      remainingTicketLimits[key] = eventLimits[key] - value;
-    });
+  if (!isValidVerification) {
+    setError('User does not meet event verification requirements', 3);
+    resetCart();
+    router.push('/marketplace');
+  }
 
-    let isValidOrder = true;
-    Object.values(tickets).forEach((ticket) => {
-      const limitLeft =
-        remainingTicketLimits[ticket.eventId] - ticket.unitAmount;
-      if (limitLeft < 0) {
-        isValidOrder = false;
+  // 3. Fetch user past orders and filter for events currently in cart
+  const { profile } = useFetchProfile({ userId: session?.user?.id });
+
+  const { orders } = useFetchOrders({ orderIds: profile?.orders });
+
+  const pastRelevantTickets: Record<string, number> = {};
+  orders.forEach((order) => {
+    order.ticketData.forEach((ticket) => {
+      if (Object.keys(pastRelevantTickets).includes(ticket.eventId)) {
+        pastRelevantTickets[ticket.eventId] += ticket.unitAmount;
+      } else {
+        pastRelevantTickets[ticket.eventId] = ticket.unitAmount;
       }
     });
-    // 5. If invalid, prompt user to alter cart to meet restrictions and redirect to home page
-    if (!isValidOrder) {
-      setError('Order does not meet event limit restrictions', 3);
-      resetCart();
-      router.push('/marketplace');
-    } else {
-      setIsEligibleForCheckout(true);
-    }
-  }, [
-    JSON.stringify(eventLimits),
-    JSON.stringify(pastRelevantTickets),
-    resetCart,
-  ]);
+  });
 
-  useEffect(() => {
-    // 6. Request Stripe session
-    if (isEligibleForCheckout && session?.user?.id) {
-      fetch('/api/stripe/sessions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tickets: Object.values(tickets),
-          userId: session.user.id,
-        }), // TODO: Add more fields
-      })
-        .then((resp) => resp.json())
-        .then((data) => setClientSecret(data.clientSecret))
-        .catch((error) => handleFetchError(error));
+  // 4. Verify if user is not making any invalid purchases
+  const remainingTicketLimits: Record<string, number> = {};
+  Object.entries(pastRelevantTickets).forEach(([key, value]) => {
+    remainingTicketLimits[key] = eventLimits[key] - value;
+  });
+
+  let isValidOrder = true;
+  Object.values(tickets).forEach((ticket) => {
+    const limitLeft = remainingTicketLimits[ticket.eventId] - ticket.unitAmount;
+    if (limitLeft < 0) {
+      isValidOrder = false;
     }
-  }, [isEligibleForCheckout, session?.user?.id]);
+  });
+
+  // 5. If invalid, prompt user to alter cart to meet restrictions and redirect to home page
+  if (!isValidOrder) {
+    setError('Order does not meet event limit restrictions', 3);
+    resetCart();
+    router.push('/marketplace');
+  }
+
+  // 6. Request Stripe session
+  const { clientSecret } = useFetchStripeSession({
+    tickets: Object.values(tickets),
+    userId: session?.user?.id,
+    email: session?.user?.email,
+    isValidOrder,
+  });
 
   return (
-    <div>
+    <>
       {clientSecret ? (
         <EmbeddedCheckoutProvider
           stripe={stripePromise}
@@ -155,6 +116,6 @@ export default function CheckoutPage() {
       ) : (
         <div>Loading...</div>
       )}
-    </div>
+    </>
   );
 }
