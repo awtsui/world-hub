@@ -1,4 +1,4 @@
-name: Testing WorldHub Features
+name: Testing WorldHub
 
 on: [push, pull_request]
 
