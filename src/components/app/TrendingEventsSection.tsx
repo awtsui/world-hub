@@ -1,10 +1,9 @@
-import { MainCategory, SubCategory, Event } from '@/lib/types';
-import Link from 'next/link';
+import { Event } from '@/lib/types';
 import EventsCarousel from '../EventsCarousel';
 
-type TrendingEventsSectionProps = {
+interface TrendingEventsSectionProps {
   events: Event[];
-};
+}
 
 export default function TrendingEventsSection({ events }: TrendingEventsSectionProps) {
   const popularEvents = events.toSorted((a, b) => (a.totalSold > b.totalSold ? -1 : 1)).slice(0, 10);

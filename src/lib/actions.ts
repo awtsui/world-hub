@@ -52,6 +52,32 @@ export async function getEventsByIds(eventIds: string[]) {
   }
 }
 
+export async function getEventById(eventId: string) {
+  await dbConnect();
+  try {
+    const data = await Event.findOne({
+      eventId,
+    }).exec();
+    if (!data) {
+      throw Error('Event does not exist');
+    }
+    const { _id, __v, ...rest } = data._doc;
+    const formattedData = {
+      ...rest,
+      ticketTiers: data.ticketTiers.map((tier: any) => {
+        const { _id, __v, ...tierRest } = tier._doc;
+        return {
+          ...tierRest,
+          price: tier.price.toString(),
+        };
+      }),
+    };
+    return formattedData;
+  } catch (error) {
+    throw new Error(`Unable to fetch event by id: ${error}`);
+  }
+}
+
 export async function getApprovedEventsByCategory(categoryName: string) {
   await dbConnect();
   try {
@@ -154,7 +180,7 @@ export async function getAllEvents() {
 export async function getHostProfileById(hostId: string) {
   await dbConnect();
   try {
-    const data = await HostProfile.findOne({ hostId });
+    const data = await HostProfile.findOne({ hostId }).exec();
     const { _id, __v, ...rest } = data._doc;
     const formattedData = { ...rest };
     return formattedData;
@@ -169,7 +195,7 @@ export async function getHostProfileByIds(hostIds: string[]) {
     const data = await HostProfile.find({ hostId: { $in: hostIds } });
     const formattedData = data.map((profile) => {
       const { _id, __v, ...rest } = profile._doc;
-      return rest;
+      return { ...rest };
     });
     return formattedData;
   } catch (error) {
@@ -180,7 +206,7 @@ export async function getHostProfileByIds(hostIds: string[]) {
 export async function getVenueById(venueId: string) {
   await dbConnect();
   try {
-    const data = await Venue.findOne({ venueId });
+    const data = await Venue.findOne({ venueId }).exec();
     const { _id, __v, ...rest } = data._doc;
     const formattedData = { ...rest };
     return formattedData;
@@ -192,7 +218,7 @@ export async function getVenueById(venueId: string) {
 export async function getMediaById(mediaId: string) {
   await dbConnect();
   try {
-    const data = await Media.findById(mediaId);
+    const data = await Media.findById(mediaId).exec();
     const { __v, ...rest } = data._doc;
 
     let formattedData;

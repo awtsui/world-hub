@@ -9,13 +9,20 @@ interface useFetchStripeSessionParams {
   userId?: string;
   email?: string | null;
   isValidOrder: boolean;
+  isValidVerification: boolean;
 }
 
-export default function useFetchStripeSession({ tickets, userId, email, isValidOrder }: useFetchStripeSessionParams) {
+export default function useFetchStripeSession({
+  tickets,
+  userId,
+  email,
+  isValidOrder,
+  isValidVerification,
+}: useFetchStripeSessionParams) {
   const [clientSecret, setClientSecret] = useState('');
 
   useEffect(() => {
-    if (userId && tickets && tickets.length && isValidOrder) {
+    if (userId && tickets && tickets.length && isValidOrder && isValidVerification) {
       fetch('/api/stripe/sessions', {
         method: 'POST',
         headers: {
@@ -31,7 +38,7 @@ export default function useFetchStripeSession({ tickets, userId, email, isValidO
         .then((data) => setClientSecret(data.clientSecret))
         .catch((error) => handleFetchError(error));
     }
-  }, [userId, JSON.stringify(tickets), isValidOrder, email]);
+  }, [userId, JSON.stringify(tickets), isValidOrder, email, isValidVerification]);
 
   return { clientSecret };
 }

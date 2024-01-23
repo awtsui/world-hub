@@ -1,5 +1,5 @@
 import { categories } from '@/lib/data';
-import CategorySection from '../../../components/app/CategorySection';
+import CategorySection from '@/components/app/CategorySection';
 import { Event } from '@/lib/types';
 import { getApprovedEvents } from '@/lib/actions';
 import TrendingEventsSection from '@/components/app/TrendingEventsSection';

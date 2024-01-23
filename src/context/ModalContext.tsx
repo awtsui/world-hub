@@ -52,7 +52,7 @@ interface AlertModalContext {
   clear: () => void;
 }
 
-const AlertModalContext = createContext<AlertModalContext | null>(null);
+export const AlertModalContext = createContext<AlertModalContext | null>(null);
 
 export function useAlertDialog() {
   const context = useContext(AlertModalContext);

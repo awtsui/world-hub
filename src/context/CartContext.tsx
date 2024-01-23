@@ -29,7 +29,7 @@ interface CartContext {
   isLoading: boolean;
 }
 
-const CartContext = createContext<CartContext | null>(null);
+export const CartContext = createContext<CartContext | null>(null);
 
 interface CartProviderProps {
   children?: React.ReactNode;

@@ -1,12 +1,12 @@
 import { MainCategory, SubCategory, Event } from '@/lib/types';
 import Link from 'next/link';
-import EventsCarousel from '../EventsCarousel';
+import EventsCarousel from '@/components/EventsCarousel';
 
-type CategorySectionProps = {
+interface CategorySectionProps {
   category: MainCategory;
   subCategory?: SubCategory;
   events: Event[];
-};
+}
 
 export default function CategorySection({ category, subCategory, events }: CategorySectionProps) {
   const isCategory = !subCategory;

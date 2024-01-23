@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import Event from '../models/Event';
 import { generateUUID } from '@/lib/server/utils';
-import { CURRENCIES } from '@/lib/constants';
+import { Currency } from '@/lib/constants';
 import HostProfile from '../models/HostProfile';
 import Media from '../models/Media';
 import { EventDataRequestBodySchema } from '@/lib/zod/apischema';
@@ -48,7 +48,7 @@ export async function createEvent(data: EventDataRequestBody, tokenId: string, s
           subCategory: event.subcategory,
           mediaId: media._id.toString(),
           datetime: event.datetime,
-          currency: CURRENCIES.USD,
+          currency: Currency.USD,
           description: event.description.trim(),
           venueId: event.venueId,
           lineup: event.lineup,

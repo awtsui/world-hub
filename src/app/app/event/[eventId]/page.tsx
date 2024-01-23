@@ -1,6 +1,6 @@
-import { getEventsByIds, getHostProfileByIds, getMediaById, getVenueById } from '@/lib/actions';
+import { getEventById, getHostProfileByIds, getMediaById, getVenueById } from '@/lib/actions';
 import Image from 'next/image';
-import { Calendar, CheckCircle, Clock, MapPin, Smartphone, User } from 'lucide-react';
+import { Calendar, Clock, MapPin, User } from 'lucide-react';
 import { formatDate } from '@/lib/client/utils';
 import GoogleMapView from '@/components/app/GoogleMapView';
 import CopyToClipboard from '@/components/CopyToClipboard';
@@ -9,15 +9,14 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Link from 'next/link';
 import VerificationLevelIcon from '@/components/app/VerificationLevelIcon';
 
-type EventPageParams = {
+interface EventPageParams {
   params: {
     eventId: string;
   };
-};
+}
 
 export default async function EventPage({ params }: EventPageParams) {
-  // Replace with data fetching
-  const event = (await getEventsByIds([params.eventId]))[0];
+  const event = await getEventById(params.eventId);
   const hosts = await getHostProfileByIds(event.lineup);
   const venue = await getVenueById(event.venueId);
   const media = await getMediaById(event.mediaId);
@@ -27,14 +26,14 @@ export default async function EventPage({ params }: EventPageParams) {
   }
 
   const venueAddress = `${venue.address} ${venue.city}, ${venue.state} ${venue.zipcode}`;
-  const [date, time] = formatDate(new Date(event.datetime)).split(' at ');
+  const [date, time] = formatDate(event.datetime).split(' at ');
 
   return (
     <div className="mx-auto w-3/5 pb-12">
       <AspectRatio ratio={20 / 8}>
         <Image
           src={media.url}
-          alt={event.eventId}
+          alt={`event-banner-image-${event.eventId}`}
           fill
           style={{ objectFit: 'cover', borderRadius: '20px' }}
           className="rounded-lg"

@@ -38,3 +38,7 @@ next-env.d.ts
 # prettier
 .prettierrc
 .prettierignore
+
+# eslint
+.eslintrc.json
+.gitignore
