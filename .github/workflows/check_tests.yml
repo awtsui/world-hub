@@ -1,6 +1,6 @@
-name: Testing WorldHub Features
+name: Testing WorldHub
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   check-unit-tests:
