@@ -10,7 +10,7 @@ const TicketSchema = new Schema<ITicketWithHash>(
     isExpired: Boolean,
   },
 
-  { collection: 'tickets' }
+  { collection: 'tickets' },
 );
 
 const Ticket = models.Ticket || model('Ticket', TicketSchema);

@@ -8,9 +8,22 @@ import Host from './mongodb/models/Host';
 import HostProfile from './mongodb/models/HostProfile';
 import Venue from './mongodb/models/Venue';
 import Event from './mongodb/models/Event';
-import { EventApprovalStatus, HostApprovalStatus } from './types';
+import { EventApprovalStatus, HostApprovalStatus, Tier } from './types';
 import { revalidatePath } from 'next/cache';
 import Media from './mongodb/models/Media';
+import { getTransporter, mailOptions } from './nodemailer/utils/transporter';
+import { z } from 'zod';
+import { ContactFormSchema } from './zod/schema';
+import { generateEmailContent, isExpiredSignedUrl } from './utils';
+import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
+import { deleteMedia } from './mongodb/utils/medias';
+
+const { AWS_CLOUDFRONT_URL, AWS_CLOUDFRONT_PRIVATE_KEY, AWS_CLOUDFRONT_KEY_PAIR_ID } = process.env;
+if (!AWS_CLOUDFRONT_URL) throw new Error('AWS_CLOUDFRONT_URL not defined');
+if (!AWS_CLOUDFRONT_PRIVATE_KEY) throw new Error('AWS_CLOUDFRONT_PRIVATE_KEY not defined');
+if (!AWS_CLOUDFRONT_KEY_PAIR_ID) throw new Error('AWS_CLOUDFRONT_KEY_PAIR_ID not defined');
+
+type ContactForm = z.infer<typeof ContactFormSchema>;
 
 export async function getEventsByIds(eventIds: string[]) {
   await dbConnect();
@@ -24,12 +37,13 @@ export async function getEventsByIds(eventIds: string[]) {
       const { _id, __v, ...rest } = event._doc;
       return {
         ...rest,
-        ticketTiers: event.ticketTiers.map((tier: any) => ({
-          label: tier.label,
-          price: tier.price.toString(),
-          quantity: tier.quantity,
-          ticketsPurchased: tier.ticketsPurchased,
-        })),
+        ticketTiers: event.ticketTiers.map((tier: any) => {
+          const { _id, __v, ...tierRest } = tier._doc;
+          return {
+            ...tierRest,
+            price: tier.price.toString(),
+          };
+        }),
       };
     });
     return formattedData;
@@ -50,8 +64,9 @@ export async function getApprovedEventsByCategory(categoryName: string) {
       return {
         ...rest,
         ticketTiers: event.ticketTiers.map((tier: any) => {
+          const { _id, __v, ...tierRest } = tier._doc;
           return {
-            label: tier.label,
+            ...tierRest,
             price: tier.price.toString(),
           };
         }),
@@ -75,8 +90,9 @@ export async function getApprovedEventsBySubCategory(subCategoryName: string) {
       return {
         ...rest,
         ticketTiers: event.ticketTiers.map((tier: any) => {
+          const { _id, __v, ...tierRest } = tier._doc;
           return {
-            label: tier.label,
+            ...tierRest,
             price: tier.price.toString(),
           };
         }),
@@ -99,8 +115,9 @@ export async function getApprovedEvents() {
       return {
         ...rest,
         ticketTiers: event.ticketTiers.map((tier: any) => {
+          const { _id, __v, ...tierRest } = tier._doc;
           return {
-            label: tier.label,
+            ...tierRest,
             price: tier.price.toString(),
           };
         }),
@@ -146,6 +163,20 @@ export async function getHostProfileById(hostId: string) {
   }
 }
 
+export async function getHostProfileByIds(hostIds: string[]) {
+  await dbConnect();
+  try {
+    const data = await HostProfile.find({ hostId: { $in: hostIds } });
+    const formattedData = data.map((profile) => {
+      const { _id, __v, ...rest } = profile._doc;
+      return rest;
+    });
+    return formattedData;
+  } catch (error) {
+    throw new Error(`Unable to fetch host profile by ids: ${error}`);
+  }
+}
+
 export async function getVenueById(venueId: string) {
   await dbConnect();
   try {
@@ -162,8 +193,25 @@ export async function getMediaById(mediaId: string) {
   await dbConnect();
   try {
     const data = await Media.findById(mediaId);
-    const { _id, __v, ...rest } = data._doc;
-    const formattedData = { ...rest };
+    const { __v, ...rest } = data._doc;
+
+    let formattedData;
+    if ((data.url && isExpiredSignedUrl(data.url)) || !data.url) {
+      const newUrl = getSignedUrl({
+        url: `${AWS_CLOUDFRONT_URL}/${data.fileName}`,
+        dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
+        privateKey: AWS_CLOUDFRONT_PRIVATE_KEY!,
+        keyPairId: AWS_CLOUDFRONT_KEY_PAIR_ID!,
+      });
+      formattedData = {
+        ...rest,
+        url: newUrl,
+      };
+      await Media.updateOne({ _id: mediaId }, { url: newUrl });
+    } else {
+      formattedData = { ...rest };
+    }
+
     return formattedData;
   } catch (error) {
     throw new Error(`Unable to fetch media by id: ${error}`);
@@ -276,16 +324,10 @@ export async function getAllVenues() {
   }
 }
 
-export async function updateEventApprovalStatus(
-  eventId: string,
-  status: EventApprovalStatus
-) {
+export async function updateEventApprovalStatus(eventId: string, status: EventApprovalStatus) {
   await dbConnect();
   try {
-    const event = await Event.findOneAndUpdate(
-      { eventId },
-      { approvalStatus: status }
-    );
+    const event = await Event.findOneAndUpdate({ eventId }, { approvalStatus: status });
     if (!event) {
       throw Error(`Event (${eventId}) does not exist`);
     }
@@ -297,16 +339,10 @@ export async function updateEventApprovalStatus(
   }
 }
 
-export async function updateHostAccountApprovalStatus(
-  hostId: string,
-  status: HostApprovalStatus
-) {
+export async function updateHostAccountApprovalStatus(hostId: string, status: HostApprovalStatus) {
   await dbConnect();
   try {
-    const host = await Host.findOneAndUpdate(
-      { hostId },
-      { approvalStatus: status }
-    );
+    const host = await Host.findOneAndUpdate({ hostId }, { approvalStatus: status });
     if (!host) {
       throw Error('Host does not exist');
     }
@@ -321,10 +357,14 @@ export async function deleteRejectedEvent(eventId: string) {
   await dbConnect();
   try {
     const event = await Event.findOne({ eventId });
+    if (!event) {
+      throw Error('Event does not exist');
+    }
     if (event.approvalStatus !== EventApprovalStatus.Rejected) {
       throw Error('Event must be rejected before deleted');
     }
     await Event.deleteOne({ eventId });
+    await deleteMedia(event.mediaId);
     revalidatePath('/');
   } catch (error) {
     throw Error(`Unable to delete rejected event: ${error}`);
@@ -335,13 +375,47 @@ export async function deleteRejectedHost(hostId: string) {
   await dbConnect();
   try {
     const host = await Host.findOne({ hostId });
+    if (!host) {
+      throw Error('Host does not exist');
+    }
     if (host.approvalStatus !== HostApprovalStatus.Rejected) {
       throw Error('Host must be rejected before deleted');
     }
     await Host.deleteOne({ hostId });
-    await HostProfile.deleteOne({ hostId });
+    const hostProfile = await HostProfile.findOneAndDelete({ hostId });
+    if (hostProfile.mediaId) {
+      await deleteMedia(hostProfile.mediaId);
+    }
     revalidatePath('/');
   } catch (error) {
     throw Error(`Unable to delete rejected host: ${error}`);
+  }
+}
+
+export async function sendContactFormMail(data: ContactForm) {
+  try {
+    const transporter = getTransporter();
+    transporter.sendMail({
+      ...mailOptions,
+      ...generateEmailContent(data),
+      subject: data.subject,
+    });
+  } catch (error) {
+    throw Error(`Unable to send contact form mail: ${error}`);
+  }
+}
+
+export async function deleteEvent(eventId: string) {
+  await dbConnect();
+  try {
+    const event = await Event.findOne({ eventId });
+    if (!event) {
+      throw Error('Event does not exist');
+    }
+    await Event.deleteOne({ eventId });
+    await deleteMedia(event.mediaId);
+    revalidatePath('/');
+  } catch (error) {
+    throw Error(`Unable to delete rejected event: ${error}`);
   }
 }

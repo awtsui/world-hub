@@ -34,23 +34,14 @@ export default function SearchDialog() {
   }
 
   return (
-    <CommandDialog
-      open={isSearchOpen}
-      onOpenChange={onSearchClose}
-      modal
-      defaultOpen={isSearchOpen}
-    >
+    <CommandDialog open={isSearchOpen} onOpenChange={onSearchClose} modal defaultOpen={isSearchOpen}>
       <CommandInput placeholder="Search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Events">
           {events.length ? (
             events.map((event: any) => (
-              <CommandItem
-                key={event.eventId}
-                onSelect={() => handleOnSelectEvent(event.eventId)}
-                value={event.title}
-              >
+              <CommandItem key={event.eventId} onSelect={() => handleOnSelectEvent(event.eventId)} value={event.title}>
                 {event.title}
               </CommandItem>
             ))

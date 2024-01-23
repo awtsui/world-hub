@@ -1,30 +1,20 @@
-'use client';
-
 import CreateEventButton from '@/components/hosts/CreateEventButton';
 import EventViewCard from '@/components/hosts/EventViewCard';
-import { useSession } from 'next-auth/react';
-import useSWR from 'swr';
-import { fetcher } from '@/lib/client/utils';
 import { Event } from '@/lib/types';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getEventsByIds, getHostProfileById } from '@/lib/actions';
 
-export default function HostDashboardEventsPage() {
-  const { data: session } = useSession();
+export default async function HostDashboardEventsPage() {
+  const session = await getServerSession(authOptions);
 
-  const { data: profileData, isLoading } = useSWR(
-    session?.user?.id ? `/api/hosts/profile?id=${session.user.id}` : '',
-    fetcher
-  );
+  if (!session || !session.user) {
+    return null;
+  }
 
-  const fetchEventsUrl =
-    profileData && profileData.events.length
-      ? `/api/events?${profileData.events
-          .map((eventId: any) => `id=${eventId}`)
-          .join('&')}`
-      : '';
+  const hostProfile = await getHostProfileById(session.user.id);
 
-  const { data: events } = useSWR(fetchEventsUrl, fetcher, {
-    fallbackData: [],
-  });
+  const events = await getEventsByIds(hostProfile.events);
 
   let upcomingEvents: Event[] = [];
   let pastEvents: Event[] = [];

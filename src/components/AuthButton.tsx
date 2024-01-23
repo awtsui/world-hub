@@ -20,13 +20,10 @@ interface AuthButtonProps {
   signInCallbackUrl?: string;
   signOutCallbackUrl?: string;
   menuItems?: MenuItem[];
+  imageUrl?: string;
 }
 
-export default function AuthButton({
-  signInCallbackUrl,
-  signOutCallbackUrl,
-  menuItems,
-}: AuthButtonProps) {
+export default function AuthButton({ signInCallbackUrl, signOutCallbackUrl, menuItems, imageUrl }: AuthButtonProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -46,8 +43,9 @@ export default function AuthButton({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder.png" />
+              <Avatar className="h-12 w-12 relative">
+                <AvatarImage src={imageUrl} className="object-cover" />
+                <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-opacity duration-500"></div>
                 <AvatarFallback>WH</AvatarFallback>
               </Avatar>
             </Button>
@@ -59,10 +57,7 @@ export default function AuthButton({
               <>
                 <DropdownMenuGroup>
                   {menuItems.map((menuItem) => (
-                    <DropdownMenuItem
-                      key={menuItem.label}
-                      onClick={() => router.push(menuItem.url)}
-                    >
+                    <DropdownMenuItem key={menuItem.label} onClick={() => router.push(menuItem.url)}>
                       <menuItem.icon className="mr-2 h-4 w-4" />
                       <span>{menuItem.label}</span>
                     </DropdownMenuItem>

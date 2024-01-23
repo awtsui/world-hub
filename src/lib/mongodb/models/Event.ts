@@ -1,9 +1,5 @@
 import { Schema, model, models } from 'mongoose';
-import {
-  EventApprovalStatus,
-  IEvent,
-  WorldIdVerificationLevel,
-} from '@/lib/types';
+import { EventApprovalStatus, IEvent, WorldIdVerificationLevel } from '@/lib/types';
 import { Decimal128 } from 'mongodb';
 
 const EventSchema = new Schema<IEvent>(
@@ -41,7 +37,7 @@ const EventSchema = new Schema<IEvent>(
       default: WorldIdVerificationLevel.Orb,
     },
   },
-  { collection: 'events' }
+  { collection: 'events' },
 );
 
 const Event = models.Event || model('Event', EventSchema);

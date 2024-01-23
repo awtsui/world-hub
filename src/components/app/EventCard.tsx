@@ -1,12 +1,6 @@
 import { Event } from '@/lib/types';
 import Image from 'next/image';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardTitle,
-} from '../ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardTitle } from '../ui/card';
 import DateFormatter from '../DateFormatter';
 import { getHostProfileById, getMediaById, getVenueById } from '@/lib/actions';
 import { HTMLAttributes } from 'react';
@@ -18,10 +12,10 @@ interface EventCardProps extends HTMLAttributes<HTMLDivElement> {
 
 export default async function EventCard({ event, ...props }: EventCardProps) {
   const venue = await getVenueById(event.venueId);
-  const hostProfile = await getHostProfileById(event.hostId);
+  // const hostProfile = await getHostProfileById(event.hostId);
   const media = await getMediaById(event.mediaId);
 
-  if (!venue || !hostProfile || !media) {
+  if (!venue || !media) {
     return null;
   }
 
@@ -30,18 +24,13 @@ export default async function EventCard({ event, ...props }: EventCardProps) {
       <Card {...props}>
         <CardContent className="px-3 pt-3 pb-2">
           <AspectRatio ratio={16 / 9}>
-            <Image
-              src={media.url}
-              alt={event.title}
-              fill
-              className="object-cover"
-            />
+            <Image src={media.url} alt={event.title} fill className="object-cover" />
           </AspectRatio>
         </CardContent>
         <CardFooter className="flex flex-col items-start px-3 pb-3 pt-0">
           <DateFormatter date={new Date(event.datetime)} />
-          <CardTitle>
-            {hostProfile.name}: {event.title}
+          <CardTitle className="line-clamp-1">
+            {event.title} - {event.subTitle}
           </CardTitle>
           <CardDescription>
             {venue.city}, {venue.state} - {venue.name}

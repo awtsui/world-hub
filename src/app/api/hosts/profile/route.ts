@@ -24,10 +24,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: `Internal Server Error (/api/hosts/profiles): ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error (/api/hosts/profiles): ${error}` }, { status: 500 });
   }
 }
 
@@ -44,36 +41,25 @@ export async function POST(request: NextRequest) {
       throw Error('Not authorized');
     }
 
-    const validatedReqBody =
-      HostProfileDataRequestBodySchema.safeParse(reqBody);
+    const validatedReqBody = HostProfileDataRequestBodySchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
       console.error(validatedReqBody.error.errors);
       throw Error('Invalid request body');
     }
 
-    const resp = await updateHostProfile(
-      validatedReqBody.data,
-      token.id,
-      session
-    );
+    const resp = await updateHostProfile(validatedReqBody.data, token.id, session);
 
     if (!resp.success) {
       throw Error(resp.error);
     }
     await session.commitTransaction();
 
-    return NextResponse.json(
-      { message: 'Successfully updated host profile', hostId: resp.hostId },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Successfully updated host profile', hostId: resp.hostId }, { status: 200 });
   } catch (error) {
     await session.abortTransaction();
 
-    return NextResponse.json(
-      { error: `Internal Server Error (/api/hosts/profile): ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error (/api/hosts/profile): ${error}` }, { status: 500 });
   } finally {
     await session.endSession();
   }

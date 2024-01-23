@@ -15,8 +15,7 @@ export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
     // TODO: validate reqBody
-    const validatedReqBody =
-      TicketGeneratorDataRequestBodySchema.safeParse(reqBody);
+    const validatedReqBody = TicketGeneratorDataRequestBodySchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
       console.error(validatedReqBody.error.errors);
@@ -35,14 +34,11 @@ export async function POST(request: NextRequest) {
         message: 'Ticket generation was successful',
         hash: resp.hash,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     await session.abortTransaction();
-    return NextResponse.json(
-      { error: `Internal Server Error: ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error: ${error}` }, { status: 500 });
   } finally {
     await session.endSession();
   }

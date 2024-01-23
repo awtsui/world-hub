@@ -15,10 +15,7 @@ import {
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { HostApprovalStatus } from '@/lib/types';
-import {
-  deleteRejectedHost,
-  updateHostAccountApprovalStatus,
-} from '@/lib/actions';
+import { deleteRejectedHost, updateHostAccountApprovalStatus } from '@/lib/actions';
 
 export type HostColumnData = {
   id: string;
@@ -37,10 +34,7 @@ export const defaultHostColumns = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -61,85 +55,37 @@ export const defaultHostColumns = [
     enableHiding: false,
     columns: [
       columnHelper.accessor('id', {
-        cell: (info) => (
-          <div className="text-right font-medium">
-            {truncateString(info.getValue() as string, 8)}
-          </div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Id"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{truncateString(info.getValue() as string, 8)}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Id" className="justify-end" />,
       }),
       columnHelper.accessor('approvalStatus', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
         header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Approval Status"
-            className="justify-end"
-          />
+          <DataTableFilterColumnHeader column={column} title="Approval Status" className="justify-end" />
         ),
       }),
       columnHelper.accessor('name', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Name"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Name" className="justify-end" />,
       }),
       columnHelper.accessor('email', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Email"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Email" className="justify-end" />,
       }),
       columnHelper.accessor('biography', {
-        cell: (info) => (
-          <div className="text-right font-medium">
-            {truncateString(info.getValue() as string, 30)}
-          </div>
-        ),
+        cell: (info) => <div className="text-right font-medium">{truncateString(info.getValue() as string, 30)}</div>,
         header: () => <p className="text-right font-medium">Biography</p>,
       }),
       columnHelper.accessor('mediaId', {
-        cell: (info) => (
-          <div className="text-right font-medium">
-            {truncateString(info.getValue() as string, 8)}
-          </div>
-        ),
+        cell: (info) => <div className="text-right font-medium">{truncateString(info.getValue() as string, 8)}</div>,
         header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Media Id"
-            className="justify-end"
-          />
+          <DataTableFilterColumnHeader column={column} title="Media Id" className="justify-end" />
         ),
       }),
       columnHelper.accessor('events', {
         cell: (info) => {
           const events = info.getValue() as string[];
-          return (
-            <div className="text-right font-medium">
-              {events.toSorted().join(', ')}
-            </div>
-          );
+          return <div className="text-right font-medium">{events.toSorted().join(', ')}</div>;
         },
         header: () => <div className="text-right">Events</div>,
       }),
@@ -162,36 +108,18 @@ export const defaultHostColumns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(host.id)}
-            >
-              Copy host ID
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(host.email)}
-            >
-              Copy email
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(host.id)}>Copy host ID</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(host.email)}>Copy email</DropdownMenuItem>
             {row.getValue('approvalStatus') === HostApprovalStatus.Pending && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() =>
-                    updateHostAccountApprovalStatus(
-                      row.getValue('id'),
-                      HostApprovalStatus.Approved
-                    )
-                  }
+                  onClick={() => updateHostAccountApprovalStatus(row.getValue('id'), HostApprovalStatus.Approved)}
                 >
                   Approve
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() =>
-                    updateHostAccountApprovalStatus(
-                      row.getValue('id'),
-                      HostApprovalStatus.Rejected
-                    )
-                  }
+                  onClick={() => updateHostAccountApprovalStatus(row.getValue('id'), HostApprovalStatus.Rejected)}
                 >
                   Reject
                 </DropdownMenuItem>

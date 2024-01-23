@@ -3,14 +3,7 @@ import { useAlertDialog } from '@/context/ModalContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { usePathname, useRouter } from 'next/navigation';
@@ -25,9 +18,7 @@ interface UpdateUserAccountFormProps {
   user: User;
 }
 
-export default function UpdateUserAccountForm({
-  user,
-}: UpdateUserAccountFormProps) {
+export default function UpdateUserAccountForm({ user }: UpdateUserAccountFormProps) {
   const { setError, setSuccess } = useAlertDialog();
   const pathname = usePathname();
   const router = useRouter();
@@ -78,21 +69,13 @@ export default function UpdateUserAccountForm({
   }
   return (
     <Form {...form}>
-      <form
-        onSubmit={handleSubmit(processForm)}
-        onReset={() => reset()}
-        className="w-full p-2"
-      >
+      <form onSubmit={handleSubmit(processForm)} onReset={() => reset()} className="w-full p-2">
         <div className="flex items-center py-4 gap-2">
           <div className="space-y-2 flex-1">
             <p className="text-lg font-bold">Profile</p>
             <p className="text-sm">View and update your account details</p>
           </div>
-          <Button
-            variant="secondary"
-            disabled={!formState.isDirty}
-            type="reset"
-          >
+          <Button variant="secondary" disabled={!formState.isDirty} type="reset">
             Reset
           </Button>
           <Button type="submit" disabled={!formState.isDirty}>

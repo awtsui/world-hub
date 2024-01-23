@@ -15,7 +15,7 @@ export default function ChangeProfilePictureDialog({
 }: ChangeProfilePictureDialogProps) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogContent className="w-[200px]">
+      <DialogContent>
         <DialogHeader className="items-center">
           <DialogTitle>Choose a new profile picture</DialogTitle>
         </DialogHeader>

@@ -30,18 +30,11 @@ export default function CheckoutSuccessPage() {
   const URL = sessionId ? `/api/stripe/sessions/?id=${sessionId}` : '';
   const { data: sessionData } = useSWR(URL, fetcher);
 
-  const { data: order } = useSWR(
-    sessionData ? `/api/orders?id=${sessionData.order_id}` : '',
-    fetcher
-  );
+  const { data: order } = useSWR(sessionData ? `/api/orders?id=${sessionData.order_id}` : '', fetcher);
 
   const { data: tickets } = useSWR(
-    order && order[0].tickets
-      ? `/api/tickets?${order[0].tickets
-          .map((id: string) => `id=${id}`)
-          .join('&')}`
-      : '',
-    fetcher
+    order && order[0].tickets ? `/api/tickets?${order[0].tickets.map((id: string) => `id=${id}`).join('&')}` : '',
+    fetcher,
   );
 
   if (session?.user?.id && order && session.user.id !== order[0].userId) {
@@ -78,16 +71,10 @@ export default function CheckoutSuccessPage() {
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <Button
-            onClick={() => router.push('/marketplace')}
-            variant={'secondary'}
-          >
+          <Button onClick={() => router.push('/marketplace')} variant={'secondary'}>
             Back to Marketplace
           </Button>
-          <ReactToPrint
-            trigger={() => <Button>Download Tickets</Button>}
-            content={() => ticketSectionRef.current}
-          />
+          <ReactToPrint trigger={() => <Button>Download Tickets</Button>} content={() => ticketSectionRef.current} />
         </div>
       </div>
 

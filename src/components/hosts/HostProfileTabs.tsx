@@ -15,18 +15,15 @@ interface HostProfileTabsProps {
   tab: string | null;
 }
 
-export default function HostProfileTabs({
-  hostProfile,
-  tab,
-}: HostProfileTabsProps) {
+export default function HostProfileTabs({ hostProfile, tab }: HostProfileTabsProps) {
   const [tabValue, setTabValue] = useState(tab ?? 'profile');
   const router = useRouter();
   const pathname = usePathname();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: media } = useSWR(
-    `/api/medias?id=${hostProfile.mediaId}`,
-    fetcher
+    hostProfile && hostProfile.mediaId ? `/api/medias?id=${hostProfile.mediaId}` : '',
+    fetcher,
   );
 
   useEffect(() => {
@@ -40,27 +37,15 @@ export default function HostProfileTabs({
     router.push(`${pathname}?tab=${value}`);
   };
 
-  if (!media) {
-    return null;
-  }
-
   return (
-    <Tabs
-      value={tabValue}
-      onValueChange={onTabChange}
-      defaultValue="profile"
-      className="w-1/2"
-    >
+    <Tabs value={tabValue} onValueChange={onTabChange} defaultValue="profile" className="w-1/2">
       <TabsList>
         <TabsTrigger value="profile">Profile</TabsTrigger>
         <TabsTrigger value="notifications">Notifications</TabsTrigger>
       </TabsList>
       <TabsContent value="profile">
         <div className="pt-6">
-          <ProfilePictureDropdownMenu
-            media={media}
-            setIsDialogOpen={setIsDialogOpen}
-          />
+          <ProfilePictureDropdownMenu media={media} setIsDialogOpen={setIsDialogOpen} />
           <ChangeProfilePictureDialog
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}

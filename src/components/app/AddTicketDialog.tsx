@@ -33,19 +33,14 @@ export default function AddTicketDialog({ event }: AddTicketDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          onClick={() => setSelectedTicket(null)}
-          disabled={!isValidVerificationLevel}
-        >
+        <Button onClick={() => setSelectedTicket(null)} disabled={!isValidVerificationLevel}>
           Purchase a ticket
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-2xl">{event.title}</DialogTitle>
-          <DialogDescription className="text-md">
-            {event.subTitle}
-          </DialogDescription>
+          <DialogDescription className="text-md">{event.subTitle}</DialogDescription>
         </DialogHeader>
         <div>
           <p>Tickets Available</p>
@@ -55,9 +50,7 @@ export default function AddTicketDialog({ event }: AddTicketDialogProps) {
                 key={tier.label}
                 variant="outline"
                 className={`flex w-full justify-between px-4 py-2 outline outline-1 rounded-md ${
-                  selectedTicket?.label === tier.label
-                    ? 'bg-slate-100'
-                    : 'bg-white'
+                  selectedTicket?.label === tier.label ? 'bg-slate-100' : 'bg-white'
                 }`}
                 onClick={() => setSelectedTicket(tier)}
               >
@@ -70,11 +63,7 @@ export default function AddTicketDialog({ event }: AddTicketDialogProps) {
         <DialogFooter>
           {selectedTicket && (
             <DialogClose asChild>
-              <AddTicketButton
-                event={event}
-                tier={selectedTicket}
-                setOpen={setOpen}
-              />
+              <AddTicketButton event={event} tier={selectedTicket} setOpen={setOpen} />
             </DialogClose>
           )}
         </DialogFooter>

@@ -17,11 +17,7 @@ interface EventsViewDrawerProps {
   label: string;
 }
 
-export default function EventsViewDrawer({
-  events,
-  label,
-  hostProfile,
-}: EventsViewDrawerProps) {
+export default function EventViewDrawer({ events, label, hostProfile }: EventsViewDrawerProps) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -32,9 +28,7 @@ export default function EventsViewDrawer({
       <DrawerContent>
         <DrawerHeader className="mx-auto">
           <DrawerTitle className="text-center">{label}</DrawerTitle>
-          <DrawerDescription className="text-center">
-            Explore {hostProfile.name}'s future shows
-          </DrawerDescription>
+          <DrawerDescription className="text-center">Explore {hostProfile.name}&apos;s future shows</DrawerDescription>
         </DrawerHeader>
         <div className="px-16 pb-12">
           <EventsCarousel events={events} />

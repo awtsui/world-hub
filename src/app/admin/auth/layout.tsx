@@ -1,10 +1,6 @@
 import AdminAuthNavbar from '@/components/admin/AdminAuthNavbar';
 
-export default async function HostsAuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function HostsAuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AdminAuthNavbar />

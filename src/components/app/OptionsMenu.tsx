@@ -5,23 +5,15 @@ import { categories } from '@/lib/data';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-export default function OptionsMenu({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
+export default function OptionsMenu({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
   return (
-    <div
-      className={cn('flex items-center space-x-4 lg:space-x-6', className)}
-      {...props}
-    >
+    <div className={cn('flex items-center space-x-4 lg:space-x-6', className)} {...props}>
       <Link
         href="/marketplace"
         className={cn(
           'text-md font-medium transition-colors hover:text-primary',
-          pathname === '/marketplace'
-            ? 'text-black dark:text-white'
-            : 'text-muted-foreground'
+          pathname === '/marketplace' ? 'text-black dark:text-white' : 'text-muted-foreground',
         )}
       >
         Home
@@ -32,9 +24,7 @@ export default function OptionsMenu({
           href={`/marketplace/${category.id}`}
           className={cn(
             'text-md font-medium transition-colors hover:text-primary',
-            pathname === `/marketplace/${category.id}`
-              ? 'text-black dark:text-white'
-              : 'text-muted-foreground'
+            pathname === `/marketplace/${category.id}` ? 'text-black dark:text-white' : 'text-muted-foreground',
           )}
         >
           {category.name}

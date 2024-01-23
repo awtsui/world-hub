@@ -1,7 +1,4 @@
-import {
-  HostColumnData,
-  defaultHostColumns,
-} from '@/components/admin/HostColumns';
+import { HostColumnData, defaultHostColumns } from '@/components/admin/HostColumns';
 import { DataTable } from '@/components/ui/data-table';
 import { getAllHostProfiles, getAllHosts } from '@/lib/actions';
 
@@ -12,9 +9,7 @@ export default async function AdminManageHostsPage() {
   let hostData: HostColumnData[] = [];
 
   for (let i = 0; i < hosts.length; i++) {
-    const corrHostProfile = hostProfiles.find(
-      (profile: any) => profile.hostId === hosts[i].hostId
-    );
+    const corrHostProfile = hostProfiles.find((profile: any) => profile.hostId === hosts[i].hostId);
     hostData.push({
       id: hosts[i].hostId,
       name: hosts[i].name,

@@ -1,7 +1,7 @@
 import { CredentialsSignUpFormSchema } from '@/lib/zod/schema';
 import { z } from 'zod';
 import { compareSync, hashSync } from 'bcrypt-ts';
-import { getUniqueAdminId } from '@/lib/server/utils';
+import { generateUUID } from '@/lib/server/utils';
 import { ClientSession } from 'mongoose';
 import { ADMIN_HASH_SALT } from '@/lib/constants';
 import dbConnect from './mongoosedb';
@@ -16,12 +16,10 @@ export async function signIn(form: Record<'email' | 'password', string>) {
     const password = form.password.trim();
 
     // Check if email and password are not empty.
-    if (email === '' || password === '')
-      throw { error: 'Fields can not be empty !' };
+    if (email === '' || password === '') throw { error: 'Fields can not be empty !' };
 
     // Check if email is valid.
-    const regEx =
-      /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
+    const regEx = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
 
     if (!email.match(regEx)) throw { error: 'Email is not valid !' };
 
@@ -43,10 +41,7 @@ export async function signIn(form: Record<'email' | 'password', string>) {
   }
 }
 
-export async function signUp(
-  form: CredentialsSignUpForm,
-  session?: ClientSession
-) {
+export async function signUp(form: CredentialsSignUpForm, session?: ClientSession) {
   try {
     const name = form.name.trim();
     const email = form.email.trim();
@@ -60,8 +55,7 @@ export async function signUp(
     if (email === '') return { error: 'Email must not be empty !' };
 
     // Check if email is valid.
-    const regEx =
-      /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
+    const regEx = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
 
     if (!email.match(regEx)) return { error: 'Email is not valid !' };
 
@@ -70,23 +64,21 @@ export async function signUp(
         email,
       },
       null,
-      { session }
+      { session },
     );
 
     if (existingHost) return { error: 'Email already taken!' };
 
     // Check if passwords are empty.
-    if (password === '' || confirmPassword === '')
-      return { error: 'Passwords must not be empty !' };
+    if (password === '' || confirmPassword === '') return { error: 'Passwords must not be empty !' };
 
     // Check if password are identical.
-    if (password !== confirmPassword)
-      return { error: 'Passwords should be identical !' };
+    if (password !== confirmPassword) return { error: 'Passwords should be identical !' };
 
     // Hash the password.
     password = hashSync(password, ADMIN_HASH_SALT);
 
-    const adminId = await getUniqueAdminId();
+    const adminId = generateUUID();
 
     const newAdmin = await Admin.create(
       [
@@ -97,7 +89,7 @@ export async function signUp(
           password,
         },
       ],
-      { session }
+      { session },
     );
 
     return { success: true, id: adminId };

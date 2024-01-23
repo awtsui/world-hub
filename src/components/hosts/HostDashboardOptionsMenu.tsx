@@ -4,10 +4,7 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
-export default function HostDashboardOptionsMenu({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
+export default function HostDashboardOptionsMenu({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
 
   const routes = [
@@ -37,19 +34,14 @@ export default function HostDashboardOptionsMenu({
     },
   ];
   return (
-    <div
-      className={cn('flex items-center space-x-4 lg:space-x-6', className)}
-      {...props}
-    >
+    <div className={cn('flex items-center space-x-4 lg:space-x-6', className)} {...props}>
       {routes.map((route) => (
         <Link
           key={route.href}
           href={route.href}
           className={cn(
             'text-md font-medium transition-colors hover:text-primary',
-            route.active
-              ? 'text-black dark:text-white'
-              : 'text-muted-foreground'
+            route.active ? 'text-black dark:text-white' : 'text-muted-foreground',
           )}
         >
           {route.label}

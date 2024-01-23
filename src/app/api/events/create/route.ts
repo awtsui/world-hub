@@ -36,14 +36,11 @@ export async function POST(request: NextRequest) {
       { message: 'Event successfully created!', eventId: resp.eventId },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     await session.abortTransaction();
-    return NextResponse.json(
-      { error: `Internal Server Error (/api/events/create): ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error (/api/events/create): ${error}` }, { status: 500 });
   } finally {
     await session.endSession();
   }

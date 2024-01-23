@@ -71,28 +71,29 @@ export function AlertModalProvider({ children }: AlertModalProviderProps) {
   const [alert, setAlert] = useState(AlertStatus.None);
   const [alertText, setAlertText] = useState('');
 
-  function createSetCallback(alertType: AlertStatus) {
-    return useCallback((text: string, timeout?: number) => {
-      setAlertText(text);
-      setAlert(alertType);
-      setTimeout(
-        () => {
-          setAlert(AlertStatus.None);
-        },
-        timeout ? timeout * 1000 : 3000
-      );
-    }, []);
+  function useCreateSetCallback(alertType: AlertStatus) {
+    return useCallback(
+      (text: string, timeout?: number) => {
+        setAlertText(text);
+        setAlert(alertType);
+        setTimeout(
+          () => {
+            setAlert(AlertStatus.None);
+          },
+          timeout ? timeout * 1000 : 3000,
+        );
+      },
+      [alertType],
+    );
   }
 
-  const setSuccess = createSetCallback(AlertStatus.Success);
-  const setError = createSetCallback(AlertStatus.Error);
-  const setNotif = createSetCallback(AlertStatus.Notif);
+  const setSuccess = useCreateSetCallback(AlertStatus.Success);
+  const setError = useCreateSetCallback(AlertStatus.Error);
+  const setNotif = useCreateSetCallback(AlertStatus.Notif);
   const clear = useCallback(() => setAlert(AlertStatus.None), []);
 
   return (
-    <AlertModalContext.Provider
-      value={{ alert, alertText, setSuccess, setNotif, setError, clear }}
-    >
+    <AlertModalContext.Provider value={{ alert, alertText, setSuccess, setNotif, setError, clear }}>
       {children}
     </AlertModalContext.Provider>
   );

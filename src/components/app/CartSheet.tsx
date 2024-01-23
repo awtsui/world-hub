@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '../ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '../ui/sheet';
 import { X } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { Button } from '../ui/button';
@@ -22,21 +15,14 @@ export default function CartSheet() {
 
   const subTotal = Object.values(tickets).reduce(
     (total, item) => total.plus(Big(item.price).times(item.unitAmount)),
-    Big('0.0')
+    Big('0.0'),
   );
 
   const isDisabled = tickets && !Object.values(tickets).length;
 
   return (
-    <Sheet
-      open={isCartOpen}
-      onOpenChange={onCartClose}
-      defaultOpen={isCartOpen}
-    >
-      <SheetContent
-        side="right"
-        className="flex flex-col h-full w-full space-y-4 px-3 py-6 "
-      >
+    <Sheet open={isCartOpen} onOpenChange={onCartClose} defaultOpen={isCartOpen}>
+      <SheetContent side="right" className="flex flex-col h-full w-full space-y-4 px-3 py-6 ">
         <SheetHeader>
           <SheetTitle className="text-center">Shopping Cart</SheetTitle>
         </SheetHeader>
@@ -87,19 +73,11 @@ export default function CartSheet() {
           </div>
           <div className="flex gap-2">
             <Link href="/cart" className="w-full">
-              <Button
-                variant="secondary"
-                className="w-full"
-                onClick={onCartClose}
-              >
+              <Button variant="secondary" className="w-full" onClick={onCartClose}>
                 View Cart
               </Button>
             </Link>
-            <Button
-              className="w-full"
-              disabled={isDisabled}
-              onClick={onCartClose}
-            >
+            <Button className="w-full" disabled={isDisabled} onClick={onCartClose}>
               <Link href="/checkout" className="w-full">
                 Checkout
               </Link>

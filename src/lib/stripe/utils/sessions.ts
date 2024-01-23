@@ -12,14 +12,12 @@ if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY not defined');
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-type StripeSessionDataRequestBody = z.infer<
-  typeof StripeSessionDataRequestBodySchema
->;
+type StripeSessionDataRequestBody = z.infer<typeof StripeSessionDataRequestBodySchema>;
 
 export async function createStripeSession(
   data: StripeSessionDataRequestBody,
   tokenId: string,
-  session?: ClientSession
+  session?: ClientSession,
 ) {
   try {
     const { tickets, userId, email } = data;
@@ -60,8 +58,8 @@ export async function createStripeSession(
               hasValidated: false,
               isExpired: false,
             })),
-          { session }
-        )
+          { session },
+        ),
       );
     });
 
@@ -75,9 +73,7 @@ export async function createStripeSession(
       }
     });
 
-    const newTicketIds = newTickets
-      .flat()
-      .map((ticket: any) => ticket._id.toString());
+    const newTicketIds = newTickets.flat().map((ticket: any) => ticket._id.toString());
 
     const order = await Order.create(
       [
@@ -93,7 +89,7 @@ export async function createStripeSession(
       ],
       {
         session,
-      }
+      },
     );
 
     const headerList = headers();
@@ -105,7 +101,7 @@ export async function createStripeSession(
       mode: 'payment',
       return_url: `${originUrl}/checkout/success?sessionId={CHECKOUT_SESSION_ID}`,
       metadata: { orderId: order[0]._id.toString() },
-      customer_email: email,
+      customer_email: email || undefined,
     });
 
     return { success: true, clientSecret: stripeSession.client_secret };

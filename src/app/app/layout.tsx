@@ -9,11 +9,7 @@ import CartSheet from '@/components/app/CartSheet';
 import AlertPopup from '@/components/Alert';
 import { Toaster } from '@/components/ui/toaster';
 
-export default async function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <ModalProvider>
       <CartProvider>

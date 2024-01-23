@@ -33,13 +33,9 @@ export const HostProfileDataRequestBodySchema = z
       mediaId: z.string().optional(),
     }),
   })
-  .refine(
-    ({ profile }) =>
-      profile.name !== '' || profile.biography !== '' || profile.mediaId !== '',
-    {
-      message: 'One of the fields must be defined',
-    }
-  );
+  .refine(({ profile }) => profile.name !== '' || profile.biography !== '' || profile.mediaId !== '', {
+    message: 'One of the fields must be defined',
+  });
 
 export const StripeSessionDataRequestBodySchema = z.object({
   tickets: z
@@ -54,7 +50,7 @@ export const StripeSessionDataRequestBodySchema = z.object({
     .array()
     .nonempty(),
   userId: z.string(),
-  email: z.string().email().optional(),
+  email: z.string().email().optional().or(z.literal('')),
 });
 
 export const TicketGeneratorDataRequestBodySchema = z.object({
@@ -62,9 +58,7 @@ export const TicketGeneratorDataRequestBodySchema = z.object({
 });
 
 export const TicketValidatorDataRequestBodySchema = z.object({
-  hash: z
-    .string()
-    .regex(/^.+,\$2a\$[\$\.\/A-Za-z0-9]+$/, 'Hash does not meet schema'),
+  hash: z.string().regex(/^.+,\$2a\$[\$\.\/A-Za-z0-9]+$/, 'Hash does not meet schema'),
   eventId: z.string(),
 });
 

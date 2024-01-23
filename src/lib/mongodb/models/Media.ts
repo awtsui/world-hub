@@ -5,9 +5,10 @@ const MediaSchema = new Schema<IMedia>(
   {
     description: String,
     type: String,
+    fileName: String,
     url: String,
   },
-  { collection: 'medias' }
+  { collection: 'medias' },
 );
 
 const Media = models.Media || model('Media', MediaSchema);

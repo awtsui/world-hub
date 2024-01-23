@@ -1,7 +1,4 @@
-import {
-  UserColumnData,
-  defaultUserColumns,
-} from '@/components/admin/UserColumns';
+import { UserColumnData, defaultUserColumns } from '@/components/admin/UserColumns';
 import { DataTable } from '@/components/ui/data-table';
 import { getAllUserProfiles, getAllUsers } from '@/lib/actions';
 
@@ -16,9 +13,7 @@ export default async function AdminManageUsersPage() {
       id: users[i].userId,
       email: users[i].email,
       isVerified: users[i].isVerified ? 'Yes' : 'No',
-      orders: userProfiles.find(
-        (profile: any) => profile.userId === users[i].userId
-      ).orders,
+      orders: userProfiles.find((profile: any) => profile.userId === users[i].userId).orders,
     });
   }
 

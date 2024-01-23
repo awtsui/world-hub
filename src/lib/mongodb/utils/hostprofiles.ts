@@ -5,15 +5,9 @@ import { ClientSession } from 'mongoose';
 import Media from '../models/Media';
 import { deleteMedia } from './medias';
 
-type HostProfileDataRequestBody = z.infer<
-  typeof HostProfileDataRequestBodySchema
->;
+type HostProfileDataRequestBody = z.infer<typeof HostProfileDataRequestBodySchema>;
 
-export async function updateHostProfile(
-  data: HostProfileDataRequestBody,
-  tokenId: string,
-  session?: ClientSession
-) {
+export async function updateHostProfile(data: HostProfileDataRequestBody, tokenId: string, session?: ClientSession) {
   const { hostId, profile } = data;
 
   try {
@@ -35,7 +29,7 @@ export async function updateHostProfile(
         {
           name: profile.name,
         },
-        { session }
+        { session },
       );
     }
 
@@ -45,7 +39,7 @@ export async function updateHostProfile(
         {
           biography: profile.biography,
         },
-        { session }
+        { session },
       );
     }
 
@@ -64,10 +58,10 @@ export async function updateHostProfile(
 
       await HostProfile.updateOne(
         { hostId },
-        { mediaId: profile.mediaId },
+        { mediaId: profile.mediaId, description: 'Host profile picture' },
         {
           session,
-        }
+        },
       );
     }
 

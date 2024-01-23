@@ -1,25 +1,12 @@
-import {
-  getEventsByIds,
-  getHostProfileById,
-  getMediaById,
-  getVenueById,
-} from '@/lib/actions';
+import { getEventsByIds, getHostProfileByIds, getMediaById, getVenueById } from '@/lib/actions';
 import Image from 'next/image';
-import {
-  Calendar,
-  CheckCircle,
-  Clock,
-  MapPin,
-  Smartphone,
-  User,
-} from 'lucide-react';
+import { Calendar, CheckCircle, Clock, MapPin, Smartphone, User } from 'lucide-react';
 import { formatDate } from '@/lib/client/utils';
 import GoogleMapView from '@/components/app/GoogleMapView';
 import CopyToClipboard from '@/components/CopyToClipboard';
 import AddTicketDialog from '@/components/app/AddTicketDialog';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Link from 'next/link';
-import { WorldIdVerificationLevel } from '@/lib/types';
 import VerificationLevelIcon from '@/components/app/VerificationLevelIcon';
 
 type EventPageParams = {
@@ -31,11 +18,11 @@ type EventPageParams = {
 export default async function EventPage({ params }: EventPageParams) {
   // Replace with data fetching
   const event = (await getEventsByIds([params.eventId]))[0];
-  const host = await getHostProfileById(event.hostId);
+  const hosts = await getHostProfileByIds(event.lineup);
   const venue = await getVenueById(event.venueId);
   const media = await getMediaById(event.mediaId);
 
-  if (!event || !host || !venue || !media) {
+  if (!event || !hosts || !venue || !media) {
     return <div>Loading...</div>;
   }
 
@@ -60,9 +47,7 @@ export default async function EventPage({ params }: EventPageParams) {
               <p className="text-4xl font-bold">{event.title}</p>
               <p className="text-xl">{event.subTitle}</p>
             </div>
-            <VerificationLevelIcon
-              verificationLevel={event.verificationLevel}
-            />
+            <VerificationLevelIcon verificationLevel={event.verificationLevel} />
           </div>
           <div className="py-4">
             <p className="text-md">{event.subCategory}</p>
@@ -72,9 +57,16 @@ export default async function EventPage({ params }: EventPageParams) {
             <p className="text-xl font-bold py-2">Information</p>
             <div className="flex gap-3 items-center">
               <User />
-              <Link href={`/host/${host.hostId}`}>
-                <p className="text-md hover:text-green-500">{host.name}</p>
-              </Link>
+              <div className="flex gap-3">
+                {hosts.map((host, index) => (
+                  <div key={host.hostId} className="flex">
+                    <Link href={`/host/${host.hostId}`}>
+                      <p className="text-md hover:text-green-500">{host.name}</p>
+                    </Link>
+                    {index < hosts.length - 1 && <p>{', '}</p>}
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="flex gap-3 items-center">
               <MapPin />

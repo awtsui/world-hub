@@ -7,10 +7,9 @@ const UserProfileSchema = new Schema<IUserProfile>(
     orders: [String],
   },
 
-  { collection: 'userprofiles' }
+  { collection: 'userprofiles' },
 );
 
-const UserProfile =
-  models.UserProfile || model('UserProfile', UserProfileSchema);
+const UserProfile = models.UserProfile || model('UserProfile', UserProfileSchema);
 
 export default UserProfile;

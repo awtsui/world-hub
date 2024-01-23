@@ -7,7 +7,7 @@ const UserSchema = new Schema<IUser>(
     email: String,
     isVerified: Boolean,
   },
-  { collection: 'users' }
+  { collection: 'users' },
 );
 
 const User = models.User || model('User', UserSchema);

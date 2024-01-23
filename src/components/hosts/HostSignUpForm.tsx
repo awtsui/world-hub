@@ -4,14 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
@@ -83,11 +76,7 @@ export default function HostSignUpForm() {
                 <FormItem id="email">
                   <FormLabel>Email Address</FormLabel>
                   <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="name@address.com"
-                      {...field}
-                    />
+                    <Input type="email" placeholder="name@address.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,11 +89,7 @@ export default function HostSignUpForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your password"
-                      type="password"
-                      {...field}
-                    />
+                    <Input placeholder="Enter your password" type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,11 +102,7 @@ export default function HostSignUpForm() {
                 <FormItem>
                   <FormLabel>Confirm password</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Re-enter your password"
-                      type="password"
-                      {...field}
-                    />
+                    <Input placeholder="Re-enter your password" type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,10 +115,7 @@ export default function HostSignUpForm() {
         </form>
         <p className="text-center text-md text-gray-600 mt-5">
           Already have an account?
-          <Link
-            className="text-blue-500 hover:underline ml-1"
-            href="/auth/signin"
-          >
+          <Link className="text-blue-500 hover:underline ml-1" href="/auth/signin">
             Sign In
           </Link>
         </p>

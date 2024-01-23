@@ -14,7 +14,7 @@ const HostSchema = new Schema<IHost>(
     },
   },
 
-  { collection: 'hosts' }
+  { collection: 'hosts' },
 );
 
 const Host = models.Host || model('Host', HostSchema);

@@ -11,15 +11,8 @@ interface AdminAuthButtonProps {
 
 const menuItems: MenuItem[] = [];
 
-export default function AdminAuthButton({
-  signInCallbackUrl,
-  signOutCallbackUrl,
-}: AdminAuthButtonProps) {
+export default function AdminAuthButton({ signInCallbackUrl, signOutCallbackUrl }: AdminAuthButtonProps) {
   return (
-    <AuthButton
-      signInCallbackUrl={signInCallbackUrl}
-      signOutCallbackUrl={signOutCallbackUrl}
-      menuItems={menuItems}
-    />
+    <AuthButton signInCallbackUrl={signInCallbackUrl} signOutCallbackUrl={signOutCallbackUrl} menuItems={menuItems} />
   );
 }

@@ -5,12 +5,7 @@ export default function AdminLogo() {
   return (
     <div className="w-[380px] h-auto">
       <AspectRatio ratio={6 / 1}>
-        <Image
-          alt="adminlogo"
-          className="cursor-pointer object-cover"
-          fill
-          src="/adminlogo.png"
-        />
+        <Image alt="adminlogo" className="cursor-pointer object-cover" fill src="/adminlogo.png" />
       </AspectRatio>
     </div>
   );

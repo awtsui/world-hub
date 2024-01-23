@@ -23,7 +23,7 @@ const OrderSchema = new Schema<IOrder>(
     tickets: [String],
   },
 
-  { collection: 'orders' }
+  { collection: 'orders' },
 );
 
 const Order = models.Order || model('Order', OrderSchema);

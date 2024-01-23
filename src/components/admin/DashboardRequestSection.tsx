@@ -1,14 +1,7 @@
 // Display count of unaddressed requests for new events, new host accounts, new venues, and any bug alerts
 
 import { Event, Host } from '@/lib/types';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Label } from '../ui/label';
 import Link from 'next/link';
 import { Button } from '../ui/button';
@@ -18,18 +11,9 @@ interface DashboardRequestSectionProps {
   hosts: Host[];
 }
 
-export default function DashboardRequestSection({
-  events,
-  hosts,
-}: DashboardRequestSectionProps) {
-  const eventRequests = events.reduce(
-    (total, event) => (event.approvalStatus === 'PENDING' ? total + 1 : total),
-    0
-  );
-  const hostAccountRequests = hosts.reduce(
-    (total, host) => (host.approvalStatus === 'PENDING' ? total + 1 : total),
-    0
-  );
+export default function DashboardRequestSection({ events, hosts }: DashboardRequestSectionProps) {
+  const eventRequests = events.reduce((total, event) => (event.approvalStatus === 'PENDING' ? total + 1 : total), 0);
+  const hostAccountRequests = hosts.reduce((total, host) => (host.approvalStatus === 'PENDING' ? total + 1 : total), 0);
   return (
     <div className="flex flex-col gap-5 items-center">
       <div className="flex gap-5">
@@ -53,9 +37,7 @@ export default function DashboardRequestSection({
             <CardDescription>Approve or reject new hosts</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <Label className="text-6xl text-center">
-              {hostAccountRequests}
-            </Label>
+            <Label className="text-6xl text-center">{hostAccountRequests}</Label>
           </CardContent>
           <CardFooter className="justify-center">
             <Link href="/dashboard/hosts">

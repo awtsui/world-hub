@@ -4,20 +4,13 @@ import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '../ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 type CategoryDropdownProps = {
   categoryId: string;
 };
 
-export default function CategoryDropdown({
-  categoryId,
-}: CategoryDropdownProps) {
+export default function CategoryDropdown({ categoryId }: CategoryDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const categoryInfo = categories[categoryId];
 
@@ -35,16 +28,9 @@ export default function CategoryDropdown({
             <ChevronDown color="white" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align={'start'}
-          className="grid grid-cols-3 gap-3 bg-slate-900"
-        >
+        <DropdownMenuContent align={'start'} className="grid grid-cols-3 gap-3 bg-slate-900">
           {categoryInfo.subCategories.map((subcategory) => (
-            <DropdownMenuItem
-              key={subcategory.name}
-              asChild
-              className="text-md"
-            >
+            <DropdownMenuItem key={subcategory.name} asChild className="text-md">
               <Link
                 href={`/marketplace/${categoryId}/${subcategory.id}`}
                 key={subcategory.id}

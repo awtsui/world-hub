@@ -49,10 +49,7 @@ export async function GET(request: NextRequest) {
     });
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: `Internal Server Error (/api/events): ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error (/api/events): ${error}` }, { status: 500 });
   }
 }
 
@@ -81,17 +78,11 @@ export async function DELETE(request: NextRequest) {
 
     await session.commitTransaction();
 
-    return NextResponse.json(
-      { message: `Successfully deleted event ${eventId}` },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: `Successfully deleted event ${eventId}` }, { status: 200 });
   } catch (error) {
     await session.abortTransaction();
     console.error(error);
-    return NextResponse.json(
-      { error: `Internal Server Error (/api/events): ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error (/api/events): ${error}` }, { status: 500 });
   } finally {
     await session.endSession();
   }

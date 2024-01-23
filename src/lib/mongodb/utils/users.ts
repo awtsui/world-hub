@@ -5,9 +5,7 @@ import UserProfile from '../models/UserProfile';
 import { z } from 'zod';
 import { UserAccountDataRequestBodySchema } from '@/lib/zod/apischema';
 
-type UserAccountDataRequestBody = z.infer<
-  typeof UserAccountDataRequestBodySchema
->;
+type UserAccountDataRequestBody = z.infer<typeof UserAccountDataRequestBodySchema>;
 
 export async function signUpIfNewUser(userId: string) {
   await dbConnect();
@@ -32,7 +30,7 @@ export async function signUpIfNewUser(userId: string) {
           isVerified: false,
         },
       ],
-      { session }
+      { session },
     );
 
     const newUserProfile = await UserProfile.create(
@@ -42,7 +40,7 @@ export async function signUpIfNewUser(userId: string) {
           orders: [],
         },
       ],
-      { session }
+      { session },
     );
 
     await session.commitTransaction();
@@ -56,21 +54,13 @@ export async function signUpIfNewUser(userId: string) {
   }
 }
 
-export async function updateUserAccount(
-  data: UserAccountDataRequestBody,
-  tokenId: string,
-  session?: ClientSession
-) {
+export async function updateUserAccount(data: UserAccountDataRequestBody, tokenId: string, session?: ClientSession) {
   const { userId, email } = data;
   try {
     if (userId !== tokenId) {
       throw Error('Not authorized to update this user account');
     }
-    const existingUser = await User.findOneAndUpdate(
-      { userId },
-      { email },
-      { session }
-    );
+    const existingUser = await User.findOneAndUpdate({ userId }, { email }, { session });
     if (!existingUser) {
       throw Error('User account does not exist');
     }

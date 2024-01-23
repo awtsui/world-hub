@@ -10,10 +10,9 @@ const HostProfileSchema = new Schema<IHostProfile>(
     events: [String],
   },
 
-  { collection: 'hostprofiles' }
+  { collection: 'hostprofiles' },
 );
 
-const HostProfile =
-  models.HostProfile || model('HostProfile', HostProfileSchema);
+const HostProfile = models.HostProfile || model('HostProfile', HostProfileSchema);
 
 export default HostProfile;

@@ -1,10 +1,5 @@
 import { getToken } from 'next-auth/jwt';
-import {
-  NextRequest,
-  NextResponse,
-  NextMiddleware,
-  NextFetchEvent,
-} from 'next/server';
+import { NextRequest, NextResponse, NextMiddleware, NextFetchEvent } from 'next/server';
 
 // Handles routing to app sub domain
 
@@ -14,17 +9,12 @@ export function withAppMiddleware(middleware: NextMiddleware) {
 
     if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
       const { searchParams, pathname } = request.nextUrl;
-      const path = `${pathname}${
-        searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''
-      }`;
+      const path = `${pathname}${searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''}`;
 
       const token = await getToken({ req: request });
 
       const appProtectedPaths = ['/checkout'];
-      const matchesAppProtectedPath = appProtectedPaths.some((path) =>
-        pathname.startsWith(path)
-      );
-
+      const matchesAppProtectedPath = appProtectedPaths.some((path) => pathname.startsWith(path));
       if (matchesAppProtectedPath) {
         if (!token) {
           const url = new URL('/auth', request.url);
@@ -45,9 +35,7 @@ export function withAppMiddleware(middleware: NextMiddleware) {
         return NextResponse.redirect(new URL('/marketplace', request.url));
       }
 
-      return NextResponse.rewrite(
-        new URL(`/app${path === '/' ? '' : path}`, request.url)
-      );
+      return NextResponse.rewrite(new URL(`/app${path === '/' ? '' : path}`, request.url));
     }
 
     return middleware(request, event);

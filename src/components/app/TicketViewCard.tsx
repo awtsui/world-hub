@@ -1,14 +1,7 @@
 'use client';
 
 import { TicketWithHash } from '@/lib/types';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import TicketQRCode from '../TicketQRCode';
 import useSWR from 'swr';
 import { fetcher, formatDate } from '@/lib/client/utils';
@@ -19,10 +12,7 @@ interface TicketViewCardProps {
 
 export default function TicketViewCard({ ticket }: TicketViewCardProps) {
   const { data: event } = useSWR(`/api/events?id=${ticket.eventId}`, fetcher);
-  const { data: venue } = useSWR(
-    event ? `/api/venues?id=${event[0].venueId}` : '',
-    fetcher
-  );
+  const { data: venue } = useSWR(event ? `/api/venues?id=${event[0].venueId}` : '', fetcher);
 
   if (!event || !venue) {
     return null;

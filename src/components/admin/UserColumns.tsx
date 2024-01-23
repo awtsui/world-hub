@@ -3,10 +3,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Checkbox } from '../ui/checkbox';
 import { truncateString } from '@/lib/client/utils';
-import {
-  DataTableBooleanSortColumnHeader,
-  DataTableFilterColumnHeader,
-} from '../ui/data-table';
+import { DataTableBooleanSortColumnHeader, DataTableFilterColumnHeader } from '../ui/data-table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,10 +29,7 @@ export const defaultUserColumns = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -56,41 +50,17 @@ export const defaultUserColumns = [
     enableHiding: false,
     columns: [
       columnHelper.accessor('id', {
-        cell: (info) => (
-          <div className="text-right font-medium">
-            {truncateString(info.getValue() as string, 8)}
-          </div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Id"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{truncateString(info.getValue() as string, 8)}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Id" className="justify-end" />,
       }),
       columnHelper.accessor('email', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Email"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Email" className="justify-end" />,
       }),
       columnHelper.accessor('isVerified', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
         header: ({ column }) => (
-          <DataTableBooleanSortColumnHeader
-            column={column}
-            title="Is Verified?"
-            className="justify-end"
-          />
+          <DataTableBooleanSortColumnHeader column={column} title="Is Verified?" className="justify-end" />
         ),
         sortingFn: 'basic',
       }),
@@ -128,16 +98,8 @@ export const defaultUserColumns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.email)}
-            >
-              Copy email
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>Copy user ID</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.email)}>Copy email</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>TODO: View customer</DropdownMenuItem>
             <DropdownMenuItem>TODO: View payment details</DropdownMenuItem>

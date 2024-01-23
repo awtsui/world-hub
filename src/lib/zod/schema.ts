@@ -2,23 +2,12 @@ import { VerificationLevel } from '@worldcoin/idkit';
 import { z } from 'zod';
 
 const MAX_FILE_SIZE = 1024 * 1024 * 10;
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-];
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 export const ImageFileSchema = z
   .any()
-  .refine(
-    (file) => file && file?.size <= MAX_FILE_SIZE,
-    `Max file size is 10MB.`
-  )
-  .refine(
-    (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-    '.jpg, .jpeg, .png and .webp files are accepted.'
-  );
+  .refine((file) => file && file?.size <= MAX_FILE_SIZE, `Max file size is 10MB.`)
+  .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file?.type), '.jpg, .jpeg, .png and .webp files are accepted.');
 
 export const EventFormDataSchema = z.object({
   title: z.string().min(1, 'Title is required'),

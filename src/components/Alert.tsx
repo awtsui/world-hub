@@ -18,9 +18,7 @@ export default function AlertPopup() {
     <AlertDialog onOpenChange={clear} open={alert !== AlertStatus.None}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-center">
-            {alertText}
-          </AlertDialogTitle>
+          <AlertDialogTitle className="text-center">{alertText}</AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogAction asChild className="items-center">
           <Button onClick={clear}>Okay</Button>

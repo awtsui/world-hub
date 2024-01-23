@@ -2,16 +2,12 @@ import { MainCategory, SubCategory, Event } from '@/lib/types';
 import Link from 'next/link';
 import EventsCarousel from '../EventsCarousel';
 
-type PopularEventsSectionProps = {
+type TrendingEventsSectionProps = {
   events: Event[];
 };
 
-export default function PopularEventsSection({
-  events,
-}: PopularEventsSectionProps) {
-  const popularEvents = events
-    .toSorted((a, b) => (a.totalSold > b.totalSold ? -1 : 1))
-    .slice(0, 10);
+export default function TrendingEventsSection({ events }: TrendingEventsSectionProps) {
+  const popularEvents = events.toSorted((a, b) => (a.totalSold > b.totalSold ? -1 : 1)).slice(0, 10);
 
   return (
     <div className="flex flex-col px-5 py-3">

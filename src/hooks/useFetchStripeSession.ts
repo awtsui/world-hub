@@ -11,12 +11,7 @@ interface useFetchStripeSessionParams {
   isValidOrder: boolean;
 }
 
-export default function useFetchStripeSession({
-  tickets,
-  userId,
-  email,
-  isValidOrder,
-}: useFetchStripeSessionParams) {
+export default function useFetchStripeSession({ tickets, userId, email, isValidOrder }: useFetchStripeSessionParams) {
   const [clientSecret, setClientSecret] = useState('');
 
   useEffect(() => {
@@ -36,7 +31,7 @@ export default function useFetchStripeSession({
         .then((data) => setClientSecret(data.clientSecret))
         .catch((error) => handleFetchError(error));
     }
-  }, [userId, JSON.stringify(tickets), isValidOrder]);
+  }, [userId, JSON.stringify(tickets), isValidOrder, email]);
 
   return { clientSecret };
 }

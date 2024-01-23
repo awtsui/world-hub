@@ -9,28 +9,15 @@ interface WorldcoinButtonProps {
   label: string;
 }
 
-export default function WorldcoinButton({
-  callbackUrl,
-  label,
-}: WorldcoinButtonProps) {
+export default function WorldcoinButton({ callbackUrl, label }: WorldcoinButtonProps) {
   function onClick() {
     signIn('worldcoin', {
       callbackUrl,
     });
   }
   return (
-    <Button
-      onClick={onClick}
-      variant={'outline'}
-      className="bg-white text-black text-lg gap-5 py-6 px-6"
-    >
-      <Image
-        src="/wld-logo.png"
-        alt="World ID Logo"
-        width={30}
-        height={30}
-        className="object-cover"
-      />
+    <Button onClick={onClick} variant={'outline'} className="bg-white text-black text-lg gap-5 py-6 px-6">
+      <Image src="/wld-logo.png" alt="World ID Logo" width={30} height={30} className="object-cover" />
       {label}
     </Button>
   );

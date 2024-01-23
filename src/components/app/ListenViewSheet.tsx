@@ -1,11 +1,4 @@
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { HostProfile } from '@/lib/types';
 import { Button } from '../ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -15,10 +8,7 @@ interface ListenViewSheetProps {
   label: string;
 }
 
-export default function ListenViewSheet({
-  hostProfile,
-  label,
-}: ListenViewSheetProps) {
+export default function ListenViewSheet({ hostProfile, label }: ListenViewSheetProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>

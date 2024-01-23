@@ -40,10 +40,7 @@ export const defaultOrderColumns = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -64,56 +61,20 @@ export const defaultOrderColumns = [
     enableHiding: false,
     columns: [
       columnHelper.accessor('id', {
-        cell: (info) => (
-          <div className="text-right font-medium">
-            {truncateString(info.getValue() as string, 8)}
-          </div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Id"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{truncateString(info.getValue() as string, 8)}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Id" className="justify-end" />,
       }),
       columnHelper.accessor('userId', {
-        cell: (info) => (
-          <div className="text-right font-medium">
-            {truncateString(info.getValue() as string, 8)}
-          </div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="User Id"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{truncateString(info.getValue() as string, 8)}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="User Id" className="justify-end" />,
       }),
       columnHelper.accessor('email', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Email"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Email" className="justify-end" />,
       }),
       columnHelper.accessor('amount', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableSortColumnHeader
-            column={column}
-            title="Amount"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableSortColumnHeader column={column} title="Amount" className="justify-end" />,
       }),
       columnHelper.accessor('totalPrice', {
         cell: ({ row }) => {
@@ -126,23 +87,13 @@ export const defaultOrderColumns = [
           return <div className="text-right font-medium">{formatted}</div>;
         },
         header: ({ column }) => (
-          <DataTableSortColumnHeader
-            column={column}
-            title="Total Price"
-            className="justify-end"
-          />
+          <DataTableSortColumnHeader column={column} title="Total Price" className="justify-end" />
         ),
       }),
       columnHelper.accessor('isPaid', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
         header: ({ column }) => (
-          <DataTableBooleanSortColumnHeader
-            column={column}
-            title="Is Paid?"
-            className="justify-end"
-          />
+          <DataTableBooleanSortColumnHeader column={column} title="Is Paid?" className="justify-end" />
         ),
         sortingFn: 'basic',
       }),
@@ -152,13 +103,7 @@ export const defaultOrderColumns = [
           const formatted = formatDate(new Date(timestamp as Date));
           return <div className="text-right font-medium">{formatted}</div>;
         },
-        header: ({ column }) => (
-          <DataTableSortColumnHeader
-            column={column}
-            title="Timestamp"
-            className="justify-end"
-          />
-        ),
+        header: ({ column }) => <DataTableSortColumnHeader column={column} title="Timestamp" className="justify-end" />,
       }),
     ],
   }),
@@ -179,21 +124,11 @@ export const defaultOrderColumns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(order.id)}
-            >
-              Copy order ID
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(order.userId)}
-            >
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(order.id)}>Copy order ID</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(order.userId)}>
               Copy user ID
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(order.email)}
-            >
-              Copy email
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(order.email)}>Copy email</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>TODO: View customer</DropdownMenuItem>
             <DropdownMenuItem>TODO: View payment details</DropdownMenuItem>

@@ -5,7 +5,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'world-hub-storage.s3.us-east-1.amazonaws.com',
+        hostname: 'd7kqasaq9wy32.cloudfront.net',
       },
     ],
   },

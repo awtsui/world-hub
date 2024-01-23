@@ -9,10 +9,7 @@ export default function SignInPage() {
 
   return (
     <div className="flex items-center justify-center h-full">
-      <SignInWithWorldcoinButton
-        callbackUrl={callbackUrl}
-        label="Sign In with Worldcoin"
-      />
+      <SignInWithWorldcoinButton callbackUrl={callbackUrl} label="Sign In with Worldcoin" />
     </div>
   );
 }

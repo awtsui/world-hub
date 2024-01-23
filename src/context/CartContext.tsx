@@ -1,14 +1,7 @@
 'use client';
 
 import { TicketWithData } from '@/lib/types';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 const LOCAL_STORAGE_KEY = 'STRIPE_CART_ITEMS';
 
@@ -33,6 +26,7 @@ interface CartContext {
   addTicket: (ticket: TicketWithData) => void;
   removeTicket: (eventId: string, ticketLabel: string) => void;
   resetCart: () => void;
+  isLoading: boolean;
 }
 
 const CartContext = createContext<CartContext | null>(null);
@@ -44,12 +38,15 @@ interface CartProviderProps {
 export function CartProvider({ children }: CartProviderProps) {
   const firstRender = useRef(true);
   const [tickets, setTickets] = useState<Record<string, TicketWithData>>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (firstRender.current) {
+      setIsLoading(true);
       firstRender.current = false;
       const localItems = loadJSON(LOCAL_STORAGE_KEY);
       localItems && setTickets(localItems);
+      setIsLoading(false);
     }
     saveJSON(LOCAL_STORAGE_KEY, tickets);
   }, [tickets]);
@@ -91,6 +88,7 @@ export function CartProvider({ children }: CartProviderProps) {
         addTicket,
         removeTicket,
         resetCart,
+        isLoading,
       }}
     >
       {children}

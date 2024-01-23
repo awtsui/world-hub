@@ -9,10 +9,7 @@ import useSWR from 'swr';
 export default function HostDashboardSettingsPage() {
   const { data: session } = useSession();
 
-  const { data: profileData } = useSWR(
-    session?.user?.id ? `/api/hosts/profile?id=${session.user.id}` : '',
-    fetcher
-  );
+  const { data: profileData } = useSWR(session?.user?.id ? `/api/hosts/profile?id=${session.user.id}` : '', fetcher);
   const searchParams = useSearchParams();
 
   const tab = searchParams.get('tab');

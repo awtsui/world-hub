@@ -8,7 +8,7 @@ const AdminSchema = new Schema(
     adminType: String,
   },
 
-  { collection: 'admins' }
+  { collection: 'admins' },
 );
 
 const Admin = models.Admin || model('Admin', AdminSchema);

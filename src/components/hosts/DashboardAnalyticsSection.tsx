@@ -7,42 +7,24 @@ interface DashboardAnalyticsSectionProps {
   events: Event[];
 }
 
-export default function DashboardAnalyticsSection({
-  hostProfile,
-  events,
-}: DashboardAnalyticsSectionProps) {
+export default function DashboardAnalyticsSection({ hostProfile, events }: DashboardAnalyticsSectionProps) {
   const today = new Date();
-  const upcomingEvents = events.reduce(
-    (total, event) =>
-      new Date(event.datetime) > today ? total + 1 : total + 0,
-    0
-  );
-  const ticketsSold = events.reduce(
-    (total, event) => total + event.totalSold,
-    0
-  );
+  const upcomingEvents = events.reduce((total, event) => (new Date(event.datetime) > today ? total + 1 : total + 0), 0);
+  const ticketsSold = events.reduce((total, event) => total + event.totalSold, 0);
 
-  const topEvents = events
-    .filter((event) => event.totalSold > 0)
-    .sort((a, b) => (a.totalSold >= b.totalSold ? -1 : 1));
+  const topEvents = events.filter((event) => event.totalSold > 0).sort((a, b) => (a.totalSold >= b.totalSold ? -1 : 1));
 
   return (
     <div className="w-full space-y-8">
       <div>
         <p className="py-3 px-2 text-2xl font-semibold">Analytics</p>
         <Separator />
-        <Link
-          href="/dashboard/events"
-          className="flex justify-between py-5 px-2 hover:bg-slate-100"
-        >
+        <Link href="/dashboard/events" className="flex justify-between py-5 px-2 hover:bg-slate-100">
           <p>Upcoming Events</p>
           <p>{upcomingEvents}</p>
         </Link>
         <Separator />
-        <Link
-          href="/dashboard/analytics"
-          className="flex justify-between py-5 px-2 hover:bg-slate-100"
-        >
+        <Link href="/dashboard/analytics" className="flex justify-between py-5 px-2 hover:bg-slate-100">
           <p>Tickets Sold</p>
           <p>{ticketsSold}</p>
         </Link>

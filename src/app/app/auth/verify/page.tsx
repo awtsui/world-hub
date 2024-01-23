@@ -1,10 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import {
-  IDKitWidget,
-  ISuccessResult,
-  VerificationLevel,
-} from '@worldcoin/idkit';
+import { IDKitWidget, ISuccessResult, VerificationLevel } from '@worldcoin/idkit';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -62,18 +58,8 @@ export default function VerifyPage() {
         verification_level={VerificationLevel.Device}
       >
         {({ open }) => (
-          <Button
-            onClick={open}
-            variant={'outline'}
-            className="bg-white text-black text-lg gap-5 py-6 px-6"
-          >
-            <Image
-              src="/wld-logo.png"
-              alt="World ID Logo"
-              width={30}
-              height={30}
-              className="object-cover"
-            />
+          <Button onClick={open} variant={'outline'} className="bg-white text-black text-lg gap-5 py-6 px-6">
+            <Image src="/wld-logo.png" alt="World ID Logo" width={30} height={30} className="object-cover" />
             Verify with World ID
           </Button>
         )}

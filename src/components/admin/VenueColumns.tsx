@@ -23,10 +23,7 @@ export const defaultVenueColumns = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -47,77 +44,29 @@ export const defaultVenueColumns = [
     enableHiding: false,
     columns: [
       columnHelper.accessor('venueId', {
-        cell: (info) => (
-          <div className="text-right font-medium">
-            {truncateString(info.getValue() as string, 8)}
-          </div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Id"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{truncateString(info.getValue() as string, 8)}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Id" className="justify-end" />,
       }),
       columnHelper.accessor('name', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Name"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Name" className="justify-end" />,
       }),
       columnHelper.accessor('address', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Address"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="Address" className="justify-end" />,
       }),
       columnHelper.accessor('city', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="City"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="City" className="justify-end" />,
       }),
       columnHelper.accessor('state', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
-        header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="State"
-            className="justify-end"
-          />
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
+        header: ({ column }) => <DataTableFilterColumnHeader column={column} title="State" className="justify-end" />,
       }),
       columnHelper.accessor('zipcode', {
-        cell: (info) => (
-          <div className="text-right font-medium">{info.getValue()}</div>
-        ),
+        cell: (info) => <div className="text-right font-medium">{info.getValue()}</div>,
         header: ({ column }) => (
-          <DataTableFilterColumnHeader
-            column={column}
-            title="Zip Code"
-            className="justify-end"
-          />
+          <DataTableFilterColumnHeader column={column} title="Zip Code" className="justify-end" />
         ),
       }),
       columnHelper.accessor('parking', {
@@ -126,10 +75,7 @@ export const defaultVenueColumns = [
           return (
             <>
               {parking.map((instruction: any, index) => (
-                <div
-                  key={`instruction-${index}`}
-                  className="text-right font-medium"
-                >
+                <div key={`instruction-${index}`} className="text-right font-medium">
                   {instruction}
                 </div>
               ))}
@@ -157,16 +103,12 @@ export const defaultVenueColumns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(venue.venueId)}
-            >
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(venue.venueId)}>
               Copy venue ID
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                navigator.clipboard.writeText(
-                  `${venue.address} ${venue.city}, ${venue.state} ${venue.zipcode}`
-                )
+                navigator.clipboard.writeText(`${venue.address} ${venue.city}, ${venue.state} ${venue.zipcode}`)
               }
             >
               Copy address

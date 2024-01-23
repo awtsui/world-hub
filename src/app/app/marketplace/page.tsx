@@ -2,7 +2,7 @@ import { categories } from '@/lib/data';
 import CategorySection from '../../../components/app/CategorySection';
 import { Event } from '@/lib/types';
 import { getApprovedEvents } from '@/lib/actions';
-import PopularEventsSection from '@/components/app/PopularEventsSection';
+import TrendingEventsSection from '@/components/app/TrendingEventsSection';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Image from 'next/image';
 
@@ -18,13 +18,9 @@ export default async function MarketplaceHomePage() {
         <Image src="/homebg2.png" alt="home-bg" fill className="object-cover" />
       </AspectRatio>
       <div className="flex flex-col py-4 px-12">
-        <PopularEventsSection events={events} />
+        <TrendingEventsSection events={events} />
         {Object.values(categories).map((category) => (
-          <CategorySection
-            key={category.id}
-            category={category}
-            events={events}
-          />
+          <CategorySection key={category.id} category={category} events={events} />
         ))}
       </div>
     </div>

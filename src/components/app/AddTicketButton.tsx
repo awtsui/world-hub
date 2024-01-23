@@ -11,11 +11,7 @@ type AddTicketButtonProps = {
   tier: Tier;
   setOpen: (state: boolean) => void;
 };
-export default function AddTicketButton({
-  event,
-  tier,
-  setOpen,
-}: AddTicketButtonProps) {
+export default function AddTicketButton({ event, tier, setOpen }: AddTicketButtonProps) {
   const { addTicket } = useCart();
   const { onCartOpen } = useCartSheet();
   // const { setSuccess } = useAlertDialog();
@@ -34,9 +30,7 @@ export default function AddTicketButton({
     addTicket(newTicket);
     toast({
       title: 'Ticket added to cart',
-      description: `${event.title} - ${tier.label} $${parseFloat(
-        tier.price
-      ).toFixed(2)}`,
+      description: `${event.title} - ${tier.label} $${parseFloat(tier.price).toFixed(2)}`,
       action: (
         <ToastAction altText="View in cart" onClick={() => onCartOpen()}>
           View in cart

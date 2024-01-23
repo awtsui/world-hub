@@ -31,12 +31,7 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
     <div className="pb-12">
       <div className="relative">
         <AspectRatio ratio={3 / 1} className="w-full">
-          <Image
-            src="/homebg2.png"
-            alt="category-bg"
-            fill
-            className="object-cover "
-          />
+          <Image src="/homebg2.png" alt="category-bg" fill className="object-cover " />
         </AspectRatio>
         <div className="absolute top-10 left-14">
           <div className="flex items-center gap-10">
@@ -49,12 +44,7 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
       </div>
       <div className="px-12 py-4">
         {Object.values(subCategories).map((subCategory) => (
-          <CategorySection
-            key={subCategory.id}
-            category={category}
-            subCategory={subCategory}
-            events={events}
-          />
+          <CategorySection key={subCategory.id} category={category} subCategory={subCategory} events={events} />
         ))}
       </div>
     </div>

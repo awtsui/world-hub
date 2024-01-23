@@ -61,8 +61,7 @@ export const authOptions: NextAuthOptions = {
           id: profile.sub,
           name: profile.sub,
           provider: 'worldcoin',
-          verificationLevel:
-            profile['https://id.worldcoin.org/v1'].verification_level,
+          verificationLevel: profile['https://id.worldcoin.org/v1'].verification_level,
           role: Role.user,
         };
       },
@@ -80,9 +79,7 @@ export const authOptions: NextAuthOptions = {
         const accountType = req.query?.['accountType'];
 
         if (!accountType) {
-          throw Error(
-            'Include accountType in query when attempting to sign in'
-          );
+          throw Error('Include accountType in query when attempting to sign in');
         }
 
         let resp;

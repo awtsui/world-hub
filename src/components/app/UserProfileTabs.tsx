@@ -29,20 +29,13 @@ export default function UserProfileTabs({ user, tab }: UserProfileTabsProps) {
   };
 
   return (
-    <Tabs
-      value={tabValue}
-      onValueChange={onTabChange}
-      defaultValue={tabValue}
-      className="w-1/2"
-    >
+    <Tabs value={tabValue} onValueChange={onTabChange} defaultValue={tabValue} className="w-1/2">
       <TabsList>
         <TabsTrigger value="profile">Profile</TabsTrigger>
         <TabsTrigger value="orders">Orders</TabsTrigger>
         <TabsTrigger value="notifications">Notifications</TabsTrigger>
       </TabsList>
-      <TabsContent value="profile">
-        {user && <UpdateUserAccountForm user={user} />}
-      </TabsContent>
+      <TabsContent value="profile">{user && <UpdateUserAccountForm user={user} />}</TabsContent>
       <TabsContent value="orders">
         <div>Orders Tab (Not implemented)</div>
       </TabsContent>

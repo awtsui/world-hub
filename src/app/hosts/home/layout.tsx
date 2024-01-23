@@ -1,10 +1,6 @@
 import HostLandingNavbar from '@/components/hosts/HostLandingNavbar';
 
-export default async function HostsLandingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function HostsLandingLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <HostLandingNavbar />

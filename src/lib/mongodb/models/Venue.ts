@@ -11,7 +11,7 @@ const VenueSchema = new Schema<IVenue>(
     zipcode: String,
     parking: [String],
   },
-  { collection: 'venues' }
+  { collection: 'venues' },
 );
 
 const Venue = models.Venue || model('Venue', VenueSchema);

@@ -14,7 +14,7 @@ export default function CartPage() {
 
   const subTotal = Object.values(tickets).reduce(
     (total, item) => total.plus(Big(item.price).times(item.unitAmount)),
-    Big('0.0')
+    Big('0.0'),
   );
 
   return (
@@ -37,20 +37,13 @@ export default function CartPage() {
           {Object.entries(tickets).map(([ticketId, ticket]) => (
             <div key={ticketId} className="flex flex-col gap-3">
               <div className="grid grid-cols-7 items-center">
-                <Link
-                  href={`/event/${ticket.eventId}`}
-                  className="hover:underline col-span-3 pl-2"
-                >
+                <Link href={`/event/${ticket.eventId}`} className="hover:underline col-span-3 pl-2">
                   {ticket.eventTitle} - {ticket.label}
                 </Link>
                 <p className="text-center">{formatPrice(ticket.price)}</p>
                 <p className="text-center">{ticket.unitAmount}</p>
 
-                <p className="text-center">
-                  {formatPrice(
-                    Big(ticket.price).times(ticket.unitAmount).toString()
-                  )}
-                </p>
+                <p className="text-center">{formatPrice(Big(ticket.price).times(ticket.unitAmount).toString())}</p>
                 <div className="mx-auto">
                   <Button
                     variant="ghost"

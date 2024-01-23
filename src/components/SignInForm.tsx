@@ -6,14 +6,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from './ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -50,7 +43,7 @@ export default function SignInForm({ accountType }: SignInFormProps) {
         email,
         password,
       },
-      { accountType }
+      { accountType },
     );
     if (resp?.status == 200) {
       router.push(callbackUrl);
@@ -71,11 +64,7 @@ export default function SignInForm({ accountType }: SignInFormProps) {
                 <FormItem id="email">
                   <FormLabel>Email Address</FormLabel>
                   <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="name@address.com"
-                      {...field}
-                    />
+                    <Input type="email" placeholder="name@address.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -88,11 +77,7 @@ export default function SignInForm({ accountType }: SignInFormProps) {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your password"
-                      type="password"
-                      {...field}
-                    />
+                    <Input placeholder="Enter your password" type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -106,10 +91,7 @@ export default function SignInForm({ accountType }: SignInFormProps) {
         {accountType === 'host' && (
           <p className="text-center text-md text-gray-600 mt-5">
             If you don&apos;t have an account, please
-            <Link
-              className="text-blue-500 hover:underline ml-1"
-              href="/auth/signup"
-            >
+            <Link className="text-blue-500 hover:underline ml-1" href="/auth/signup">
               sign up
             </Link>
           </p>

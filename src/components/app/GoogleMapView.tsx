@@ -30,13 +30,11 @@ function GoogleMapView({ address }: GoogleMapViewProps) {
             position: results[0].geometry.location,
           });
         } else {
-          console.error(
-            `Geocode was not successful for the following reason: ${status}`
-          );
+          console.error(`Geocode was not successful for the following reason: ${status}`);
         }
       });
     });
-  }, []);
+  }, [address]);
   return <div className="w-80 h-80" ref={googlemap} />;
 }
 

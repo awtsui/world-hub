@@ -1,10 +1,6 @@
 import HostDashboardNavbar from '@/components/hosts/HostDashboardNavbar';
 
-export default async function HostsDashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function HostsDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <HostDashboardNavbar />

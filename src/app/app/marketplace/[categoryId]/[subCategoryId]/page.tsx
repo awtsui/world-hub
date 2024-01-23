@@ -14,9 +14,7 @@ type SubCategoryPageParams = {
   };
 };
 
-export default async function SubCategoryPage({
-  params,
-}: SubCategoryPageParams) {
+export default async function SubCategoryPage({ params }: SubCategoryPageParams) {
   // TODO: Organize events based on subcategory
   // Replace with data fetching
   const categoryName = categoryIdToName[params.categoryId];
@@ -32,19 +30,11 @@ export default async function SubCategoryPage({
     <div className="pb-12">
       <div className="relative">
         <AspectRatio ratio={3 / 1} className="w-full">
-          <Image
-            src="/homebg2.png"
-            alt="category-bg"
-            fill
-            className="object-cover "
-          />
+          <Image src="/homebg2.png" alt="category-bg" fill className="object-cover " />
         </AspectRatio>
         <div className="absolute top-10 left-14">
           <div className="flex items-center gap-3">
-            <Link
-              href={`/marketplace/${params.categoryId}`}
-              className="text-3xl text-white"
-            >
+            <Link href={`/marketplace/${params.categoryId}`} className="text-3xl text-white">
               {categoryName}
             </Link>
             <ChevronRight color="white" className="w-5 h-5" />

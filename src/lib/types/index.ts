@@ -110,6 +110,7 @@ export interface IHostProfile {
 export interface IMedia {
   description: string;
   type: string;
+  fileName: string;
   url: string;
 }
 

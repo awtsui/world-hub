@@ -8,10 +8,7 @@ import { useCartSheet } from '@/context/ModalContext';
 export default function CartButton() {
   const { tickets } = useCart();
   const { onCartOpen } = useCartSheet();
-  const numberOfTickets = Object.values(tickets).reduce(
-    (acc, curr) => acc + curr.unitAmount,
-    0
-  );
+  const numberOfTickets = Object.values(tickets).reduce((acc, curr) => acc + curr.unitAmount, 0);
 
   return (
     <Button className="flex gap-3" onClick={onCartOpen}>

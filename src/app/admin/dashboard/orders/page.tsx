@@ -1,7 +1,4 @@
-import {
-  OrderColumnData,
-  defaultOrderColumns,
-} from '@/components/admin/OrderColumns';
+import { OrderColumnData, defaultOrderColumns } from '@/components/admin/OrderColumns';
 import { DataTable } from '@/components/ui/data-table';
 import { getAllOrders } from '@/lib/actions';
 

@@ -9,16 +9,11 @@ import DashboardAnalyticsSection from '@/components/hosts/DashboardAnalyticsSect
 
 export default function HostDashboardPage() {
   const { data: session } = useSession();
-  const { data: profileData } = useSWR(
-    session?.user?.id ? `/api/hosts/profile?id=${session.user.id}` : '',
-    fetcher
-  );
+  const { data: profileData } = useSWR(session?.user?.id ? `/api/hosts/profile?id=${session.user.id}` : '', fetcher);
 
   const fetchEventsUrl =
     profileData && profileData.events.length
-      ? `/api/events?${profileData.events
-          .map((eventId: any) => `id=${eventId}`)
-          .join('&')}`
+      ? `/api/events?${profileData.events.map((eventId: any) => `id=${eventId}`).join('&')}`
       : '';
 
   const { data: events } = useSWR(fetchEventsUrl, fetcher, {
@@ -35,10 +30,7 @@ export default function HostDashboardPage() {
             <div>Dashboard Feed</div>
           </div>
           <div className="flex flex-col ml-auto w-1/3">
-            <DashboardAnalyticsSection
-              hostProfile={profileData}
-              events={events}
-            />
+            <DashboardAnalyticsSection hostProfile={profileData} events={events} />
           </div>
         </div>
       </div>

@@ -1,11 +1,4 @@
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { HostProfile } from '@/lib/types';
 import { Button } from '../ui/button';
 import { ChevronRight } from 'lucide-react';
@@ -15,10 +8,7 @@ interface InfoViewSheetProps {
   label: string;
 }
 
-export default function InfoViewSheet({
-  hostProfile,
-  label,
-}: InfoViewSheetProps) {
+export default function InfoViewSheet({ hostProfile, label }: InfoViewSheetProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>

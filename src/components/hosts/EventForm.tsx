@@ -7,22 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Button } from '../ui/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { categories, categoryIdToName, subCategoryIdToName } from '@/lib/data';
@@ -45,15 +31,7 @@ const steps = [
   {
     id: 'Step 1',
     name: 'Event Information',
-    fields: [
-      'title',
-      'subTitle',
-      'category',
-      'subcategory',
-      'datetime',
-      'description',
-      'lineup',
-    ],
+    fields: ['title', 'subTitle', 'category', 'subcategory', 'datetime', 'description', 'lineup'],
   },
   { id: 'Step 2', name: 'Image Upload', fields: ['thumbnailImage'] },
   { id: 'Step 3', name: 'Venue Information', fields: ['venueName'] },
@@ -71,9 +49,7 @@ const steps = [
 export default function EventForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
-  const [thumbnailPreview, setThumbnailPreview] = useState<
-    string | undefined
-  >();
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | undefined>();
   const { setError, setSuccess } = useAlertDialog();
   const router = useRouter();
   const { data: session } = useSession();
@@ -111,18 +87,12 @@ export default function EventForm() {
     control: form.control,
   });
 
-  const { data: hosts, error: fetchHostsError } = useSWR(
-    '/api/hosts/profile',
-    fetcher
-  );
-  const { data: venues, error: fetchVenuesError } = useSWR(
-    '/api/venues',
-    fetcher
-  );
+  const { data: hosts, error: fetchHostsError } = useSWR('/api/hosts/profile', fetcher);
+  const { data: venues, error: fetchVenuesError } = useSWR('/api/venues', fetcher);
 
   async function handleUploadImage(
     event: ChangeEvent<HTMLInputElement>,
-    onThumbnailImageChange: (...event: any[]) => void
+    onThumbnailImageChange: (...event: any[]) => void,
   ) {
     const file = event.target.files?.[0];
     onThumbnailImageChange(file);
@@ -141,9 +111,7 @@ export default function EventForm() {
       setLoading(true);
       const file = data.thumbnailImage;
 
-      const presignedUrlResp = await fetch(
-        `/api/upload?type=${file.type}&size=${file.size}&id=${session?.user?.id}`
-      );
+      const presignedUrlResp = await fetch(`/api/upload?type=${file.type}&size=${file.size}&id=${session?.user?.id}`);
 
       if (!presignedUrlResp.ok) {
         throw Error('Failed to retrieve presigned url');
@@ -194,10 +162,7 @@ export default function EventForm() {
         throw Error('Failed to revalidate event');
       }
 
-      setSuccess(
-        `Successfully created event! Your event id is ${createEventData.eventId}`,
-        3
-      );
+      setSuccess(`Successfully created event! Your event id is ${createEventData.eventId}`, 3);
       setCreationSuccess(true);
     } catch (error) {
       console.error(error);
@@ -247,9 +212,7 @@ export default function EventForm() {
             <li key={step.name} className="md:flex-1">
               {currentStep > index ? (
                 <div className="group flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                  <span className="text-md font-medium text-sky-600 transition-colors ">
-                    {step.id}
-                  </span>
+                  <span className="text-md font-medium text-sky-600 transition-colors ">{step.id}</span>
                   <span className="text-md font-medium">{step.name}</span>
                 </div>
               ) : currentStep === index ? (
@@ -257,16 +220,12 @@ export default function EventForm() {
                   className="flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
                   aria-current="step"
                 >
-                  <span className="text-md font-medium text-sky-600">
-                    {step.id}
-                  </span>
+                  <span className="text-md font-medium text-sky-600">{step.id}</span>
                   <span className="text-md font-medium">{step.name}</span>
                 </div>
               ) : (
                 <div className="group flex w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                  <span className="text-md font-medium text-gray-500 transition-colors">
-                    {step.id}
-                  </span>
+                  <span className="text-md font-medium text-gray-500 transition-colors">{step.id}</span>
                   <span className="text-md font-medium">{step.name}</span>
                 </div>
               )}
@@ -280,12 +239,8 @@ export default function EventForm() {
             {currentStep === 0 && (
               <div className="space-y-4">
                 <div className="pb-4">
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
-                    Event Information
-                  </h2>
-                  <p className="text-md text-gray-600">
-                    Provide the details for your event.
-                  </p>
+                  <h2 className="text-base font-semibold leading-7 text-gray-900">Event Information</h2>
+                  <p className="text-md text-gray-600">Provide the details for your event.</p>
                 </div>
 
                 <div className="flex gap-2">
@@ -343,10 +298,7 @@ export default function EventForm() {
                             </FormControl>
                             <SelectContent>
                               {Object.values(categories).map((category) => (
-                                <SelectItem
-                                  key={category.id}
-                                  value={category.id}
-                                >
+                                <SelectItem key={category.id} value={category.id}>
                                   {category.name}
                                 </SelectItem>
                               ))}
@@ -366,9 +318,7 @@ export default function EventForm() {
                         <FormItem id="subcategory">
                           <FormLabel>Subcategory</FormLabel>
                           <Select
-                            onValueChange={(value) =>
-                              field.onChange(subCategoryIdToName[value])
-                            }
+                            onValueChange={(value) => field.onChange(subCategoryIdToName[value])}
                             defaultValue={field.value}
                             disabled={!selectedCategoryId}
                           >
@@ -379,13 +329,8 @@ export default function EventForm() {
                             </FormControl>
                             <SelectContent>
                               {selectedCategoryId &&
-                                categories[
-                                  selectedCategoryId
-                                ].subCategories.map((category) => (
-                                  <SelectItem
-                                    key={category.id}
-                                    value={category.id}
-                                  >
+                                categories[selectedCategoryId].subCategories.map((category) => (
+                                  <SelectItem key={category.id} value={category.id}>
                                     {category.name}
                                   </SelectItem>
                                 ))}
@@ -464,36 +409,24 @@ export default function EventForm() {
             {currentStep === 1 && (
               <div className="space-y-4">
                 <div className="pb-4">
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
-                    Event Image Upload
-                  </h2>
-                  <p className="text-md text-gray-600">
-                    Provide a thumbnail image for your event.
-                  </p>
+                  <h2 className="text-base font-semibold leading-7 text-gray-900">Event Image Upload</h2>
+                  <p className="text-md text-gray-600">Provide a thumbnail image for your event.</p>
                 </div>
 
                 <FormField
                   control={form.control}
                   name="thumbnailImage"
-                  render={({
-                    field: { onChange: onThumbnailImageChange },
-                    ...field
-                  }) => (
+                  render={({ field: { onChange: onThumbnailImageChange }, ...field }) => (
                     <FormItem id="thumbnailImage">
                       <FormControl>
                         <Input
                           type="file"
                           accept="image/*"
                           {...field}
-                          onChange={(event) =>
-                            handleUploadImage(event, onThumbnailImageChange)
-                          }
+                          onChange={(event) => handleUploadImage(event, onThumbnailImageChange)}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Choose the image that best displays the spirit of your
-                        event.
-                      </FormDescription>
+                      <FormDescription>Choose the image that best displays the spirit of your event.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -508,12 +441,8 @@ export default function EventForm() {
             {currentStep === 2 && (
               <div className="space-y-4">
                 <div className="pb-4">
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
-                    Venue Information
-                  </h2>
-                  <p className="text-md text-gray-600">
-                    Provide information for your venue.
-                  </p>
+                  <h2 className="text-base font-semibold leading-7 text-gray-900">Venue Information</h2>
+                  <p className="text-md text-gray-600">Provide information for your venue.</p>
                 </div>
 
                 <FormField
@@ -535,10 +464,7 @@ export default function EventForm() {
                         </FormControl>
                         <SelectContent>
                           {venues.map((venue: Venue) => (
-                            <SelectItem
-                              key={venue.venueId}
-                              value={venue.venueId}
-                            >
+                            <SelectItem key={venue.venueId} value={venue.venueId}>
                               {venue.name}
                             </SelectItem>
                           ))}
@@ -553,12 +479,8 @@ export default function EventForm() {
             {currentStep === 3 && (
               <div className="space-y-4">
                 <div className="pb-4">
-                  <h2 className="text-base font-semibold leading-7 text-gray-900">
-                    Ticket Details
-                  </h2>
-                  <p className="text-md text-gray-600">
-                    Provide information for your tickets.
-                  </p>
+                  <h2 className="text-base font-semibold leading-7 text-gray-900">Ticket Details</h2>
+                  <p className="text-md text-gray-600">Provide information for your tickets.</p>
                 </div>
                 <div className="flex gap-2">
                   <div className="w-full">
@@ -573,16 +495,10 @@ export default function EventForm() {
                               type="number"
                               placeholder="Enter your ticket limit"
                               {...field}
-                              onChange={(event) =>
-                                field.onChange(
-                                  event.target.value ? +event.target.value : 0
-                                )
-                              }
+                              onChange={(event) => field.onChange(event.target.value ? +event.target.value : 0)}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Maximum number of tickets a user can purchase.
-                          </FormDescription>
+                          <FormDescription>Maximum number of tickets a user can purchase.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -608,22 +524,17 @@ export default function EventForm() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {Object.values(WorldIdVerificationLevel).map(
-                                (level) => (
-                                  <SelectItem key={level} value={level}>
-                                    {level}
-                                  </SelectItem>
-                                )
-                              )}
+                              {Object.values(WorldIdVerificationLevel).map((level) => (
+                                <SelectItem key={level} value={level}>
+                                  {level}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <FormDescription>
-                            Orb - User has proven unique personhood by creating
-                            their World ID with an Orb operator.
+                            Orb - User has proven unique personhood by creating their World ID with an Orb operator.
                           </FormDescription>
-                          <FormDescription>
-                            Device - User has only downloaded the Worldcoin app.
-                          </FormDescription>
+                          <FormDescription>Device - User has only downloaded the Worldcoin app.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -634,10 +545,7 @@ export default function EventForm() {
                 <div className="space-y-4">
                   <p className="text-sm">Ticket Tiers</p>
                   {fields.map((field, index) => (
-                    <div
-                      key={`${field.id}-${index}`}
-                      className="flex items-end gap-2"
-                    >
+                    <div key={`${field.id}-${index}`} className="flex items-end gap-2">
                       <FormField
                         control={form.control}
                         key={`ticketTiers.${index}.label-${field.id}`}
@@ -646,10 +554,7 @@ export default function EventForm() {
                           <FormItem id={`ticketTiers.${index}.label`}>
                             <FormLabel>Ticket Tier</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter ticket tier"
-                                {...field}
-                              />
+                              <Input placeholder="Enter ticket tier" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -669,11 +574,7 @@ export default function EventForm() {
                                 min="0"
                                 placeholder="Enter price"
                                 {...field}
-                                onChange={(event) =>
-                                  field.onChange(
-                                    event.target.value ? +event.target.value : 0
-                                  )
-                                }
+                                onChange={(event) => field.onChange(event.target.value ? +event.target.value : 0)}
                               />
                             </FormControl>
                             <FormMessage />
@@ -692,23 +593,14 @@ export default function EventForm() {
                                 type="number"
                                 placeholder="Enter quantity"
                                 {...field}
-                                onChange={(event) =>
-                                  field.onChange(
-                                    event.target.value ? +event.target.value : 0
-                                  )
-                                }
+                                onChange={(event) => field.onChange(event.target.value ? +event.target.value : 0)}
                               />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <Button
-                        variant="ghost"
-                        size={'icon'}
-                        className="rounded-full mb-1"
-                        onClick={() => remove(index)}
-                      >
+                      <Button variant="ghost" size={'icon'} className="rounded-full mb-1" onClick={() => remove(index)}>
                         <X className="h-5 w-5" />
                       </Button>
                     </div>
@@ -729,32 +621,20 @@ export default function EventForm() {
                 {creationSuccess ? (
                   <div className="space-y-4">
                     <div>
-                      <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Complete
-                      </h2>
-                      <p className=" text-md text-gray-600">
-                        Thank you for your submission.
-                      </p>
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">Complete</h2>
+                      <p className=" text-md text-gray-600">Thank you for your submission.</p>
                     </div>
 
-                    <Button onClick={() => router.push('/dashboard/events')}>
-                      View event in dashboard
-                    </Button>
+                    <Button onClick={() => router.push('/dashboard/events')}>View event in dashboard</Button>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     <div>
-                      <h2 className="text-base font-semibold leading-7 text-gray-900">
-                        Failed
-                      </h2>
-                      <p className="text-md text-gray-600">
-                        Your submission failed unexpectedly.
-                      </p>
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">Failed</h2>
+                      <p className="text-md text-gray-600">Your submission failed unexpectedly.</p>
                     </div>
 
-                    <Button onClick={() => router.push('/dashboard/events')}>
-                      Try Again
-                    </Button>
+                    <Button onClick={() => router.push('/dashboard/events')}>Try Again</Button>
                   </div>
                 )}
               </>
@@ -763,18 +643,10 @@ export default function EventForm() {
         </Form>
       </div>
       <div className="flex justify-between">
-        <Button
-          onClick={prev}
-          disabled={
-            currentStep === 0 || currentStep === steps.length - 1 || loading
-          }
-        >
+        <Button onClick={prev} disabled={currentStep === 0 || currentStep === steps.length - 1 || loading}>
           <ChevronLeft />
         </Button>
-        <Button
-          onClick={next}
-          disabled={currentStep === steps.length - 1 || loading}
-        >
+        <Button onClick={next} disabled={currentStep === steps.length - 1 || loading}>
           {currentStep !== steps.length - 2 ? <ChevronRight /> : 'Complete'}
         </Button>
       </div>

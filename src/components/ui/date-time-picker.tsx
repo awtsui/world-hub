@@ -4,11 +4,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { SelectSingleEventHandler } from 'react-day-picker';
 import { Label } from '@/components/ui/label';
@@ -20,14 +16,8 @@ interface DateTimePickerProps {
   disabled: (date: Date) => boolean;
 }
 
-export function DateTimePicker({
-  date,
-  setDate,
-  disabled,
-}: DateTimePickerProps) {
-  const [selectedDateTime, setSelectedDateTime] = React.useState<DateTime>(
-    DateTime.fromJSDate(date ?? new Date())
-  );
+export function DateTimePicker({ date, setDate, disabled }: DateTimePickerProps) {
+  const [selectedDateTime, setSelectedDateTime] = React.useState<DateTime>(DateTime.fromJSDate(date ?? new Date()));
 
   const handleSelect: SelectSingleEventHandler = (day, selected) => {
     const selectedDay = DateTime.fromJSDate(selected);
@@ -55,17 +45,10 @@ export function DateTimePicker({
       <PopoverTrigger asChild className="z-10">
         <Button
           variant={'outline'}
-          className={cn(
-            'w-[280px] justify-start text-left font-normal h-10',
-            !date && 'text-muted-foreground'
-          )}
+          className={cn('w-[280px] justify-start text-left font-normal h-10', !date && 'text-muted-foreground')}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? (
-            selectedDateTime.toFormat('DDD HH:mm')
-          ) : (
-            <span>Pick a date</span>
-          )}
+          {date ? selectedDateTime.toFormat('DDD HH:mm') : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
@@ -78,11 +61,7 @@ export function DateTimePicker({
         />
         <div className="px-4 pt-0 pb-4">
           <Label>Time</Label>
-          <Input
-            type="time"
-            onChange={handleTimeChange}
-            value={selectedDateTime.toFormat('HH:mm')}
-          />
+          <Input type="time" onChange={handleTimeChange} value={selectedDateTime.toFormat('HH:mm')} />
         </div>
         {!selectedDateTime && <p>Please pick a day.</p>}
       </PopoverContent>

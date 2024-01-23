@@ -1,10 +1,5 @@
 import { getToken } from 'next-auth/jwt';
-import {
-  NextFetchEvent,
-  NextMiddleware,
-  NextRequest,
-  NextResponse,
-} from 'next/server';
+import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
 
 // Handles routing to admin sub domain
 
@@ -14,16 +9,12 @@ export function withAdminMiddleware(middleware: NextMiddleware) {
 
     if (hostname == `admin.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
       const { searchParams, pathname } = request.nextUrl;
-      const path = `${pathname}${
-        searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''
-      }`;
+      const path = `${pathname}${searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''}`;
 
       const token = await getToken({ req: request });
 
       const protectedPaths = ['/dashboard'];
-      const matchesProtectedPaths = protectedPaths.some((path) =>
-        pathname.startsWith(path)
-      );
+      const matchesProtectedPaths = protectedPaths.some((path) => pathname.startsWith(path));
 
       if (matchesProtectedPaths) {
         if (!token) {
@@ -49,9 +40,7 @@ export function withAdminMiddleware(middleware: NextMiddleware) {
         return NextResponse.redirect(url);
       }
 
-      return NextResponse.rewrite(
-        new URL(`/admin${path === '/' ? '' : path}`, request.url)
-      );
+      return NextResponse.rewrite(new URL(`/admin${path === '/' ? '' : path}`, request.url));
     }
 
     return middleware(request, event);

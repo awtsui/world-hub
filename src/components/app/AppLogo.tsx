@@ -5,12 +5,7 @@ export default function AppLogo() {
   return (
     <div className="w-[210px] h-auto">
       <AspectRatio ratio={8 / 2}>
-        <Image
-          alt="logo"
-          className="cursor-pointer object-cover"
-          fill
-          src="/logo.png"
-        />
+        <Image alt="logo" className="cursor-pointer object-cover" fill src="/logo.png" />
       </AspectRatio>
     </div>
   );

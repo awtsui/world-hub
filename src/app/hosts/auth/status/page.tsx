@@ -1,14 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useAlertDialog } from '@/context/ModalContext';
 import { fetcher } from '@/lib/client/utils';
@@ -21,25 +14,20 @@ import useSWR from 'swr';
 export default function HostApprovalStatusPage() {
   const searchParams = useSearchParams();
   const hostId = searchParams.get('id');
-  const { data: accountData } = useSWR(
-    hostId ? `/api/hosts/status?id=${hostId}` : '',
-    fetcher
-  );
+  const { data: accountData } = useSWR(hostId ? `/api/hosts/status?id=${hostId}` : '', fetcher);
   const { setSuccess } = useAlertDialog();
   const router = useRouter();
 
   // TODO: May not need useEffect here
 
-  useEffect(() => {
-    if (
-      accountData &&
-      Object.keys(accountData).includes('approvalStatus') &&
-      accountData.approvalStatus === HostApprovalStatus.Approved
-    ) {
-      setSuccess('Your account has been approved!', 3);
-      router.push('/auth/signin');
-    }
-  }, [JSON.stringify(accountData)]);
+  if (
+    accountData &&
+    Object.keys(accountData).includes('approvalStatus') &&
+    accountData.approvalStatus === HostApprovalStatus.Approved
+  ) {
+    router.push('/auth/signin');
+    setSuccess('Your account has been approved!', 3);
+  }
 
   if ((accountData && accountData.error) || !accountData) {
     return <div>Account not found</div>;
@@ -51,9 +39,7 @@ export default function HostApprovalStatusPage() {
         <Card className="h-auto w-80">
           <CardHeader className="items-center">
             <CardTitle>Account Approval Status</CardTitle>
-            <CardDescription>
-              Please wait as we review your account request
-            </CardDescription>
+            <CardDescription>Please wait as we review your account request</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Label className="text-5xl">{accountData.approvalStatus}</Label>

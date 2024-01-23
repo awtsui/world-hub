@@ -8,11 +8,7 @@ type CategorySectionProps = {
   events: Event[];
 };
 
-export default function CategorySection({
-  category,
-  subCategory,
-  events,
-}: CategorySectionProps) {
+export default function CategorySection({ category, subCategory, events }: CategorySectionProps) {
   const isCategory = !subCategory;
 
   const filteredEvents = events.filter((event) => {
@@ -29,9 +25,7 @@ export default function CategorySection({
         <div className="px-5 py-3">
           <Link
             className="text-2xl font-bold pl-3"
-            href={`/marketplace/${category.id}${
-              !isCategory ? `/${subCategory.id}` : ''
-            }`}
+            href={`/marketplace/${category.id}${!isCategory ? `/${subCategory.id}` : ''}`}
           >
             {isCategory ? category.name : subCategory.name}
           </Link>

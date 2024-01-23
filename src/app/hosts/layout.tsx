@@ -3,11 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AlertModalProvider } from '@/context/ModalContext';
 import NextAuthProvider from '@/providers/NextAuthProvider';
 
-export default async function HostsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function HostsLayout({ children }: { children: React.ReactNode }) {
   return (
     <AlertModalProvider>
       <NextAuthProvider>

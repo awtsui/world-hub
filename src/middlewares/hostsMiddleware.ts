@@ -1,10 +1,5 @@
 import { getToken } from 'next-auth/jwt';
-import {
-  NextFetchEvent,
-  NextMiddleware,
-  NextRequest,
-  NextResponse,
-} from 'next/server';
+import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
 
 // Handles routing to hosts sub domain
 
@@ -14,16 +9,12 @@ export function withHostsMiddleware(middleware: NextMiddleware) {
 
     if (hostname == `hosts.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
       const { searchParams, pathname } = request.nextUrl;
-      const path = `${pathname}${
-        searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''
-      }`;
+      const path = `${pathname}${searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''}`;
 
       const token = await getToken({ req: request });
 
       const hostsProtectedPaths = ['/dashboard'];
-      const matchesHostsProtectedPath = hostsProtectedPaths.some((path) =>
-        pathname.startsWith(path)
-      );
+      const matchesHostsProtectedPath = hostsProtectedPaths.some((path) => pathname.startsWith(path));
       if (matchesHostsProtectedPath) {
         if (!token) {
           const url = new URL('/auth/signin', request.url);
@@ -46,9 +37,7 @@ export function withHostsMiddleware(middleware: NextMiddleware) {
         return NextResponse.redirect(new URL('/home', request.url));
       }
 
-      return NextResponse.rewrite(
-        new URL(`/hosts${path === '/' ? '' : path}`, request.url)
-      );
+      return NextResponse.rewrite(new URL(`/hosts${path === '/' ? '' : path}`, request.url));
     }
 
     return middleware(request, event);

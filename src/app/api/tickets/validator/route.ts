@@ -17,8 +17,7 @@ export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
 
-    const validatedReqBody =
-      TicketValidatorDataRequestBodySchema.safeParse(reqBody);
+    const validatedReqBody = TicketValidatorDataRequestBodySchema.safeParse(reqBody);
     if (!validatedReqBody.success) {
       console.error(validatedReqBody.error.errors);
       throw Error('Invalid request body');
@@ -31,16 +30,10 @@ export async function POST(request: NextRequest) {
 
     await session.commitTransaction();
 
-    return NextResponse.json(
-      { message: 'Successfully validated ticket' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Successfully validated ticket' }, { status: 200 });
   } catch (error) {
     await session.abortTransaction();
-    return NextResponse.json(
-      { error: `Internal Server Error: ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error: ${error}` }, { status: 500 });
   } finally {
     await session.endSession();
   }

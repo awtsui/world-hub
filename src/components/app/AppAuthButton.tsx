@@ -21,15 +21,8 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-export default function AppAuthButton({
-  signInCallbackUrl,
-  signOutCallbackUrl,
-}: AppAuthButtonProps) {
+export default function AppAuthButton({ signInCallbackUrl, signOutCallbackUrl }: AppAuthButtonProps) {
   return (
-    <AuthButton
-      signInCallbackUrl={signInCallbackUrl}
-      signOutCallbackUrl={signOutCallbackUrl}
-      menuItems={menuItems}
-    />
+    <AuthButton signInCallbackUrl={signInCallbackUrl} signOutCallbackUrl={signOutCallbackUrl} menuItems={menuItems} />
   );
 }

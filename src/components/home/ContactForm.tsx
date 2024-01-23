@@ -4,20 +4,19 @@ import { ContactFormSchema } from '@/lib/zod/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '../ui/textarea';
+import { useToast } from '../ui/use-toast';
+import { sendContactFormMail } from '@/lib/actions';
+import { useState } from 'react';
+
+type Inputs = z.infer<typeof ContactFormSchema>;
 
 export default function ContactForm() {
-  type Inputs = z.infer<typeof ContactFormSchema>;
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<Inputs>({
     mode: 'onBlur',
@@ -34,7 +33,20 @@ export default function ContactForm() {
   const { register, handleSubmit, watch, reset, trigger, formState } = form;
 
   async function processForm(data: Inputs) {
-    reset();
+    try {
+      setIsLoading(true);
+      await sendContactFormMail(data);
+      toast({
+        title: 'Contact form successfully sent',
+      });
+      reset();
+    } catch {
+      toast({
+        title: 'Contact form failed to send',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -63,11 +75,7 @@ export default function ContactForm() {
                   <FormItem>
                     <FormLabel>Subject</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Choose subject"
-                        type="subject"
-                        {...field}
-                      />
+                      <Input placeholder="Choose subject" type="subject" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -82,11 +90,7 @@ export default function ContactForm() {
                   <FormItem id="company">
                     <FormLabel>Company</FormLabel>
                     <FormControl>
-                      <Input
-                        type="company"
-                        placeholder="Your company"
-                        {...field}
-                      />
+                      <Input type="company" placeholder="Your company" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -99,11 +103,7 @@ export default function ContactForm() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Email Address"
-                        type="email"
-                        {...field}
-                      />
+                      <Input placeholder="Email Address" type="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,18 +117,14 @@ export default function ContactForm() {
                 <FormItem>
                   <FormLabel>Message</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Start typing here"
-                      className="resize-none"
-                      {...field}
-                    />
+                    <Textarea placeholder="Start typing here" className="resize-none" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          <Button className="mt-6" type="submit">
+          <Button className="mt-6" type="submit" disabled={!formState.isDirty || isLoading}>
             Submit
           </Button>
         </form>

@@ -34,13 +34,10 @@ export async function GET(request: NextRequest) {
         customer_email: checkoutSession.customer_details?.email,
         order_id: checkoutSession.metadata?.orderId,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    return NextResponse.json(
-      { error: `Internal Server Error: ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error: ${error}` }, { status: 500 });
   }
 }
 
@@ -58,19 +55,14 @@ export async function POST(request: NextRequest) {
       throw Error('Not authorized');
     }
 
-    const validatedReqBody =
-      StripeSessionDataRequestBodySchema.safeParse(reqBody);
+    const validatedReqBody = StripeSessionDataRequestBodySchema.safeParse(reqBody);
 
     if (!validatedReqBody.success) {
       console.error(validatedReqBody.error.errors);
       throw Error('Invalid request body');
     }
 
-    const resp = await createStripeSession(
-      validatedReqBody.data,
-      token.id,
-      session
-    );
+    const resp = await createStripeSession(validatedReqBody.data, token.id, session);
 
     await session.commitTransaction();
 
@@ -79,14 +71,11 @@ export async function POST(request: NextRequest) {
         message: 'Successfully create stripe session',
         clientSecret: resp.clientSecret,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     await session.abortTransaction();
-    return NextResponse.json(
-      { error: `Internal Server Error: ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error: ${error}` }, { status: 500 });
   } finally {
     await session.endSession();
   }

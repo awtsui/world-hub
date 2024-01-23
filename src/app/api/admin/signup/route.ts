@@ -33,14 +33,11 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     await session.abortTransaction();
-    return NextResponse.json(
-      { error: `Internal Server Error (/api/admin/signup): ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Internal Server Error (/api/admin/signup): ${error}` }, { status: 500 });
   } finally {
     await session.endSession();
   }

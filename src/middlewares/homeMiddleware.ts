@@ -1,9 +1,4 @@
-import {
-  NextFetchEvent,
-  NextMiddleware,
-  NextRequest,
-  NextResponse,
-} from 'next/server';
+import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
 
 // Handles routing to main domain
 
@@ -13,13 +8,9 @@ export function withHomeMiddleware(middleware: NextMiddleware) {
 
     if (hostname === `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
       const { searchParams, pathname } = request.nextUrl;
-      const path = `${pathname}${
-        searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''
-      }`;
+      const path = `${pathname}${searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''}`;
 
-      return NextResponse.rewrite(
-        new URL(`/home${path === '/' ? '' : path}`, request.url)
-      );
+      return NextResponse.rewrite(new URL(`/home${path === '/' ? '' : path}`, request.url));
     }
 
     return middleware(request, event);
