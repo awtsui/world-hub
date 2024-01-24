@@ -47,11 +47,7 @@ export default function HostApprovalStatusPage() {
           <CardFooter>
             <div className="mx-auto">
               {accountData.approvalStatus !== HostApprovalStatus.Approved ? (
-                <a
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/marketplace`}
-                >
+                <a rel="noopener noreferrer" target="_blank" href={`//app.${process.env.NEXT_PUBLIC_URL}/marketplace`}>
                   <Button>Go to Marketplace</Button>
                 </a>
               ) : (

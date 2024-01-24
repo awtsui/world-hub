@@ -6,7 +6,7 @@ export function withHomeMiddleware(middleware: NextMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
     const hostname = request.headers.get('host')!;
 
-    if (hostname === `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+    if (hostname === `${process.env.NEXT_PUBLIC_URL}`) {
       const { searchParams, pathname } = request.nextUrl;
       const path = `${pathname}${searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''}`;
 

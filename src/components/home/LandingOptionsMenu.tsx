@@ -42,7 +42,7 @@ export default function LandingOptionsMenu({ className, ...props }: React.HTMLAt
           {route.label}
         </Link>
       ))}
-      <a href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/signin`}>
+      <a href={`//app.${process.env.NEXT_PUBLIC_URL}/auth/signin`}>
         <Button>Sign In</Button>
       </a>
     </div>

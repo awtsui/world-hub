@@ -1,6 +1,8 @@
 import { NextFetchEvent, NextMiddleware, NextRequest } from 'next/server';
 
-const allowedOrigins = ['http://localhost:3000'];
+const { NODE_ENV, NEXT_PUBLIC_URL } = process.env;
+
+const allowedOrigin = NODE_ENV === 'development' ? `http://${NEXT_PUBLIC_URL}` : `https://${NEXT_PUBLIC_URL}`;
 
 export function withCorsMiddleware(middleware: NextMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
@@ -11,7 +13,7 @@ export function withCorsMiddleware(middleware: NextMiddleware) {
       const res = await middleware(request, event);
 
       if (res) {
-        if (allowedOrigins.includes(origin)) {
+        if (allowedOrigin === origin) {
           res.headers.append('Access-Control-Allow-Origin', origin);
         }
         res.headers.append('Access-Control-Allow-Credentials', 'true');

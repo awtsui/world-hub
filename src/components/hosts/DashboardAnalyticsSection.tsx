@@ -43,7 +43,7 @@ export default function DashboardAnalyticsSection({ hostProfile, events }: Dashb
             {topEvents.map((event, index) => (
               <a
                 key={event.eventId}
-                href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/event/${event.eventId}`}
+                href={`//app.${process.env.NEXT_PUBLIC_URL}/event/${event.eventId}`}
                 className="flex justify-between py-5 px-2 hover:bg-slate-100"
                 rel="noopener noreferrer"
                 target="_blank"
