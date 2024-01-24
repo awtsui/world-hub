@@ -2,7 +2,7 @@ import CreateEventButton from '@/components/hosts/CreateEventButton';
 import EventViewCard from '@/components/hosts/EventViewCard';
 import { Event } from '@/lib/types';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/next-auth/utils/options';
 import { getEventsByIds, getHostProfileById } from '@/lib/actions';
 
 export default async function HostDashboardEventsPage() {
