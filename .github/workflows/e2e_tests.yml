@@ -5,14 +5,28 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress Run
+    environment: development
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         containers: [1, 2] # Uses 2 parallel instances
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Use Node 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Run Cypress
         uses: cypress-io/github-action@v6
