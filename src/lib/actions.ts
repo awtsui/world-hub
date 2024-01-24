@@ -218,7 +218,7 @@ export async function getVenueById(venueId: string) {
 export async function getMediaById(mediaId: string) {
   await dbConnect();
   try {
-    const data = await Media.findById(mediaId).exec();
+    const data = await Media.findById(mediaId);
     const { __v, ...rest } = data._doc;
 
     let formattedData;
