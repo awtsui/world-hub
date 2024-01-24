@@ -45,7 +45,7 @@ export default async function EventViewCard({ event, ...props }: EventViewCardPr
         {event.approvalStatus === EventApprovalStatus.Approved && (
           <a
             target="_blank"
-            href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/event/${event.eventId}`}
+            href={`//app.${process.env.NEXT_PUBLIC_URL}/event/${event.eventId}`}
             rel="noopener noreferrer"
           >
             <Button variant="outline">View in Marketplace</Button>

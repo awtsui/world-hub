@@ -12,7 +12,7 @@ export function withAdminMiddleware(middleware: NextMiddleware) {
       hostname = `${hostname.split('---')[0]}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
     }
 
-    if (hostname == `admin.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+    if (hostname == `admin.${process.env.NEXT_PUBLIC_URL}`) {
       const { searchParams, pathname } = request.nextUrl;
       const path = `${pathname}${searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''}`;
 
