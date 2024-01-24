@@ -1,6 +1,4 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { Role } from '@/lib/types';
-import { getServerSession } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
 

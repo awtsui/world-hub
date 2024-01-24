@@ -2,8 +2,8 @@ import CreateEventButton from '@/components/hosts/CreateEventButton';
 import EventViewCard from '@/components/hosts/EventViewCard';
 import { Event } from '@/lib/types';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getEventsByIds, getHostProfileById } from '@/lib/actions';
+import { authOptions } from '../../../../lib/next-auth/options';
 
 export default async function HostDashboardEventsPage() {
   const session = await getServerSession(authOptions);
