@@ -4,11 +4,11 @@ import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/
 
 export function withHomeMiddleware(middleware: NextMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
-    let hostname = request.headers.get('host')!.replace('localhost:3000', `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+    let hostname = request.headers.get('host')!.replace('localhost:3000', `${process.env.NEXT_PUBLIC_URL}`);
 
     // special case for Vercel preview deployment URLs
     if (hostname.includes('---') && hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
-      hostname = `${hostname.split('---')[0]}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+      hostname = `${hostname.split('---')[0]}.${process.env.NEXT_PUBLIC_URL}`;
     }
 
     if (hostname === `${process.env.NEXT_PUBLIC_URL}`) {
