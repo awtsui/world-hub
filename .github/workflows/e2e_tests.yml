@@ -17,6 +17,7 @@ jobs:
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
+          build: yarn build
           start: yarn start
           browser: chrome
           wait-on: 'http://localhost:3000'
