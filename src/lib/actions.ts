@@ -23,6 +23,8 @@ if (!AWS_CLOUDFRONT_URL) throw new Error('AWS_CLOUDFRONT_URL not defined');
 if (!AWS_CLOUDFRONT_PRIVATE_KEY) throw new Error('AWS_CLOUDFRONT_PRIVATE_KEY not defined');
 if (!AWS_CLOUDFRONT_KEY_PAIR_ID) throw new Error('AWS_CLOUDFRONT_KEY_PAIR_ID not defined');
 
+const AWS_CLOUDFRONT_PRIVATE_KEY_DECODED = Buffer.from(AWS_CLOUDFRONT_PRIVATE_KEY, 'base64').toString('utf8');
+
 type ContactForm = z.infer<typeof ContactFormSchema>;
 
 export async function getEventsByIds(eventIds: string[]) {
@@ -226,7 +228,7 @@ export async function getMediaById(mediaId: string) {
       const newUrl = getSignedUrl({
         url: `${AWS_CLOUDFRONT_URL}/${data.fileName}`,
         dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
-        privateKey: AWS_CLOUDFRONT_PRIVATE_KEY!,
+        privateKey: AWS_CLOUDFRONT_PRIVATE_KEY_DECODED!,
         keyPairId: AWS_CLOUDFRONT_KEY_PAIR_ID!,
       });
       formattedData = {
