@@ -1,5 +1,5 @@
-import { Currency } from '@/lib/constants';
 import {
+  Currency,
   Event,
   EventApprovalStatus,
   HostProfile,
@@ -54,7 +54,7 @@ export const mockEvents: Event[] = [
     subCategory: 'EDM',
     mediaId: '65ab5ed11478dc081df51250',
     datetime: new Date('2024-01-25T00:43:00.000+00:00'),
-    currency: 'USD',
+    currency: Currency.USD,
     description:
       'Lorem Ipsum is the single greatest threat. We are not - we are not keeping up with other websites. Lorem Ipsum best not make any more threats to your website. It will be met with fire and fury like the world has never seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',
     venueId: '1',
@@ -81,7 +81,7 @@ export const mockEvents: Event[] = [
     subCategory: 'EDM',
     mediaId: '65ac68f6962173289df7f951',
     datetime: new Date('2024-01-25T00:43:00.000+00:00'),
-    currency: 'USD',
+    currency: Currency.USD,
     description:
       'Lorem Ipsum is the single greatest threat. We are not - we are not keeping up with other websites. Lorem Ipsum best not make any more threats to your website. It will be met with fire and fury like the world has never seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',
     venueId: '1',

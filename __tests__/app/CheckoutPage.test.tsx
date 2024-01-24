@@ -1,20 +1,16 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import CheckoutPage from '@/app/app/checkout/page';
 import { useSession } from 'next-auth/react';
-import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
-import getStripe from '@/lib/stripe/utils/get-stripejs';
 import { useRouter } from 'next/navigation';
-import { AlertModalContext, AlertModalProvider, useAlertDialog } from '@/context/ModalContext';
-import { SWRConfig } from 'swr';
-import { CartContext, CartProvider } from '@/context/CartContext';
+import { AlertModalContext } from '@/context/ModalContext';
+import { CartContext } from '@/context/CartContext';
 import { Session } from 'next-auth';
-import { AlertStatus, Role, TicketWithData, WorldIdVerificationLevel } from '@/lib/types';
+import { AlertStatus, Currency, Role, TicketWithData, WorldIdVerificationLevel } from '@/lib/types';
 import useFetchEventsByIds from '@/hooks/useFetchEventsByIds';
 import useFetchOrdersByIds from '@/hooks/useFetchOrdersByIds';
 import useFetchUserProfileById from '@/hooks/useFetchUserProfileById';
 import { mockEvents, mockOrders, mockTickets, mockUserProfile } from '@/lib/data/__mocks__';
 import useFetchStripeSession from '@/hooks/useFetchStripeSession';
-import { Currency } from '@/lib/constants';
 
 jest.mock('next-auth/react', () => {
   const originalModule = jest.requireActual('next-auth/react');
@@ -66,27 +62,26 @@ const mockUseFetchOrdersByIds = useFetchOrdersByIds as jest.Mock;
 const mockUseFetchStripeSession = useFetchStripeSession as jest.Mock;
 const mockPush = jest.fn();
 
-beforeEach(() => {
-  jest.resetAllMocks();
-
-  mockUseSession.mockReturnValue({ data: mockSession });
-  mockUseFetchUserProfileById.mockReturnValue(mockUserProfile);
-  mockUseFetchEventsByIds.mockReturnValue(mockEvents);
-  mockUseFetchOrdersByIds.mockReturnValue(mockOrders);
-  mockUseFetchStripeSession.mockImplementation(({ isValidOrder, isValidVerification, ...arg }) =>
-    isValidOrder && isValidVerification ? { clientSecret: 'client-secret' } : { clientSecret: undefined },
-  );
-  mockUseRouter.mockReturnValue({
-    query: {},
-    push: mockPush,
-  });
-});
-
-afterAll(() => {
-  jest.clearAllMocks();
-});
-
 describe('CheckoutPage', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+
+    mockUseSession.mockReturnValue({ data: mockSession });
+    mockUseFetchUserProfileById.mockReturnValue(mockUserProfile);
+    mockUseFetchEventsByIds.mockReturnValue(mockEvents);
+    mockUseFetchOrdersByIds.mockReturnValue(mockOrders);
+    mockUseFetchStripeSession.mockImplementation(({ isValidOrder, isValidVerification, ...arg }) =>
+      isValidOrder && isValidVerification ? { clientSecret: 'client-secret' } : { clientSecret: undefined },
+    );
+    mockUseRouter.mockReturnValue({
+      query: {},
+      push: mockPush,
+    });
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
   it('redirects when cart has no tickets', () => {
     const mockSetError = jest.fn();
     render(

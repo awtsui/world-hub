@@ -10,7 +10,7 @@
     "prettier": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "cypress:open": "cypress open"
+    "cypress": "cypress open"
   },
   "husky": {
     "hooks": {

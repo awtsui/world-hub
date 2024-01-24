@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import './global.css';
+import '../styles/global.css';
 import { Kanit } from 'next/font/google';
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary';
 import RootError from './error';
