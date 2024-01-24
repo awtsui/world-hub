@@ -21,6 +21,7 @@
     "paths": {
       "@/*": ["./src/*"],
     },
+    "types": ["cypress", "@testing-library/cypress"],
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"],

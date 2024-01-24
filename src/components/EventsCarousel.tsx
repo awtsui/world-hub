@@ -11,9 +11,9 @@ export default function EventsCarousel({ events }: EventsCarouselProps) {
   return (
     <Carousel opts={{ loop: true, align: 'start' }} orientation="horizontal" className="w-full">
       <CarouselContent className="-ml-1">
-        {events.map((event) => (
+        {events.map((event, index) => (
           <CarouselItem key={event.eventId} className="pl-2 basis-auto">
-            <Link key={event.eventId} href={`/event/${event.eventId}`}>
+            <Link data-testid={`event-${index}-card-link`} key={event.eventId} href={`/event/${event.eventId}`}>
               <EventCard event={event} />
             </Link>
           </CarouselItem>

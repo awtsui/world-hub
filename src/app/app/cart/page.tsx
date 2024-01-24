@@ -34,8 +34,8 @@ export default function CartPage() {
             </div>
             <hr />
           </div>
-          {Object.entries(tickets).map(([ticketId, ticket]) => (
-            <div key={ticketId} className="flex flex-col gap-3">
+          {Object.entries(tickets).map(([ticketId, ticket], index) => (
+            <div key={ticketId} data-testid={`cart-item-${index}`} className="flex flex-col gap-3">
               <div className="grid grid-cols-7 items-center">
                 <Link href={`/event/${ticket.eventId}`} className="hover:underline col-span-3 pl-2">
                   {ticket.eventTitle} - {ticket.label}
@@ -79,7 +79,7 @@ export default function CartPage() {
               <p className="text-lg font-bold">${subTotal.toFixed(2)}</p>
             </div>
           </div>
-          <Button className="w-full" disabled={isDisabled}>
+          <Button data-testid="checkout-button" className="w-full" disabled={isDisabled}>
             <Link href="/checkout">Checkout</Link>
           </Button>
         </div>

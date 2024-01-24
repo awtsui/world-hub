@@ -33,7 +33,11 @@ export default function AddTicketDialog({ event }: AddTicketDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setSelectedTicket(null)} disabled={!isValidVerificationLevel}>
+        <Button
+          data-testid="add-ticket-dialog-button"
+          onClick={() => setSelectedTicket(null)}
+          disabled={!isValidVerificationLevel}
+        >
           Purchase a ticket
         </Button>
       </DialogTrigger>
@@ -45,9 +49,10 @@ export default function AddTicketDialog({ event }: AddTicketDialogProps) {
         <div>
           <p>Tickets Available</p>
           <div className="py-5 space-y-3">
-            {event.ticketTiers.map((tier) => (
+            {event.ticketTiers.map((tier, index) => (
               <Button
                 key={tier.label}
+                data-testid={`select-tier-${index}-button`}
                 variant="outline"
                 className={`flex w-full justify-between px-4 py-2 outline outline-1 rounded-md ${
                   selectedTicket?.label === tier.label ? 'bg-slate-100' : 'bg-white'
