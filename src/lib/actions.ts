@@ -423,7 +423,7 @@ export async function deleteRejectedHost(hostId: string) {
 export async function sendContactFormMail(data: ContactForm) {
   try {
     const transporter = getTransporter();
-    transporter.sendMail({
+    await transporter.sendMail({
       ...mailOptions,
       ...generateEmailContent(data),
       subject: data.subject,
