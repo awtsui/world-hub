@@ -56,13 +56,17 @@ export const authOptions: NextAuthOptions = {
       clientId: `app_${process.env.NEXT_PUBLIC_WLD_CLIENT_ID}`,
       clientSecret: process.env.WLD_CLIENT_SECRET,
       idToken: true,
-      profile(profile) {
+      async profile(profile) {
+        const resp = await signUpIfNewUser(profile.sub);
+
         return {
           id: profile.sub,
           name: profile.sub,
+          email: resp.email,
           provider: 'worldcoin',
-          verificationLevel: profile['https://id.worldcoin.org/v1'].verification_level,
           role: Role.user,
+          verificationLevel: profile['https://id.worldcoin.org/v1'].verification_level,
+          isVerified: resp.isVerified,
         };
       },
     },
@@ -130,7 +134,8 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      return url;
+      const redirectUrl = url.startsWith('/') ? new URL(url, baseUrl).toString() : url;
+      return redirectUrl;
     },
   },
   pages: {
