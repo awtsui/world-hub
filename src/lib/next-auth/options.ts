@@ -134,8 +134,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      const redirectUrl = url.startsWith('/') ? new URL(url, baseUrl).toString() : url;
-      return redirectUrl;
+      return url;
     },
   },
   pages: {

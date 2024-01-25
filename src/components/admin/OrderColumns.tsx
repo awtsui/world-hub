@@ -100,7 +100,7 @@ export const defaultOrderColumns = [
       columnHelper.accessor('timestamp', {
         cell: (info) => {
           const timestamp = info.getValue();
-          const formatted = formatDate(new Date(timestamp as Date));
+          const formatted = formatDate(timestamp);
           return <div className="text-right font-medium">{formatted}</div>;
         },
         header: ({ column }) => <DataTableSortColumnHeader column={column} title="Timestamp" className="justify-end" />,
