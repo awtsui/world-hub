@@ -40,8 +40,6 @@ function isNotAllowedToCall(path: string, method: string, role?: Role) {
   });
 }
 
-const allowedDomains = ['locahost:3000'];
-
 // Handle role based authentication and authorization when communicating with api
 
 export function withAuthMiddleware(middleware: NextMiddleware) {
