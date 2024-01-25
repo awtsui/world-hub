@@ -17,6 +17,7 @@ import { ContactFormSchema } from './zod/schema';
 import { generateEmailContent, isExpiredSignedUrl } from './utils';
 import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { deleteMedia } from './mongodb/utils/medias';
+import { cookies } from 'next/headers';
 
 const { AWS_CLOUDFRONT_URL, AWS_CLOUDFRONT_PRIVATE_KEY, AWS_CLOUDFRONT_KEY_PAIR_ID } = process.env;
 if (!AWS_CLOUDFRONT_URL) throw new Error('AWS_CLOUDFRONT_URL not defined');
@@ -158,6 +159,7 @@ export async function getApprovedEvents() {
 }
 
 export async function getAllEvents() {
+  const _ = cookies();
   await dbConnect();
   try {
     const data = await Event.find({});
@@ -247,6 +249,7 @@ export async function getMediaById(mediaId: string) {
 }
 
 export async function getAllOrders() {
+  const _ = cookies();
   await dbConnect();
   try {
     const data = await Order.find({});
@@ -273,6 +276,7 @@ export async function getAllOrders() {
 }
 
 export async function getAllUsers() {
+  const _ = cookies();
   await dbConnect();
   try {
     const data = await User.find({});
@@ -289,6 +293,7 @@ export async function getAllUsers() {
 }
 
 export async function getAllUserProfiles() {
+  const _ = cookies();
   await dbConnect();
   try {
     const data = await UserProfile.find({});
@@ -305,6 +310,7 @@ export async function getAllUserProfiles() {
 }
 
 export async function getAllHosts() {
+  const _ = cookies();
   await dbConnect();
   try {
     const data = await Host.find({});
@@ -321,6 +327,8 @@ export async function getAllHosts() {
 }
 
 export async function getAllHostProfiles() {
+  const _ = cookies();
+
   await dbConnect();
   try {
     const data = await HostProfile.find({});
@@ -337,6 +345,7 @@ export async function getAllHostProfiles() {
 }
 
 export async function getAllVenues() {
+  const _ = cookies();
   await dbConnect();
   try {
     const data = await Venue.find({});

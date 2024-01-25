@@ -21,8 +21,6 @@ export async function POST(request: NextRequest) {
 
     const resp = await signUp(validatedReqBody.data, session);
 
-    revalidatePath('/');
-
     if (!resp.success) {
       throw Error(resp.error);
     }
