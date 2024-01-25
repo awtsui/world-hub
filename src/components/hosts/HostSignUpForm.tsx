@@ -9,6 +9,7 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { useAlertDialog } from '@/context/ModalContext';
+import { revalidatePath } from 'next/cache';
 
 type Inputs = z.infer<typeof CredentialsSignUpFormSchema>;
 
@@ -43,8 +44,8 @@ export default function HostSignUpForm() {
       }
       const signUpData = await signUpResp.json();
 
-      setSuccess('Successfully signed up!', 3);
       router.push(`/auth/status?id=${signUpData.hostId}`);
+      setSuccess('Successfully signed up!', 3);
     } catch (error) {
       console.error(error);
       setError('Failed to sign up', 3);

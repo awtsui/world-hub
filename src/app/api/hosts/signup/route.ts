@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { signUp } from '@/lib/mongodb/utils/hosts';
 import { CredentialsSignUpFormSchema } from '@/lib/zod/schema';
 import mongoose, { ClientSession } from 'mongoose';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   await dbConnect();
@@ -19,6 +20,8 @@ export async function POST(request: NextRequest) {
     }
 
     const resp = await signUp(validatedReqBody.data, session);
+
+    revalidatePath('/');
 
     if (!resp.success) {
       throw Error(resp.error);
