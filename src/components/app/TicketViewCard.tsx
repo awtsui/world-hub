@@ -36,7 +36,6 @@ export default function TicketViewCard({ ticket }: TicketViewCardProps) {
       <CardFooter className="flex-col items-start">
         <div className="py-2">
           <p className="text-slate-500 text-sm">Date & Time</p>
-          <p>{typeof event[0].datetime}</p>
           <p className="font-bold text-md">{formatDate(event[0].datetime)}</p>
         </div>
         <div className="py-2">
