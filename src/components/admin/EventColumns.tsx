@@ -87,7 +87,7 @@ export const defaultEventColumns = [
       columnHelper.accessor('datetime', {
         cell: (info) => {
           const timestamp = info.getValue();
-          const formatted = formatDate(new Date(timestamp as Date));
+          const formatted = formatDate(timestamp);
           return <div className="text-right font-medium">{formatted}</div>;
         },
         header: ({ column }) => <DataTableSortColumnHeader column={column} title="Datetime" className="justify-end" />,
