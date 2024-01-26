@@ -29,9 +29,10 @@ export default function CartSheet() {
         <div className="flex-1">
           <div className="flex flex-col py-5">
             <div className="flex flex-col pb-3 px-2">
-              {Object.values(tickets).map((ticket) => (
+              {Object.values(tickets).map((ticket, index) => (
                 <div
                   key={`${ticket.eventId}-${ticket.label}`}
+                  data-testid={`modal-cart-item-${index}`}
                   className="grid grid-cols-6 grid-flow-row-dense py-2 items-center"
                 >
                   <div className="flex flex-col col-span-3">
@@ -72,12 +73,12 @@ export default function CartSheet() {
             <hr />
           </div>
           <div className="flex gap-2">
-            <Link href="/cart" className="w-full">
-              <Button variant="secondary" className="w-full" onClick={onCartClose}>
+            <Button data-testid="modal-view-cart-button" variant="secondary" className="w-full" onClick={onCartClose}>
+              <Link href="/cart" className="w-full">
                 View Cart
-              </Button>
-            </Link>
-            <Button className="w-full" disabled={isDisabled} onClick={onCartClose}>
+              </Link>
+            </Button>
+            <Button data-testid="modal-checkout-button" className="w-full" disabled={isDisabled} onClick={onCartClose}>
               <Link href="/checkout" className="w-full">
                 Checkout
               </Link>

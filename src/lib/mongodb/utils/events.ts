@@ -1,12 +1,11 @@
 import { z } from 'zod';
 import Event from '../models/Event';
 import { generateUUID } from '@/lib/server/utils';
-import { Currency } from '@/lib/constants';
 import HostProfile from '../models/HostProfile';
 import Media from '../models/Media';
 import { EventDataRequestBodySchema } from '@/lib/zod/apischema';
 import { ClientSession } from 'mongoose';
-import { EventApprovalStatus } from '@/lib/types';
+import { Currency, EventApprovalStatus } from '@/lib/types';
 import { deleteMedia } from './medias';
 
 const { AWS_S3_BUCKET_NAME } = process.env;

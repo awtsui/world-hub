@@ -9,7 +9,7 @@ export default function TrendingEventsSection({ events }: TrendingEventsSectionP
   const popularEvents = events.toSorted((a, b) => (a.totalSold > b.totalSold ? -1 : 1)).slice(0, 10);
 
   return (
-    <div className="flex flex-col px-5 py-3">
+    <div data-testid="trending-events-section" className="flex flex-col px-5 py-3">
       <p className="text-2xl font-bold pl-3">Trending</p>
       {popularEvents.length > 0 ? (
         <div className="pt-2">

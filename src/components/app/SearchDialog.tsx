@@ -35,7 +35,7 @@ export default function SearchDialog() {
 
   return (
     <CommandDialog open={isSearchOpen} onOpenChange={onSearchClose} modal defaultOpen={isSearchOpen}>
-      <CommandInput placeholder="Search..." />
+      <CommandInput data-testid="search-dialog-input" placeholder="Search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Events">

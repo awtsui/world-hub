@@ -11,7 +11,7 @@ export default function CartButton() {
   const numberOfTickets = Object.values(tickets).reduce((acc, curr) => acc + curr.unitAmount, 0);
 
   return (
-    <Button className="flex gap-3" onClick={onCartOpen}>
+    <Button data-testid="cart-button" className="flex gap-3" onClick={onCartOpen}>
       <ShoppingCart />
       {numberOfTickets}
     </Button>

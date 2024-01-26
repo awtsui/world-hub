@@ -1,0 +1,44 @@
+name: E2E Test - Chrome
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  Cypress-Run:
+    name: Cypress Run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: yarn
+
+      - name: Install dependencies
+        run: yarn global add vercel
+
+      - name: Pull Vercel Dev Environment
+        run: vercel env pull --yes .env.local --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          build: yarn build
+          start: yarn start
+          browser: chrome
+          wait-on: 'http://localhost:3000'
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

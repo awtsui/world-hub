@@ -11,6 +11,7 @@ export default function OptionsMenu({ className, ...props }: React.HTMLAttribute
     <div className={cn('flex items-center space-x-4 lg:space-x-6', className)} {...props}>
       <Link
         href="/marketplace"
+        data-testid="marketplace-link"
         className={cn(
           'text-md font-medium transition-colors hover:text-primary',
           pathname === '/marketplace' ? 'text-black dark:text-white' : 'text-muted-foreground',
@@ -21,6 +22,7 @@ export default function OptionsMenu({ className, ...props }: React.HTMLAttribute
       {Object.values(categories).map((category) => (
         <Link
           key={category.id}
+          data-testid={`${category.name}-link`}
           href={`/marketplace/${category.id}`}
           className={cn(
             'text-md font-medium transition-colors hover:text-primary',

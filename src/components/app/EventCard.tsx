@@ -20,7 +20,7 @@ export default async function EventCard({ event, ...props }: EventCardProps) {
   }
 
   return (
-    <div className="w-[300px] h-auto flex-none">
+    <div data-testid="event-card" className="w-[300px] h-auto flex-none">
       <Card {...props}>
         <CardContent className="px-3 pt-3 pb-2">
           <AspectRatio ratio={16 / 9}>

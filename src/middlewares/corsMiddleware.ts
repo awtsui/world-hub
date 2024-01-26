@@ -1,7 +1,5 @@
 import { NextFetchEvent, NextMiddleware, NextRequest } from 'next/server';
 
-const { NODE_ENV, NEXT_PUBLIC_URL, NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX } = process.env;
-
 export function withCorsMiddleware(middleware: NextMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
     const { pathname } = request.nextUrl;

@@ -22,6 +22,29 @@ export enum HostApprovalStatus {
   Pending = 'PENDING',
 }
 
+export enum Currency {
+  USD = 'USD',
+}
+
+export enum Role {
+  user = 'user',
+  admin = 'admin',
+  host = 'host',
+  operator = 'operator',
+}
+
+export enum AlertStatus {
+  Success = 'SUCCESS',
+  Notif = 'NOTIF',
+  Error = 'ERROR',
+  None = 'NONE',
+}
+
+export enum WorldIdVerificationLevel {
+  Orb = 'orb',
+  Device = 'device',
+}
+
 export interface IEvent {
   eventId: string;
   title: string;
@@ -142,22 +165,3 @@ export type MenuItem = {
   label: string;
   url: string;
 };
-
-export enum Role {
-  user = 'user',
-  admin = 'admin',
-  host = 'host',
-  operator = 'operator',
-}
-
-export enum AlertStatus {
-  Success = 'SUCCESS',
-  Notif = 'NOTIF',
-  Error = 'ERROR',
-  None = 'NONE',
-}
-
-export enum WorldIdVerificationLevel {
-  Orb = 'orb',
-  Device = 'device',
-}

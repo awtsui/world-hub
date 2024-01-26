@@ -32,7 +32,7 @@ export default function AddTicketButton({ event, tier, setOpen }: AddTicketButto
       title: 'Ticket added to cart',
       description: `${event.title} - ${tier.label} $${parseFloat(tier.price).toFixed(2)}`,
       action: (
-        <ToastAction altText="View in cart" onClick={() => onCartOpen()}>
+        <ToastAction data-testid="toast-view-cart-button" altText="View in cart" onClick={() => onCartOpen()}>
           View in cart
         </ToastAction>
       ),
@@ -42,9 +42,13 @@ export default function AddTicketButton({ event, tier, setOpen }: AddTicketButto
   return (
     <>
       {tier.ticketsPurchased < tier.quantity ? (
-        <Button onClick={() => addItemToCart()}>Add to Cart</Button>
+        <Button data-testid="add-ticket-to-cart-button" onClick={() => addItemToCart()}>
+          Add to Cart
+        </Button>
       ) : (
-        <Button disabled={true}>Sold Out</Button>
+        <Button data-testid="sold-out-button" disabled={true}>
+          Sold Out
+        </Button>
       )}
     </>
   );

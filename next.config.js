@@ -9,6 +9,9 @@ const nextConfig = {
       },
     ],
   },
+  env: {
+    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_VERCEL_URL || 'localhost:3000',
+  },
 };
 
 module.exports = nextConfig;
