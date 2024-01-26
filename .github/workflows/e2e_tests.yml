@@ -14,11 +14,6 @@ jobs:
     name: Cypress Run
     environment: development
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1, 2] # Uses 2 parallel instances
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +30,9 @@ jobs:
         run: yarn global add vercel
 
       - name: Pull Vercel Dev Environment
-        run: vercel env pull .env.local --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel env pull .env.local --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+          cat .env.local
 
       - name: Run Cypress
         uses: cypress-io/github-action@v6
@@ -45,7 +42,6 @@ jobs:
           browser: chrome
           wait-on: 'http://localhost:3000'
           record: true
-          parallel: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

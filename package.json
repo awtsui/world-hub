@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "build": "next build",
     "build:staging": "cp .env.staging .env.local && next build",
     "build:production": "cp .env.prod .env.local && next build",
     "dev:staging": "cp .env.staging .env.local && next dev",
