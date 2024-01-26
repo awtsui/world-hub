@@ -1,11 +1,17 @@
-name: E2E Test
+name: E2E Test - Chrome
 
-on: [push]
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+on:
+  push:
+    branches-ignore:
+      - main
 
 jobs:
-  cypress-run:
+  Cypress-Run:
     name: Cypress Run
-    environment: development
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -21,12 +27,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install Vercel CLI
         run: yarn
 
-      - name: Create .env file
-        run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
+      - name: Install dependencies
+        run: yarn global add vercel
+
+      - name: Pull Vercel Dev Environment
+        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Run Cypress
         uses: cypress-io/github-action@v6
