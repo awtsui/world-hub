@@ -4,6 +4,7 @@ import { EventDataRequestBodySchema } from '@/lib/zod/apischema';
 import dbConnect from '@/lib/mongodb/utils/mongoosedb';
 import mongoose, { ClientSession } from 'mongoose';
 import { getToken } from 'next-auth/jwt';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   // TODO: validate request body
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
     if (!resp.success) {
       throw Error(resp.error);
     }
+
     await session.commitTransaction();
 
     return NextResponse.json(

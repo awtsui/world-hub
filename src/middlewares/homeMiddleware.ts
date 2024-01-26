@@ -11,7 +11,7 @@ export function withHomeMiddleware(middleware: NextMiddleware) {
       hostname = `${hostname.split('---')[0]}.${process.env.NEXT_PUBLIC_URL}`;
     }
 
-    if (hostname === `${process.env.NEXT_PUBLIC_URL}`) {
+    if (hostname == `www.${process.env.NEXT_PUBLIC_URL}` || hostname == `${process.env.NEXT_PUBLIC_URL}`) {
       const { searchParams, pathname } = request.nextUrl;
       const path = `${pathname}${searchParams.toString().length > 0 ? `?${searchParams.toString()}` : ''}`;
 

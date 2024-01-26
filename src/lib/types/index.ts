@@ -53,7 +53,7 @@ export interface IEvent {
   category: string;
   subCategory: string;
   mediaId: string;
-  datetime: Date;
+  datetime: string;
   currency: string;
   description: string;
   venueId: string;

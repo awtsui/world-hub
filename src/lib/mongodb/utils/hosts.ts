@@ -8,7 +8,6 @@ import { ClientSession } from 'mongoose';
 import { HOST_HASH_SALT } from '@/lib/constants';
 import dbConnect from './mongoosedb';
 import { HostApprovalStatus } from '@/lib/types';
-import { revalidateTag } from 'next/cache';
 
 type CredentialsSignUpForm = z.infer<typeof CredentialsSignUpFormSchema>;
 
@@ -114,8 +113,6 @@ export async function signUp(form: CredentialsSignUpForm, session?: ClientSessio
       ],
       { session },
     );
-
-    revalidateTag('host');
 
     return { success: true, id: hostId };
   } catch (error) {

@@ -4,7 +4,7 @@ export function handleFetchError(error: any) {
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function formatDate(date: Date | string) {
+export function formatDate(date: string) {
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     hour: 'numeric',
@@ -12,7 +12,7 @@ export function formatDate(date: Date | string) {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
-  }).format(date instanceof Date ? date : new Date(date));
+  }).format(new Date(date));
 
   return formattedDate;
 }

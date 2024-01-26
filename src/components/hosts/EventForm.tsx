@@ -157,11 +157,6 @@ export default function EventForm() {
       }
       const createEventData = await createEventResp.json();
 
-      const revalidateEventResp = await fetch(`/api/revalidate?tag=event`);
-      if (!revalidateEventResp.ok) {
-        throw Error('Failed to revalidate event');
-      }
-
       setSuccess(`Successfully created event! Your event id is ${createEventData.eventId}`, 3);
       setCreationSuccess(true);
     } catch (error) {
