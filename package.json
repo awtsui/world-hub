@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "build:staging": "scripts/combine_env.sh .env.staging .env.staging.temp .env.local && next build",
+    "build:production": "scripts/combine_env.sh .env.prod .env.prod.temp .env.local && next build",
+    "start": "next start",
     "lint": "next lint",
     "prettier": "prettier --write .",
     "test": "jest",

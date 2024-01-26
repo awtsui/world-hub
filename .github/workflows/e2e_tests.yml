@@ -35,7 +35,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           build: yarn build:staging
-          start: yarn start:staging
+          start: yarn start
           browser: chrome
           wait-on: 'http://localhost:3000'
           record: true
