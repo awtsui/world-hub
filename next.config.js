@@ -11,7 +11,6 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_VERCEL_URL || 'localhost:3000',
-    NODE_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV || 'development',
   },
 };
 
