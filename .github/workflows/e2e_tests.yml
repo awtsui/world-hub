@@ -12,6 +12,7 @@ on:
 jobs:
   Cypress-Run:
     name: Cypress Run
+    environment: development
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
