@@ -35,11 +35,13 @@ jobs:
         run: yarn global add vercel
 
       - name: Pull Vercel Dev Environment
-        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel env pull env/.env.staging --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
+          build: yarn build:staging
+          start: yarn start:staging
           browser: chrome
           wait-on: 'http://localhost:3000'
           record: true
