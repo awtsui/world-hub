@@ -10,7 +10,7 @@ export default function LandingPage() {
         <div className="flex flex-col items-center justify-center gap-5">
           <p className="w-auto text-7xl text-center max-w-[500px]">EXPLORE THE MARKETPLACE FOR HUMANS</p>
           <Button data-testid="explore-button" className="px-12 py-5 text-lg">
-            <a href={`//app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`}>Explore</a>
+            <a href={`//app.${process.env.NEXT_PUBLIC_URL}`}>Explore</a>
           </Button>
         </div>
       </div>
