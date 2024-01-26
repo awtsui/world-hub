@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:staging": "cp .env.staging .env.local && next build",
-    "build:production": "cp .env.prod .env.local && next build",
-    "dev:staging": "cp .env.staging .env.local && next dev",
+    "build:staging": "cp .env.staging .env && next build",
+    "build:production": "cp .env.prod .env && next build",
+    "dev:staging": "cp .env.staging .env && next dev",
     "lint": "next lint",
     "prettier": "prettier --write .",
     "test": "jest",
