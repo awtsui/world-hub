@@ -7,12 +7,12 @@ import { getApprovedEventsBySubCategory } from '@/lib/actions';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Image from 'next/image';
 
-type SubCategoryPageParams = {
+interface SubCategoryPageParams {
   params: {
     categoryId: string;
     subCategoryId: string;
   };
-};
+}
 
 export default async function SubCategoryPage({ params }: SubCategoryPageParams) {
   // TODO: Organize events based on subcategory

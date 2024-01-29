@@ -165,3 +165,9 @@ export type MenuItem = {
   label: string;
   url: string;
 };
+
+export type SearchResult = {
+  events: Event[];
+  venues: Venue[];
+  hostProfiles: HostProfile[];
+};

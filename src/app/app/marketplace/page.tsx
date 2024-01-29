@@ -13,7 +13,7 @@ export default async function MarketplaceHomePage() {
     return <div>Loading...</div>;
   }
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <AspectRatio ratio={3 / 1}>
         <Image src="/homebg2.png" alt="home-bg" fill className="object-cover" />
       </AspectRatio>
