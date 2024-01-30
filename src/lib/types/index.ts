@@ -171,3 +171,9 @@ export type SearchResult = {
   venues: Venue[];
   hostProfiles: HostProfile[];
 };
+
+export type KeywordSearchResult = {
+  resultType: string;
+  value: string;
+  id: string;
+};

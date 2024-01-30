@@ -3,7 +3,7 @@ import { hashSync } from 'bcrypt-ts';
 import { ClientSession } from 'mongoose';
 import { z } from 'zod';
 import Ticket from '../models/Ticket';
-import { TICKET_HASH_SALT } from '@/lib/constants';
+import { config } from '@/lib/config';
 import Event from '../models/Event';
 
 type TicketGeneratorDataRequestBody = z.infer<typeof TicketGeneratorDataRequestBodySchema>;
@@ -25,7 +25,7 @@ export async function generateTicket(data: TicketGeneratorDataRequestBody, sessi
       throw Error('Ticket details do not match an event');
     }
 
-    const hash = hashSync(ticketId, TICKET_HASH_SALT);
+    const hash = hashSync(ticketId, config.TICKET_HASH_SALT);
 
     await Ticket.findByIdAndUpdate(ticketId, { hash: `${existingTicket.label},${hash}` }, { session });
 

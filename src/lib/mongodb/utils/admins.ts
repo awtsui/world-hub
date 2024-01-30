@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { compareSync, hashSync } from 'bcrypt-ts';
 import { generateUUID } from '@/lib/server/utils';
 import { ClientSession } from 'mongoose';
-import { ADMIN_HASH_SALT } from '@/lib/constants';
+import { config } from '@/lib/config';
 import dbConnect from './mongoosedb';
 import Admin from '../models/Admin';
 
@@ -76,7 +76,7 @@ export async function signUp(form: CredentialsSignUpForm, session?: ClientSessio
     if (password !== confirmPassword) return { error: 'Passwords should be identical !' };
 
     // Hash the password.
-    password = hashSync(password, ADMIN_HASH_SALT);
+    password = hashSync(password, config.ADMIN_HASH_SALT);
 
     const adminId = generateUUID();
 

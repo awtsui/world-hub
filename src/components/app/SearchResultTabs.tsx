@@ -37,7 +37,7 @@ export default function SearchResultTabs({ searchResults }: SearchResultTabsProp
           </div>
           <div className="flex flex-col">
             {events.map((event) => (
-              <EventViewRow event={event} />
+              <EventViewRow key={event.eventId} event={event} />
             ))}
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function SearchResultTabs({ searchResults }: SearchResultTabsProp
           </div>
           <div className="flex flex-col">
             {venues.map((venue) => (
-              <VenueViewRow venue={venue} />
+              <VenueViewRow key={venue.venueId} venue={venue} />
             ))}
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function SearchResultTabs({ searchResults }: SearchResultTabsProp
           </div>
           <div className="flex flex-col">
             {hostProfiles.map((hostProfile) => (
-              <HostViewRow hostProfile={hostProfile} />
+              <HostViewRow key={hostProfile.hostId} hostProfile={hostProfile} />
             ))}
           </div>
         </div>

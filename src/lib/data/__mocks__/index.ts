@@ -44,6 +44,25 @@ export const mockCategories: Record<string, MainCategory> = {
   },
 };
 
+export const mockCategory: MainCategory = {
+  name: 'Concerts',
+  id: '1',
+  subCategories: [
+    {
+      name: 'EDM',
+      id: '101',
+    },
+    {
+      name: 'Pop',
+      id: '102',
+    },
+    {
+      name: 'Hip-Hop',
+      id: '103',
+    },
+  ],
+};
+
 export const mockEvents: Event[] = [
   {
     eventId: '1',
@@ -53,7 +72,7 @@ export const mockEvents: Event[] = [
     category: 'Concerts',
     subCategory: 'EDM',
     mediaId: '65ab5ed11478dc081df51250',
-    datetime: new Date('2024-01-25T00:43:00.000+00:00'),
+    datetime: '2024-01-25T00:43:00.000+00:00',
     currency: Currency.USD,
     description:
       'Lorem Ipsum is the single greatest threat. We are not - we are not keeping up with other websites. Lorem Ipsum best not make any more threats to your website. It will be met with fire and fury like the world has never seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',
@@ -80,7 +99,7 @@ export const mockEvents: Event[] = [
     category: 'Concerts',
     subCategory: 'EDM',
     mediaId: '65ac68f6962173289df7f951',
-    datetime: new Date('2024-01-25T00:43:00.000+00:00'),
+    datetime: '2024-01-25T00:43:00.000+00:00',
     currency: Currency.USD,
     description:
       'Lorem Ipsum is the single greatest threat. We are not - we are not keeping up with other websites. Lorem Ipsum best not make any more threats to your website. It will be met with fire and fury like the world has never seen. Does everybody know that pig named Lorem Ipsum? An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud.',

@@ -23,9 +23,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" className={font.className}>
       <head>
         <Script
+          id="places-autocomplete-script"
           defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBojZfA4vrwDiBxvE56DeyDxMJigyrL9HY&libraries=places&callback=handleLocationFilter"
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBojZfA4vrwDiBxvE56DeyDxMJigyrL9HY&libraries=places&callback=initAutocomplete"
         ></Script>
+        <Script id="places-autocomplete-callback-script">window.initAutocomplete = Function.prototype</Script>
       </head>
       <body>
         <ErrorBoundary errorComponent={RootError}>{children}</ErrorBoundary>

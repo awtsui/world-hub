@@ -1,19 +1,16 @@
-import { Event } from '@/lib/types';
 import EventsCarousel from '../EventsCarousel';
+import { getTrendingEvents } from '@/lib/actions';
+import { config } from '@/lib/config';
 
-interface TrendingEventsSectionProps {
-  events: Event[];
-}
-
-export default function TrendingEventsSection({ events }: TrendingEventsSectionProps) {
-  const popularEvents = events.toSorted((a, b) => (a.totalSold > b.totalSold ? -1 : 1)).slice(0, 10);
+export default async function TrendingEventsSection() {
+  const trendingEvents = await getTrendingEvents(config.TRENDING_EVENTS_LIMIT);
 
   return (
     <div data-testid="trending-events-section" className="flex flex-col px-5 py-3">
       <p className="text-2xl font-bold pl-3">Trending</p>
-      {popularEvents.length > 0 ? (
+      {trendingEvents.length > 0 ? (
         <div className="pt-2">
-          <EventsCarousel events={popularEvents} />
+          <EventsCarousel events={trendingEvents} />
         </div>
       ) : (
         <div>No Events</div>

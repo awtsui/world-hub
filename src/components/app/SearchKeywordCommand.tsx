@@ -3,47 +3,25 @@
 import { Button } from '../ui/button';
 import { Search } from 'lucide-react';
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from 'react';
-
-import { fetcher } from '@/lib/client/utils';
-import useSWR from 'swr';
 import { cn } from '@/lib/utils';
-import { Event, HostProfile, Venue } from '@/lib/types';
-
-type Result = {
-  resultType: string;
-  value: string;
-  id: string;
-};
+import useSearchWithKeyword from '@/hooks/useSearchWithKeyword';
 
 interface SearchKeywordCommandProps {
-  keyword: string;
   setKeyword: (keyword: string) => void;
   onClickSearch: () => void;
   searchDisabled: boolean;
 }
 
-export default function SearchKeywordCommand({
-  keyword,
-  setKeyword,
-  onClickSearch,
-  searchDisabled,
-}: SearchKeywordCommandProps) {
+export default function SearchKeywordCommand({ setKeyword, onClickSearch, searchDisabled }: SearchKeywordCommandProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [isKeywordHovered, setIsKeywordHovered] = useState(false);
   const [isSearchHovered, setIsSearchHovered] = useState(false);
-  const [results, setResults] = useState<Result[]>([]);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputDivRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // TODO: build custom search hooks for each
-  const { data: events } = useSWR<Event[]>('/api/events', fetcher, { fallbackData: [] });
-  const { data: hostProfiles } = useSWR<HostProfile[]>('/api/hosts/profile', fetcher, {
-    fallbackData: [],
-  });
-  const { data: venues } = useSWR<Venue[]>('/api/venues', fetcher, {
-    fallbackData: [],
-  });
+  // Custom search hook
+  const { results, value, setValue, clearResults } = useSearchWithKeyword();
 
   useEffect(() => {
     function handleClickOutside(event: any) {
@@ -67,45 +45,17 @@ export default function SearchKeywordCommand({
     };
   }, []);
 
-  useEffect(() => {
-    if (keyword && isSearching) {
-      const tempResults: Result[] = [];
-      if (events) {
-        tempResults.push(
-          ...events
-            .filter((event: Event) => event.title.toLowerCase().includes(keyword.toLowerCase()))
-            .map((event) => ({ resultType: 'Event', value: event.title, id: event.eventId })),
-        );
-      }
-      if (venues) {
-        tempResults.push(
-          ...venues
-            .filter((venue: Venue) => venue.name.toLowerCase().includes(keyword.toLowerCase()))
-            .map((venue) => ({ resultType: 'Venue', value: venue.name, id: venue.venueId })),
-        );
-      }
-      if (hostProfiles) {
-        tempResults.push(
-          ...hostProfiles
-            .filter((profile: HostProfile) => profile.name.toLowerCase().includes(keyword.toLowerCase()))
-            .map((profile) => ({ resultType: 'Host', value: profile.name, id: profile.hostId })),
-        );
-      }
-      setResults(tempResults);
-    } else {
-      setResults([]);
-    }
-  }, [keyword]);
-
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     setKeyword(event.target.value);
+    setValue(event.target.value);
     setIsSearching(true);
   }
 
   function handleOnClick(keyword: string) {
     setKeyword(keyword);
+    setValue(keyword);
     setIsSearching(false);
-    setResults([]);
+    clearResults();
   }
 
   function handleMouseEnterSearch(event: MouseEvent<HTMLButtonElement>) {
@@ -132,19 +82,21 @@ export default function SearchKeywordCommand({
         <div className="flex flex-col items-start justify-center w-[300px]">
           <p className="text-sm ml-3">Who</p>
           <input
+            data-testid="search-keyword-command-input"
             type="text"
             placeholder="Search for event, host, or venue"
             className={cn(
               'border-none w-full text-md text-slate-500 h-6 py-0 placeholder:text-muted-foreground outline-none focus:outline-none focus:ring-0',
               isKeywordHovered && !isSearchHovered ? 'bg-accent text-accent-foreground' : '',
             )}
-            value={keyword}
+            value={value}
             onChange={handleInputChange}
             ref={inputRef}
           />
         </div>
 
         <Button
+          data-testid="search-keyword-command-button"
           className="z-10 rounded-full h-14 w-14"
           onClick={onClickSearch}
           onMouseEnter={handleMouseEnterSearch}

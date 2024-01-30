@@ -5,7 +5,7 @@ import { compareSync, hashSync } from 'bcrypt-ts';
 import HostProfile from '../models/HostProfile';
 import { generateUUID } from '@/lib/server/utils';
 import { ClientSession } from 'mongoose';
-import { HOST_HASH_SALT } from '@/lib/constants';
+import { config } from '@/lib/config';
 import dbConnect from './mongoosedb';
 import { HostApprovalStatus } from '@/lib/types';
 
@@ -83,7 +83,7 @@ export async function signUp(form: CredentialsSignUpForm, session?: ClientSessio
     if (password !== confirmPassword) return { error: 'Passwords should be identical !' };
 
     // Hash the password.
-    password = hashSync(password, HOST_HASH_SALT);
+    password = hashSync(password, config.HOST_HASH_SALT);
 
     const hostId = generateUUID();
 

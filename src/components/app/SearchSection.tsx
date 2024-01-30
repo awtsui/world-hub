@@ -53,12 +53,7 @@ export default function SearchSection() {
       <Separator orientation="vertical" className="h-[60px]" />
       <DatePickerWithRange dateRange={dateRange} setDateRange={setDateRange} />
       <Separator orientation="vertical" className="h-[60px]" />
-      <SearchKeywordCommand
-        keyword={keyword}
-        setKeyword={setKeyword}
-        onClickSearch={onClickSearch}
-        searchDisabled={searchDisabled}
-      />
+      <SearchKeywordCommand setKeyword={setKeyword} onClickSearch={onClickSearch} searchDisabled={searchDisabled} />
     </div>
   );
 }

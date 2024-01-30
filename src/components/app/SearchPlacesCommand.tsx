@@ -26,7 +26,7 @@ export default function SearchPlacesCommand({ location, setLocation, setLatLng }
     setValue,
     clearSuggestions,
   } = usePlacesAutocomplete({
-    callbackName: 'handleLocationFilter',
+    callbackName: 'initAutocomplete',
     requestOptions: {
       /* Define search scope here */
       types: ['geocode'],
