@@ -44,7 +44,7 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
       </div>
       <div className="px-12 py-4">
         {Object.values(subCategories).map((subCategory) => (
-          <CategorySection key={subCategory.id} category={category} subCategory={subCategory} events={events} />
+          <CategorySection key={subCategory.id} category={category} subCategory={subCategory} />
         ))}
       </div>
     </div>
