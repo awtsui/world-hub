@@ -12,7 +12,7 @@ const protectedEndpoints: EndpointCall[] = [
   ['/api/hosts', 'GET', ['admin']],
   ['/api/hosts/profile', 'POST', ['host']],
   // ['/api/hosts/profile', 'GET', ['host', 'admin']],
-  ['/api/venues', 'GET', ['user', 'host', 'admin']],
+  // ['/api/venues', 'GET', ['user', 'host', 'admin']],
   ['/api/venues', 'POST', ['admin']],
   ['/api/users', 'POST', ['user']],
   ['/api/users', 'GET', ['admin']],

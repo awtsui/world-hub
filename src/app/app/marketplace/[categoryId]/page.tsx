@@ -6,11 +6,11 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import Image from 'next/image';
 import CategorySection from '@/components/app/CategorySection';
 
-type CategoryPageParams = {
+interface CategoryPageParams {
   params: {
     categoryId: string;
   };
-};
+}
 
 export default async function CategoryPage({ params }: CategoryPageParams) {
   // TODO: Organize events based on subcategory
@@ -44,7 +44,7 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
       </div>
       <div className="px-12 py-4">
         {Object.values(subCategories).map((subCategory) => (
-          <CategorySection key={subCategory.id} category={category} subCategory={subCategory} events={events} />
+          <CategorySection key={subCategory.id} category={category} subCategory={subCategory} />
         ))}
       </div>
     </div>

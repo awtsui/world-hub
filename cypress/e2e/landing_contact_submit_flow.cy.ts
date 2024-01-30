@@ -1,4 +1,4 @@
-describe('Landing contact form', () => {
+describe('Landing contact form flow', () => {
   it('successfully submits contact form', () => {
     cy.visit('http://localhost:3000/contact');
     cy.get('form').within((form$) => {

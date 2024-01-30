@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const subCategory = searchParams.get('subcategory');
     const approvalStatus = searchParams.get('status');
+    const keyword = searchParams.get('keyword');
 
     if ((eventIds.length && category) || (eventIds.length && subCategory)) {
       throw Error('Parameters not properly defined');
@@ -23,11 +24,13 @@ export async function GET(request: NextRequest) {
     if (eventIds.length) {
       data = await Event.find({ eventId: { $in: eventIds } });
     } else if (category) {
-      data = await Event.find({ category });
+      data = await Event.find({ category, datetime: { $gte: new Date() } });
     } else if (subCategory) {
-      data = await Event.find({ subCategory });
+      data = await Event.find({ subCategory, datetime: { $gte: new Date() } });
     } else if (approvalStatus) {
-      data = await Event.find({ approvalStatus });
+      data = await Event.find({ approvalStatus, datetime: { $gte: new Date() } });
+    } else if (keyword) {
+      data = await Event.find({ title: { $regex: keyword, $options: 'i' }, datetime: { $gte: new Date() } });
     } else {
       data = await Event.find({});
     }

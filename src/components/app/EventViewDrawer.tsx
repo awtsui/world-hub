@@ -21,14 +21,17 @@ export default function EventViewDrawer({ events, label, hostProfile }: EventsVi
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="default" className="text-lg" size={'lg'}>
-          {label}
+        <Button variant="default" className="text-lg items-start h-40 py-4 px-8 rounded-b-none rounded-t-3xl">
+          <div className="flex flex-col items-center">
+            <ChevronUp className="h-8 w-8 mb-2" />
+            <p> {label}</p>
+          </div>
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="mx-auto">
           <DrawerTitle className="text-center">{label}</DrawerTitle>
-          <DrawerDescription className="text-center">Explore {hostProfile.name}&apos;s future shows</DrawerDescription>
+          <DrawerDescription className="text-center">Browse {hostProfile.name}&apos;s future shows</DrawerDescription>
         </DrawerHeader>
         <div className="px-16 pb-12">
           <EventsCarousel events={events} />

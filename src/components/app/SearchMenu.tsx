@@ -8,9 +8,9 @@ export default function SearchMenu() {
   const { onSearchOpen } = useSearchDialog();
 
   return (
-    <Button data-testid="search-menu-button" variant="outline" className="gap-5" onClick={onSearchOpen}>
+    <Button data-testid="search-menu-button" variant="outline" className="flex items-center" onClick={onSearchOpen}>
       <span className="text-md">Search WorldHub...</span>
-      <SearchIcon />
+      <SearchIcon className="h-5 w-5 ml-8" />
     </Button>
   );
 }

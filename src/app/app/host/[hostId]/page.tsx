@@ -2,19 +2,18 @@ import EventViewDrawer from '@/components/app/EventViewDrawer';
 import InfoViewSheet from '@/components/app/InfoViewSheet';
 import ListenViewSheet from '@/components/app/ListenViewSheet';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { getEventsByIds, getHostProfileById, getMediaById } from '@/lib/actions';
+import { getApprovedEventsByIds, getHostProfileById, getMediaById } from '@/lib/actions';
 import Image from 'next/image';
-import { Suspense } from 'react';
 
-type HostPageParams = {
+interface HostPageParams {
   params: {
     hostId: string;
   };
-};
+}
 
 export default async function HostPage({ params }: HostPageParams) {
   const hostProfile = await getHostProfileById(params.hostId);
-  const events = await getEventsByIds(hostProfile.events);
+  const events = await getApprovedEventsByIds(hostProfile.events);
   let media;
   if (hostProfile.mediaId) {
     media = await getMediaById(hostProfile.mediaId);
@@ -41,12 +40,14 @@ export default async function HostPage({ params }: HostPageParams) {
           </AspectRatio>
         </div>
       </div>
-      <div className="flex pb-16 justify-evenly w-full">
-        <InfoViewSheet hostProfile={hostProfile} label="More Info" />
-        <Suspense fallback={null}>
-          <EventViewDrawer hostProfile={hostProfile} events={events} label="Upcoming Events" />
-        </Suspense>
-        <ListenViewSheet hostProfile={hostProfile} label={`Listen to ${hostProfile.name}`} />
+      <div className="flex justify-evenly items-end w-full">
+        <div className="mb-16">
+          <InfoViewSheet hostProfile={hostProfile} label="More Info" />
+        </div>
+        <EventViewDrawer hostProfile={hostProfile} events={events} label="Upcoming Events" />
+        <div className="mb-16">
+          <ListenViewSheet hostProfile={hostProfile} label={`Listen to ${hostProfile.name}`} />
+        </div>
       </div>
     </div>
   );

@@ -55,6 +55,35 @@ export async function getEventsByIds(eventIds: string[]) {
   }
 }
 
+export async function getApprovedEventsByIds(eventIds: string[]) {
+  await dbConnect();
+  try {
+    const data = await Event.find({
+      eventId: {
+        $in: eventIds,
+      },
+      approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
+    });
+    const formattedData = data.map((event: any) => {
+      const { _id, __v, ...rest } = event._doc;
+      return {
+        ...rest,
+        ticketTiers: event.ticketTiers.map((tier: any) => {
+          const { _id, __v, ...tierRest } = tier._doc;
+          return {
+            ...tierRest,
+            price: tier.price.toString(),
+          };
+        }),
+      };
+    });
+    return formattedData;
+  } catch (error) {
+    throw new Error(`Unable to fetch event by id: ${error}`);
+  }
+}
+
 export async function getEventById(eventId: string) {
   await dbConnect();
   try {
@@ -87,6 +116,7 @@ export async function getApprovedEventsByCategory(categoryName: string) {
     const data = await Event.find({
       category: categoryName,
       approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
     });
     const formattedData = data.map((event: any) => {
       const { _id, __v, ...rest } = event._doc;
@@ -113,6 +143,7 @@ export async function getApprovedEventsBySubCategory(subCategoryName: string) {
     const data = await Event.find({
       subCategory: subCategoryName,
       approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
     });
     const formattedData = data.map((event: any) => {
       const { _id, __v, ...rest } = event._doc;
@@ -133,30 +164,31 @@ export async function getApprovedEventsBySubCategory(subCategoryName: string) {
   }
 }
 
-export async function getApprovedEvents() {
-  await dbConnect();
-  try {
-    const data = await Event.find({
-      approvalStatus: EventApprovalStatus.Approved,
-    });
-    const formattedData = data.map((event: any) => {
-      const { _id, __v, ...rest } = event._doc;
-      return {
-        ...rest,
-        ticketTiers: event.ticketTiers.map((tier: any) => {
-          const { _id, __v, ...tierRest } = tier._doc;
-          return {
-            ...tierRest,
-            price: tier.price.toString(),
-          };
-        }),
-      };
-    });
-    return formattedData;
-  } catch (error) {
-    throw new Error(`Unable to fetch events by category: ${error}`);
-  }
-}
+// export async function getApprovedEvents() {
+//   await dbConnect();
+//   try {
+//     const data = await Event.find({
+//       approvalStatus: EventApprovalStatus.Approved,
+//       datetime: { $gte: new Date() },
+//     });
+//     const formattedData = data.map((event: any) => {
+//       const { _id, __v, ...rest } = event._doc;
+//       return {
+//         ...rest,
+//         ticketTiers: event.ticketTiers.map((tier: any) => {
+//           const { _id, __v, ...tierRest } = tier._doc;
+//           return {
+//             ...tierRest,
+//             price: tier.price.toString(),
+//           };
+//         }),
+//       };
+//     });
+//     return formattedData;
+//   } catch (error) {
+//     throw new Error(`Unable to fetch events by category: ${error}`);
+//   }
+// }
 
 export async function getAllEvents() {
   const _ = cookies();
@@ -454,5 +486,65 @@ export async function deleteEvent(eventId: string) {
     revalidatePath('/');
   } catch (error) {
     throw Error(`Unable to delete rejected event: ${error}`);
+  }
+}
+
+export async function getTrendingEvents(limit: number) {
+  await dbConnect();
+
+  try {
+    if (limit <= 0) {
+      throw Error('limit argument mus tbe positive');
+    }
+
+    const events = await Event.find({ approvalStatus: EventApprovalStatus.Approved, datetime: { $gte: new Date() } })
+      .sort({ totalSold: 'desc' })
+      .limit(limit)
+      .exec();
+    return events;
+  } catch (error) {
+    throw Error(`Unable to retrieve trending event: ${error}`);
+  }
+}
+
+export async function getTrendingEventsByCategory(category: string, limit: number) {
+  await dbConnect();
+
+  try {
+    if (limit <= 0) {
+      throw Error('limit argument must be positive');
+    }
+    const events = await Event.find({
+      category,
+      approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
+    })
+      .sort({ totalSold: 'desc' })
+      .limit(limit)
+      .exec();
+    return events;
+  } catch (error) {
+    throw Error(`Unable to retrieve trending event by category: ${error}`);
+  }
+}
+
+export async function getTrendingEventsBySubcategory(subCategory: string, limit: number) {
+  await dbConnect();
+
+  try {
+    if (limit <= 0) {
+      throw Error('limit argument must be positive');
+    }
+    const events = await Event.find({
+      subCategory,
+      approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
+    })
+      .sort({ totalSold: 'desc' })
+      .limit(limit)
+      .exec();
+    return events;
+  } catch (error) {
+    throw Error(`Unable to retrieve trending event by subcategory: ${error}`);
   }
 }

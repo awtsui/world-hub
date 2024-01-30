@@ -41,12 +41,14 @@ export default async function EventPage({ params }: EventPageParams) {
       </AspectRatio>
       <div className="flex pt-6 px-12 justify-center gap-5 md:gap-20 lg:gap-36">
         <div className="flex flex-col w-auto">
-          <div className="pb-4 flex justify-between items-center">
+          <div className="pb-4 flex justify-between items-start">
             <div className="flex flex-col">
               <p className="text-4xl font-bold">{event.title}</p>
               <p className="text-xl">{event.subTitle}</p>
             </div>
-            <VerificationLevelIcon verificationLevel={event.verificationLevel} />
+            <div className="mt-1">
+              <VerificationLevelIcon verificationLevel={event.verificationLevel} />
+            </div>
           </div>
           <div className="py-4">
             <p className="text-md">{event.subCategory}</p>

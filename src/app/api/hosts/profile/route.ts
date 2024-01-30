@@ -11,9 +11,13 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const hostId = searchParams.get('id');
+    const keyword = searchParams.get('keyword');
+
     let data;
     if (hostId) {
       data = await HostProfile.findOne({ hostId });
+    } else if (keyword) {
+      data = await HostProfile.find({ name: { $regex: keyword, $options: 'i' } });
     } else {
       data = await HostProfile.find({});
     }

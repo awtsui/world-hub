@@ -38,3 +38,8 @@ next-env.d.ts
 # prettier
 .prettierrc
 .prettierignore
+
+# cypress
+/cypress/screenshots
+/cypress/videos
+/cypress/downloads

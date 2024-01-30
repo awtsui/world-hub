@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useMemo, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 
 const MAP_ZOOM = 17;

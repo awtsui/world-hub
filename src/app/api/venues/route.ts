@@ -7,9 +7,13 @@ export async function GET(request: NextRequest) {
     await dbConnect();
     const searchParams = request.nextUrl.searchParams;
     const venueId = searchParams.get('id');
+    const keyword = searchParams.get('keyword');
+
     let data;
     if (venueId) {
       data = await Venue.findOne({ venueId });
+    } else if (keyword) {
+      data = await Venue.find({ name: { $regex: keyword, $options: 'i' } });
     } else {
       data = await Venue.find({});
     }
