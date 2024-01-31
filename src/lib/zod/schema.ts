@@ -24,7 +24,14 @@ export const EventFormDataSchema = z.object({
       key: z.string(),
     })
     .array(),
-  venueId: z.string().min(1, 'Venue name is required'),
+  venue: z
+    .object({
+      label: z.string(),
+      value: z.string(),
+      key: z.string(),
+    })
+    .array()
+    .length(1),
   purchaseLimit: z.number().positive('Purchase limit must be positive'),
   ticketTiers: z
     .object({

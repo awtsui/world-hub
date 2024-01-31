@@ -1,5 +1,5 @@
 'use client';
-import { Event, Venue } from '@/lib/types';
+import { Event } from '@/lib/types';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -48,7 +48,7 @@ export default function EventViewDialog({ event }: EventViewDialogProps) {
                 Delete
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80">
+            <PopoverContent className="w-80 space-y-3">
               <DialogTitle>Are you absolutely sure?</DialogTitle>
               <DialogDescription>
                 This action cannot be undone. This will permanently delete your event and remove your data from our

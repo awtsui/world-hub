@@ -39,18 +39,17 @@ export default function DashboardAnalyticsSection({ hostProfile, events }: Dashb
         <p className="py-3 px-2 text-xl font-medium">Your top events</p>
         <Separator />
         {topEvents.length ? (
-          <div className="space-y-5">
+          <div>
             {topEvents.map((event, index) => (
               <a
                 key={event.eventId}
                 href={`//app.${process.env.NEXT_PUBLIC_URL}/event/${event.eventId}`}
-                className="flex justify-between py-5 px-2 hover:bg-slate-100"
+                className="flex py-5 px-2 gap-5 hover:bg-slate-100"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <p>
-                  #{index + 1} {event.title}
-                </p>
+                <p>#{index + 1}</p>
+                <p className="flex-1">{event.title}</p>
                 <p>{event.totalSold}</p>
               </a>
             ))}
