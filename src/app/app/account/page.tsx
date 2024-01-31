@@ -10,11 +10,15 @@ export default function AccountPage() {
 
   const tab = searchParams.get('tab');
 
+  if (!session || !session.user) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="px-12 py-4">
       <p className="text-3xl">My Account</p>
       <div className="flex justify-center">
-        <UserProfileTabs user={session?.user} tab={tab} />
+        <UserProfileTabs user={session.user} tab={tab} />
       </div>
     </div>
   );

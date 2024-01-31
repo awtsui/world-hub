@@ -3,7 +3,7 @@
 import { signOut, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,7 +53,7 @@ export default function AuthButton({ signInCallbackUrl, signOutCallbackUrl, menu
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {menuItems && !!menuItems.length && (
+            {menuItems && (
               <>
                 <DropdownMenuGroup>
                   {menuItems.map((menuItem) => (
@@ -74,7 +74,7 @@ export default function AuthButton({ signInCallbackUrl, signOutCallbackUrl, menu
         </DropdownMenu>
       ) : (
         <Button className="text-md" variant="ghost" onClick={handleSignIn}>
-          Log in
+          Sign in
         </Button>
       )}
     </div>
