@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { z } from 'zod';
 import { EventFormDataSchema } from '@/lib/zod/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,15 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { categories, categoryIdToName, subCategoryIdToName } from '@/lib/data';
-import MultipleSelector, { Option } from '../ui/multi-select';
-import { HostProfile, Venue, WorldIdVerificationLevel } from '@/lib/types';
-import useSWR from 'swr';
+import MultipleSelector from '../ui/multi-select';
+import { WorldIdVerificationLevel } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useAlertDialog } from '@/context/ModalContext';
 import Image from 'next/image';
 import { DateTimePicker } from '../ui/date-time-picker';
-import { fetcher } from '@/lib/client/utils';
+import { handleFetchError } from '@/lib/client/utils';
 import { AspectRatio } from '../ui/aspect-ratio';
 
 type Inputs = z.infer<typeof EventFormDataSchema>;
@@ -67,7 +66,7 @@ export default function EventForm() {
       lineup: [],
       thumbnailImage: null,
       datetime: undefined,
-      venueId: '',
+      venue: [],
       purchaseLimit: 0,
       ticketTiers: [],
     },
@@ -86,9 +85,6 @@ export default function EventForm() {
     name: 'ticketTiers',
     control: form.control,
   });
-
-  const { data: hosts, error: fetchHostsError } = useSWR('/api/hosts/profile', fetcher);
-  const { data: venues, error: fetchVenuesError } = useSWR('/api/venues', fetcher);
 
   async function handleUploadImage(
     event: ChangeEvent<HTMLInputElement>,
@@ -137,7 +133,7 @@ export default function EventForm() {
             category: data.category,
             subcategory: data.subcategory,
             datetime: data.datetime,
-            venueId: data.venueId,
+            venueId: data.venue[0].key,
             lineup: data.lineup.map((host) => host.key),
             purchaseLimit: data.purchaseLimit,
             ticketTiers: data.ticketTiers,
@@ -186,18 +182,9 @@ export default function EventForm() {
     }
   }
 
-  // TODO: integrate error checking and loading state into form component
-  if (fetchHostsError || fetchVenuesError) return <div>failed to load</div>;
-
-  if (!session || !hosts || !venues) {
+  if (!session) {
     return <div>Loading...</div>;
   }
-
-  const lineupOptions: Option[] = hosts.map((host: HostProfile) => ({
-    label: host.name,
-    value: host.name,
-    key: host.hostId,
-  }));
 
   return (
     <section className="flex flex-col px-12 py-8 w-full h-full justify-between">
@@ -365,9 +352,23 @@ export default function EventForm() {
                         <MultipleSelector
                           value={field.value}
                           onChange={field.onChange}
-                          options={lineupOptions}
+                          delay={300}
+                          onSearch={async (value: string) => {
+                            const trimmedKeyword = value.trim();
+                            if (trimmedKeyword) {
+                              return fetch(`/api/hosts/profile?keyword=${trimmedKeyword}`)
+                                .then((resp) => resp.json())
+                                .then((data) =>
+                                  data.map((host: any) => ({
+                                    label: host.name,
+                                    value: host.name,
+                                    key: host.hostId,
+                                  })),
+                                )
+                                .catch((error) => handleFetchError(error));
+                            }
+                          }}
                           placeholder="Select performers..."
-                          disabled={!lineupOptions}
                           emptyIndicator={
                             <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                               no results found.
@@ -442,29 +443,41 @@ export default function EventForm() {
 
                 <FormField
                   control={form.control}
-                  name="venueId"
+                  name="venue"
                   render={({ field }) => (
-                    <FormItem id="venueId">
-                      <Select
-                        onValueChange={(event) => {
-                          field.onChange(event);
-                        }}
-                        defaultValue={field.value}
-                        disabled={!venues}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a venue" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {venues.map((venue: Venue) => (
-                            <SelectItem key={venue.venueId} value={venue.venueId}>
-                              {venue.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <FormItem id="venue">
+                      <FormControl>
+                        <MultipleSelector
+                          value={field.value}
+                          onChange={field.onChange}
+                          delay={300}
+                          maxSelected={1}
+                          onSearch={async (value: string) => {
+                            if (field.value.length) {
+                              return [];
+                            }
+                            const trimmedKeyword = value.trim();
+                            if (trimmedKeyword) {
+                              return fetch(`/api/venues?keyword=${trimmedKeyword}`)
+                                .then((resp) => resp.json())
+                                .then((data) =>
+                                  data.map((venue: any) => ({
+                                    label: venue.name,
+                                    value: venue.name,
+                                    key: venue.venueId,
+                                  })),
+                                )
+                                .catch((error) => handleFetchError(error));
+                            }
+                          }}
+                          placeholder="Select a venue"
+                          emptyIndicator={
+                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                              no results found.
+                            </p>
+                          }
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -511,7 +524,6 @@ export default function EventForm() {
                               field.onChange(event);
                             }}
                             defaultValue={field.value}
-                            disabled={!venues}
                           >
                             <FormControl>
                               <SelectTrigger>

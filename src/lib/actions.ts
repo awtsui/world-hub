@@ -18,6 +18,7 @@ import { generateEmailContent, isExpiredSignedUrl } from './utils';
 import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { deleteMedia } from './mongodb/utils/medias';
 import { cookies } from 'next/headers';
+import mongoose, { ClientSession } from 'mongoose';
 
 const { AWS_CLOUDFRONT_URL, AWS_CLOUDFRONT_PRIVATE_KEY, AWS_CLOUDFRONT_KEY_PAIR_ID } = process.env;
 if (!AWS_CLOUDFRONT_URL) throw new Error('AWS_CLOUDFRONT_URL not defined');
@@ -476,16 +477,25 @@ export async function sendContactFormMail(data: ContactForm) {
 
 export async function deleteEvent(eventId: string) {
   await dbConnect();
+  const session: ClientSession = await mongoose.startSession();
+  session.startTransaction();
   try {
-    const event = await Event.findOne({ eventId });
+    const event = await Event.findOne({ eventId }, null, { session });
     if (!event) {
       throw Error('Event does not exist');
     }
-    await Event.deleteOne({ eventId });
-    await deleteMedia(event.mediaId);
+    await Event.deleteOne({ eventId }, { session });
+    await deleteMedia(event.mediaId, session);
+    await HostProfile.updateOne({ hostId: event.hostId }, { $pull: { events: eventId } }, { session });
+
     revalidatePath('/');
+
+    await session.commitTransaction();
   } catch (error) {
+    await session.abortTransaction();
     throw Error(`Unable to delete rejected event: ${error}`);
+  } finally {
+    await session.endSession();
   }
 }
 
