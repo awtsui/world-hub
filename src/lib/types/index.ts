@@ -106,10 +106,10 @@ export interface IOrder {
   userId: string;
   isPaid: boolean;
   amount: number;
-  totalPrice: Big;
+  totalPrice: string;
   ticketData: ITicketWithData[];
   email: string;
-  timestamp: Date;
+  timestamp: string;
   tickets: string[];
 }
 export interface IHost {

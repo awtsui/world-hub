@@ -19,7 +19,7 @@ const OrderSchema = new Schema<IOrder>(
       },
     ],
     email: String,
-    timestamp: { type: Date, default: Date.now },
+    timestamp: Date,
     tickets: [String],
   },
 
