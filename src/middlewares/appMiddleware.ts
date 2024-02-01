@@ -18,7 +18,7 @@ export function withAppMiddleware(middleware: NextMiddleware) {
 
       const token = await getToken({ req: request });
 
-      const appProtectedPaths = ['/checkout'];
+      const appProtectedPaths = ['/checkout', '/account'];
       const matchesAppProtectedPath = appProtectedPaths.some((path) => pathname.startsWith(path));
       if (matchesAppProtectedPath) {
         if (!token) {

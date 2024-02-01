@@ -6,8 +6,23 @@ export default function useFetchOrdersByIds(orderIds?: string[]) {
   const fetchOrdersUrl =
     orderIds && orderIds.length ? `/api/orders?${orderIds.map((id: string) => `id=${id}`).join('&')}` : '';
 
-  const { data: orders } = useSWR<Order[]>(fetchOrdersUrl, fetcher, {
+  const { data: orders } = useSWR(fetchOrdersUrl, fetcher, {
     fallbackData: [],
   });
-  return orders;
+
+  const formattedOrders = orders.map((order: any) => {
+    return {
+      ...order._doc,
+      _id: order._id.toString(),
+      totalPrice: order.totalPrice.toString(),
+      ticketData: order.ticketData.map((data: any) => {
+        return {
+          ...data._doc,
+          price: data.price.toString(),
+        };
+      }),
+    };
+  });
+
+  return formattedOrders as (Order & { _id: string })[];
 }

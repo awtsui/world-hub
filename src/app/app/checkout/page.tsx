@@ -8,7 +8,6 @@ import { WorldIdVerificationLevel } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { useAlertDialog } from '@/context/ModalContext';
 import useFetchStripeSession from '@/hooks/useFetchStripeSession';
-import { useEffect, useState } from 'react';
 import useFetchEventsByIds from '@/hooks/useFetchEventsByIds';
 import useFetchUserProfileById from '@/hooks/useFetchUserProfileById';
 import useFetchOrdersByIds from '@/hooks/useFetchOrdersByIds';

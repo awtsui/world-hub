@@ -1,15 +1,6 @@
 import Big from 'big.js';
 import { LucideIcon } from 'lucide-react';
 
-// Interfaces for Mongoose
-
-interface ITier {
-  label: string;
-  price: string;
-  quantity: number;
-  ticketsPurchased: number;
-}
-
 export enum EventApprovalStatus {
   Approved = 'APPROVED',
   Rejected = 'REJECTED',
@@ -43,6 +34,13 @@ export enum AlertStatus {
 export enum WorldIdVerificationLevel {
   Orb = 'orb',
   Device = 'device',
+}
+
+interface ITier {
+  label: string;
+  price: string;
+  quantity: number;
+  ticketsPurchased: number;
 }
 
 export interface IEvent {
@@ -108,10 +106,10 @@ export interface IOrder {
   userId: string;
   isPaid: boolean;
   amount: number;
-  totalPrice: Big;
+  totalPrice: string;
   ticketData: ITicketWithData[];
   email: string;
-  timestamp: Date;
+  timestamp: string;
   tickets: string[];
 }
 export interface IHost {
@@ -136,8 +134,6 @@ export interface IMedia {
   fileName: string;
   url: string;
 }
-
-// Types
 
 export type Event = IEvent;
 export type Venue = IVenue;
