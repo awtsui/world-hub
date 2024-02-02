@@ -2,7 +2,7 @@ import { Event } from '@/lib/types';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardTitle } from '../ui/card';
 import DateFormatter from '../DateFormatter';
-import { getHostProfileById, getMediaById, getVenueById } from '@/lib/actions';
+import { getMediaById, getVenueById } from '@/lib/actions';
 import { HTMLAttributes } from 'react';
 import { AspectRatio } from '../ui/aspect-ratio';
 
@@ -12,7 +12,6 @@ interface EventCardProps extends HTMLAttributes<HTMLDivElement> {
 
 export default async function EventCard({ event, ...props }: EventCardProps) {
   const venue = await getVenueById(event.venueId);
-  // const hostProfile = await getHostProfileById(event.hostId);
   const media = await getMediaById(event.mediaId);
 
   if (!venue || !media) {
@@ -32,7 +31,7 @@ export default async function EventCard({ event, ...props }: EventCardProps) {
           <CardTitle className="line-clamp-1">
             {event.title} - {event.subTitle}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="line-clamp-1">
             {venue.city}, {venue.state} - {venue.name}
           </CardDescription>
         </CardFooter>

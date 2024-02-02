@@ -33,19 +33,19 @@ export default async function VenuePage({ params }: VenuePageParams) {
         </div>
 
         <div className="flex flex-col gap-5 mt-20">
-          <div>
-            <p className="text-xl font-bold py-2">Address</p>
-            <CopyToClipboard text={venueAddress}>
-              <p className="hover:text-green-500">{venueAddress}</p>
-            </CopyToClipboard>
-          </div>
-          <div>
+          <div className="py-2">
             <p className="text-xl font-bold py-2">Map</p>
             <div className="py-2">
               <GoogleMapView address={venueAddress} />
             </div>
           </div>
-          <div>
+          <div className="py-2">
+            <p className="text-xl font-bold py-2">Address</p>
+            <CopyToClipboard text={venueAddress}>
+              <p className="hover:text-green-500">{venueAddress}</p>
+            </CopyToClipboard>
+          </div>
+          <div className="py-2">
             <p className="text-xl font-bold py-2">Parking</p>
             <div>
               {venue.parking.map((instruction: string, index: number) => (

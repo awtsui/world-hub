@@ -507,7 +507,11 @@ export async function getTrendingEvents(limit: number) {
       throw Error('limit argument mus tbe positive');
     }
 
-    const events = await Event.find({ approvalStatus: EventApprovalStatus.Approved, datetime: { $gte: new Date() } })
+    const events = await Event.find({
+      approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
+      totalSold: { $gte: 1 },
+    })
       .sort({ totalSold: 'desc' })
       .limit(limit)
       .exec();
