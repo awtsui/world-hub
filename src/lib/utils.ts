@@ -26,5 +26,5 @@ export function isExpiredSignedUrl(url: string) {
   if (!expiresAt) {
     throw Error('Url not formatted properly');
   }
-  return parseInt(expiresAt) < Date.now();
+  return parseInt(expiresAt) < Math.floor(Date.now() / 1000);
 }
