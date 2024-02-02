@@ -75,3 +75,16 @@ export const WorldcoinVerificationDataRequestBodySchema = z.object({
   action: z.string(),
   signal: z.string(),
 });
+
+export const VenueDataRequestBodySchema = z.object({
+  name: z.string(),
+  address: z.string(),
+  city: z.string(),
+  state: z.string(),
+  zipcode: z.string(),
+  parking: z.string().array(),
+  location: z.object({
+    latitude: z.number(),
+    longitude: z.number(),
+  }),
+});

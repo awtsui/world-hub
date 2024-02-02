@@ -51,7 +51,6 @@ export default async function EventPage({ params }: EventPageParams) {
             </div>
           </div>
           <div className="py-4">
-            <p className="text-md">{event.subCategory}</p>
             <p className="text-md">{event.description}</p>
           </div>
           <div className="flex flex-col gap-2 py-2">
@@ -71,11 +70,9 @@ export default async function EventPage({ params }: EventPageParams) {
             </div>
             <div className="flex gap-3 items-center">
               <MapPin />
-              <CopyToClipboard text={venueAddress}>
-                <p className="text-md hover:text-blue-600">
-                  {venue.name} {venue.city}, {venue.state}
-                </p>
-              </CopyToClipboard>
+              <Link className="text-md hover:text-green-500" href={`/venue/${venue.venueId}`}>
+                {venue.name}
+              </Link>
             </div>
             <div className="flex gap-3 items-center">
               <Calendar />
@@ -91,10 +88,22 @@ export default async function EventPage({ params }: EventPageParams) {
           </div>
         </div>
         <div className="flex flex-col w-auto">
-          <p className="text-xl font-bold py-2">Event location</p>
           <div className="py-2">
-            <GoogleMapView address={venueAddress} />
+            <p className="text-xl font-bold py-2">Event location</p>
+            <div className="py-2">
+              <GoogleMapView address={venueAddress} />
+            </div>
           </div>
+
+          <div className="py-2">
+            <p className="text-xl font-bold py-2">Address</p>
+            <CopyToClipboard text={venueAddress}>
+              <p className="text-md hover:text-green-500">
+                {venue.address} {venue.city}, {venue.state}
+              </p>
+            </CopyToClipboard>
+          </div>
+
           <div className="py-2">
             <p className="text-xl font-bold py-2">Parking</p>
             <ul>

@@ -10,6 +10,10 @@ const VenueSchema = new Schema<IVenue>(
     state: String,
     zipcode: String,
     parking: [String],
+    location: {
+      latitude: Number,
+      longitude: Number,
+    },
   },
   { collection: 'venues' },
 );

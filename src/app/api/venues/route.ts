@@ -1,5 +1,8 @@
 import Venue from '@/lib/mongodb/models/Venue';
 import dbConnect from '@/lib/mongodb/utils/mongoosedb';
+import { uploadVenue } from '@/lib/mongodb/utils/venues';
+import { VenueDataRequestBodySchema } from '@/lib/zod/apischema';
+import mongoose, { ClientSession } from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -31,12 +34,33 @@ export async function GET(request: NextRequest) {
 // TODO: implement when venue portal is added
 
 export async function POST(request: NextRequest) {
+  await dbConnect();
+  const session: ClientSession = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    await dbConnect();
-    // TODO: validate request body
     const reqBody = await request.json();
-    return NextResponse.json(await Venue.create(reqBody));
+
+    const validatedReqBody = VenueDataRequestBodySchema.safeParse(reqBody);
+    if (!validatedReqBody.success) {
+      console.error(validatedReqBody.error.errors);
+      throw Error('Invalid request body');
+    }
+
+    const resp = await uploadVenue(validatedReqBody.data, session);
+
+    if (!resp.success) {
+      throw Error(resp.error);
+    }
+
+    await session.commitTransaction();
+
+    return NextResponse.json({ message: 'Successfully uploaded venue', venue: resp.venueId }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    await session.abortTransaction();
+
+    return NextResponse.json({ error: `Internal Server Error (/api/venues): ${error}` }, { status: 500 });
+  } finally {
+    await session.endSession();
   }
 }

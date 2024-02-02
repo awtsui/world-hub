@@ -23,9 +23,9 @@ export default function SearchSection() {
   function onClickSearch() {
     const params = new URLSearchParams();
 
-    if (location) {
-      params.set('location', location);
-    }
+    // if (location) {
+    //   params.set('location', location);
+    // }
     if (latLng) {
       params.set('lat', latLng.lat.toString());
       params.set('lng', latLng.lng.toString());
