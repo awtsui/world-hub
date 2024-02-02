@@ -11,7 +11,9 @@ interface VenuePageParams {
 
 export default async function VenuePage({ params }: VenuePageParams) {
   const venue = await getVenueById(params.venueId);
-  const events = await getApprovedEventsByVenueId(params.venueId);
+  let events = await getApprovedEventsByVenueId(params.venueId);
+
+  events.sort((a, b) => (new Date(a.datetime) < new Date(b.datetime) ? -1 : 1));
 
   const venueAddress = `${venue.address} ${venue.city}, ${venue.state} ${venue.zipcode}`;
 
@@ -32,9 +34,9 @@ export default async function VenuePage({ params }: VenuePageParams) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 mt-20">
+        <div className="flex flex-col mt-20">
           <div className="py-2">
-            <p className="text-xl font-bold py-2">Map</p>
+            <p className="text-xl font-bold py-2">Venue location</p>
             <div className="py-2">
               <GoogleMapView address={venueAddress} />
             </div>

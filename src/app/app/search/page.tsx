@@ -16,7 +16,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="w-full flex flex-col items-center pt-10">
+    <div className="w-full flex flex-col items-center pt-10 pb-20">
       <div className="w-4/5">
         <SearchResultTabs searchResults={searchResults} />
       </div>

@@ -26,8 +26,8 @@ export default function EventViewRow({ event }: EventViewRowProps) {
 
   return (
     <div className="space-y-3 pt-3">
-      <div className="flex items-center gap-10 px-4">
-        <div className="flex flex-col items-center">
+      <div className="flex items-center gap-4 px-4">
+        <div className="flex flex-col items-center w-20">
           <p>{month}</p>
           <p className="text-2xl">{day}</p>
         </div>

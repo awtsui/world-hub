@@ -21,12 +21,6 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
   const category = categories[categoryId];
   const subCategories = categories[categoryId].subCategories;
 
-  const events: Event[] = await getApprovedEventsByCategory(categoryName);
-
-  if (!events) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="pb-12">
       <div className="relative">
