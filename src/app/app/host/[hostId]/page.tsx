@@ -13,7 +13,7 @@ interface HostPageParams {
 
 export default async function HostPage({ params }: HostPageParams) {
   const hostProfile = await getHostProfileById(params.hostId);
-  const events = await getApprovedEventsByIds(hostProfile.events);
+  let events = await getApprovedEventsByIds(hostProfile.events);
   let media;
   if (hostProfile.mediaId) {
     media = await getMediaById(hostProfile.mediaId);
@@ -22,6 +22,8 @@ export default async function HostPage({ params }: HostPageParams) {
   if (!hostProfile || !events) {
     return <div>Loading...</div>;
   }
+
+  events.sort((a, b) => (new Date(a.datetime) < new Date(b.datetime) ? -1 : 1));
 
   return (
     <div className="flex flex-col h-full mx-auto w-full items-center">

@@ -20,11 +20,13 @@ export default async function SubCategoryPage({ params }: SubCategoryPageParams)
   const categoryName = categoryIdToName[params.categoryId];
   const subCategoryName = subCategoryIdToName[params.subCategoryId];
 
-  const events: Event[] = await getApprovedEventsBySubCategory(subCategoryName);
+  let events: Event[] = await getApprovedEventsBySubCategory(subCategoryName);
 
   if (!events) {
     return <div>Loading...</div>;
   }
+
+  events.sort((a, b) => (new Date(a.datetime) < new Date(b.datetime) ? -1 : 1));
 
   return (
     <div className="pb-12">
@@ -44,7 +46,7 @@ export default async function SubCategoryPage({ params }: SubCategoryPageParams)
       </div>
       <div className="px-12 py-8">
         <div className="flex flex-wrap gap-3">
-          {events.length > 0 ? (
+          {events.length ? (
             events.map((event) => (
               <Link key={event.eventId} href={`/event/${event.eventId}`}>
                 <EventCard key={event.eventId} event={event}></EventCard>

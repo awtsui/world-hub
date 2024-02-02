@@ -31,8 +31,6 @@ export async function GET(request: NextRequest) {
     } else {
       const events = await Event.find({ datetime: { $gte: new Date() } });
       eventList.push(...events);
-      const venues = await Venue.find({});
-      venueList.push(...venues);
     }
 
     if (startDate) {
