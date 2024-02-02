@@ -177,3 +177,8 @@ export type KeywordSearchResult = {
   value: string;
   id: string;
 };
+
+export type Location = {
+  latitude: number;
+  longitude: number;
+};

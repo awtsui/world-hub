@@ -1,6 +1,8 @@
+import { config } from '@/lib/config';
 import Event from '@/lib/mongodb/models/Event';
 import HostProfile from '@/lib/mongodb/models/HostProfile';
 import Venue from '@/lib/mongodb/models/Venue';
+import { calculateDistance } from '@/lib/server/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -9,7 +11,6 @@ export async function GET(request: NextRequest) {
     const keyword = searchParams.get('keyword');
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    const location = searchParams.get('location');
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
 
@@ -41,17 +42,32 @@ export async function GET(request: NextRequest) {
       eventList = eventList.filter((event) => new Date(event.datetime) <= new Date(endDate));
     }
 
-    // TODO: filter venues and events by location OR latitude and longitude
-    // TODO: will need to add latitude and longitude as fields in Venue schema
-    // const venueIdsOfEvents = eventList.map((event) => event.venueId);
-    // const venuesOfEvents = await Venue.find({ venueId: { $in: venueIdsOfEvents } });
+    // Filter venues and events by location OR latitude and longitude
 
-    // if (location) {
-    // }
+    if (lat && lng) {
+      const venueIdsOfEvents = eventList.map((event) => event.venueId);
+      let eventVenues = await Venue.find({ venueId: { $in: venueIdsOfEvents } });
+      const searchLocation = {
+        latitude: parseFloat(lat),
+        longitude: parseFloat(lng),
+      };
+      eventVenues = eventVenues.filter(
+        (venue) => calculateDistance(searchLocation, venue.location) <= config.NEAR_DISTANCE_IN_MILES,
+      );
+
+      const validVenueIds = new Set<string>(eventVenues.map((venue) => venue.venueId));
+
+      eventList = eventList.filter((event) => validVenueIds.has(event.venueId));
+
+      venueList = venueList.filter(
+        (venue) => calculateDistance(searchLocation, venue.location) <= config.NEAR_DISTANCE_IN_MILES,
+      );
+    }
 
     eventList = eventList.map((event) => {
+      const { _id, __v, ...rest } = event._doc;
       return {
-        ...event._doc,
+        ...rest,
         ticketTiers: event.ticketTiers.map((tier: any) => {
           return {
             label: tier.label,
@@ -68,8 +84,8 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    hostProfileList = hostProfileList.map((host) => {
-      const { _id, __v, password, ...rest } = host._doc;
+    hostProfileList = hostProfileList.map((profile) => {
+      const { _id, __v, ...rest } = profile._doc;
       return {
         ...rest,
       };

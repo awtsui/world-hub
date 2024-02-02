@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
 
     const validatedReqBody = VenueDataRequestBodySchema.safeParse(reqBody);
     if (!validatedReqBody.success) {
+      console.error(validatedReqBody.error.errors);
       throw Error('Invalid request body');
     }
 

@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
       throw Error(resp.error);
     }
 
+    revalidatePath('/');
+
     await session.commitTransaction();
 
     return NextResponse.json(

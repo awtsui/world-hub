@@ -23,9 +23,11 @@ export default async function VenuePage({ params }: VenuePageParams) {
           <div>
             <p className="text-xl font-bold py-2">Events</p>
             <div>
-              {events.map((event) => (
-                <EventViewRow key={event.eventId} event={event} />
-              ))}
+              {events.length ? (
+                events.map((event) => <EventViewRow key={event.eventId} event={event} />)
+              ) : (
+                <p>No events</p>
+              )}
             </div>
           </div>
         </div>
