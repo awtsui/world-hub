@@ -19,6 +19,8 @@ export default async function CategorySection({ category, subCategory }: Categor
     events = await getTrendingEventsBySubcategory(subCategory.name, config.TRENDING_EVENTS_BY_SUBCATEGORY_LIMIT);
   }
 
+  events.sort((a, b) => (new Date(a.datetime) < new Date(b.datetime) ? -1 : 1));
+
   return (
     <div className="flex flex-col">
       {events.length > 0 && (
