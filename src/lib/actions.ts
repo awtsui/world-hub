@@ -558,3 +558,31 @@ export async function getTrendingEventsBySubcategory(subCategory: string, limit:
     throw Error(`Unable to retrieve trending event by subcategory: ${error}`);
   }
 }
+
+export async function getApprovedEventsByVenueId(venueId: String) {
+  await dbConnect();
+
+  try {
+    const data = await Event.find({
+      venueId,
+      approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
+    });
+    const formattedData = data.map((event: any) => {
+      const { _id, __v, ...rest } = event._doc;
+      return {
+        ...rest,
+        ticketTiers: event.ticketTiers.map((tier: any) => {
+          const { _id, __v, ...tierRest } = tier._doc;
+          return {
+            ...tierRest,
+            price: tier.price.toString(),
+          };
+        }),
+      };
+    });
+    return formattedData;
+  } catch (error) {
+    throw Error(`Unable to retrieve trending event by subcategory: ${error}`);
+  }
+}

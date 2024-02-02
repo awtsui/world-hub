@@ -26,18 +26,18 @@ export default function EventViewRow({ event }: EventViewRowProps) {
 
   return (
     <div className="space-y-3 pt-3">
-      <div className="flex w-full items-center gap-10 px-4">
+      <div className="flex items-center gap-10 px-4">
         <div className="flex flex-col items-center">
           <p>{month}</p>
           <p className="text-2xl">{day}</p>
         </div>
         <div className="flex flex-col flex-1">
-          <p className="text-slate-500">
+          <p className="text-slate-500 whitespace-nowrap">
             {weekday} - {time}
           </p>
-          <p className="font-semibold">{event.title}</p>
+          <p className="font-semibold whitespace-nowrap">{event.title}</p>
           {venue ? (
-            <p className="text-slate-500">
+            <p className="text-slate-500 whitespace-nowrap">
               {venue.city}, {venue.state} - {venue.name}
             </p>
           ) : (

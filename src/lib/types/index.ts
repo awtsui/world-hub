@@ -71,6 +71,10 @@ export interface IVenue {
   state: string;
   zipcode: string;
   parking: string[];
+  location: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 export interface IUser {
