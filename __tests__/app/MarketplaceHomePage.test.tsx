@@ -1,59 +1,35 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import MarketplaceHomePage from '@/app/app/marketplace/page';
 import CategorySection, { CategorySectionProps } from '@/components/app/__mocks__/CategorySection';
-import { mockEvents } from '@/lib/data/__mocks__';
-import TrendingEventsSection, { TrendingEventsSectionProps } from '@/components/app/__mocks__/TrendingEventsSection';
-import { getTrendingEvents, getTrendingEventsByCategory, getTrendingEventsBySubcategory } from '@/lib/actions';
+import TrendingEventsSection from '@/components/app/__mocks__/TrendingEventsSection';
+import MainHeroSection from '@/components/app/__mocks__/MainHeroSection';
 
-jest.mock('../../src/components/app/CategorySection.tsx', () => ({ category, subCategory }: CategorySectionProps) => {
+jest.mock('../../src/components/app/CategorySection', () => ({ category, subCategory }: CategorySectionProps) => {
   return <CategorySection category={category} subCategory={subCategory} />;
 });
 
-jest.mock('../../src/components/app/TrendingEventsSection.tsx', () => ({}: TrendingEventsSectionProps) => {
+jest.mock('../../src/components/app/TrendingEventsSection', () => () => {
   return <TrendingEventsSection />;
 });
 
-jest.mock('../../src/lib/actions.ts', () => ({
-  getTrendingEventsByCategory: jest.fn(),
-  getTrendingEventsBySubcategory: jest.fn(),
-  getTrendingEvents: jest.fn(),
-}));
-
-const mockGetTrendingEventsByCategory = getTrendingEventsByCategory as jest.Mock;
-const mockGetTrendingEventsBySubcategory = getTrendingEventsBySubcategory as jest.Mock;
-const mockGetTrendingEvents = getTrendingEvents as jest.Mock;
+jest.mock('../../src/components/app/MainHeroSection', () => () => {
+  return <MainHeroSection />;
+});
 
 describe('MarketplaceHomePage', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
   afterAll(() => {
     jest.clearAllMocks();
   });
-  it('renders a background image banner', async () => {
+  it('renders TrendingEventsSection', async () => {
     render(await MarketplaceHomePage());
-    await waitFor(() => {
-      const image = screen.getByAltText('home-bg');
-
-      expect(image).toBeInTheDocument();
-    });
+    expect(screen.getByTestId('trending-events-section')).toBeInTheDocument();
   });
-  it('renders TrendingEventsSection if there are events', async () => {
-    mockGetTrendingEvents.mockReturnValue(mockEvents);
+  it('renders CategorySection', async () => {
     render(await MarketplaceHomePage());
-    await waitFor(() => {
-      const trendingEventsSection = screen.getByTestId('trending-events-section');
-
-      expect(trendingEventsSection).toBeInTheDocument();
-    });
+    expect(screen.getByTestId('category-section')).toBeInTheDocument();
   });
-  it('renders CategorySection if there are events', async () => {
-    mockGetTrendingEventsByCategory.mockReturnValue(mockEvents);
+  it('renders MainHeroSection', async () => {
     render(await MarketplaceHomePage());
-    await waitFor(() => {
-      const categorySection = screen.getAllByTestId('category-section');
-
-      expect(categorySection).toHaveLength(1);
-    });
+    expect(screen.getByTestId('main-hero-section')).toBeInTheDocument();
   });
 });

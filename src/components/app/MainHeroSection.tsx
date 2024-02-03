@@ -15,7 +15,7 @@ export default async function MainHeroSection() {
     media = await getMediaById(hostProfile.mediaId);
   }
 
-  if (!hostProfile || !media || !event || !venue) {
+  if (!hostProfile || !event || !venue) {
     return <div>Loading...</div>;
   }
 
@@ -41,7 +41,7 @@ export default async function MainHeroSection() {
       </div>
       <div className="w-3/4 py-6 px-3">
         <AspectRatio ratio={5 / 2}>
-          <Image src={media ? media.url : '/placeholder.png'} alt="home-bg" fill className="object-cover" />
+          <Image src={media ? media.url : '/placeholder.png'} alt="main-hero-image" fill className="object-cover" />
         </AspectRatio>
       </div>
     </div>

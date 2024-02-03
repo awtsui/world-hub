@@ -1,7 +1,3 @@
-import { Event } from '@/lib/types';
-
-export interface TrendingEventsSectionProps {}
-
-export default function TrendingEventsSection({}: TrendingEventsSectionProps) {
+export default function TrendingEventsSection() {
   return <div data-testid="trending-events-section">mock</div>;
 }
