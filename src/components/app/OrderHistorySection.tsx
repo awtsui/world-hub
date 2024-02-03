@@ -4,7 +4,7 @@ import useFetchOrdersByIds from '@/hooks/useFetchOrdersByIds';
 import useFetchUserProfileById from '@/hooks/useFetchUserProfileById';
 import { User } from 'next-auth';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatDate, formatPrice } from '@/lib/client/utils';
+import { formatDate, formatPrice, formatTime } from '@/lib/client/utils';
 import CopyToClipboard from '../CopyToClipboard';
 
 interface OrderHistorySectionProps {
@@ -44,12 +44,14 @@ export default function OrderHistorySection({ user }: OrderHistorySectionProps) 
                     <p className="hover:text-green-500">{order._id}</p>
                   </CopyToClipboard>
                 </TableCell>
-                <TableCell>{formatDate(order.timestamp)}</TableCell>
+                <TableCell>
+                  {formatDate(order.timestamp)} &#x2022; {formatTime(order.timestamp)}
+                </TableCell>
                 <TableCell>{order.email}</TableCell>
                 <TableCell>{order.amount}</TableCell>
                 <TableCell>
                   {order.ticketData.map((ticket: any) => (
-                    <div key={ticket.eventTitle} className="flex gap-2">
+                    <div key={`${ticket.eventId}-${ticket.label}`} className="flex gap-2">
                       <p className="flex-1">{ticket.eventTitle}</p>
                       <p>{ticket.unitAmount}</p>
                       <p>{ticket.label}</p>

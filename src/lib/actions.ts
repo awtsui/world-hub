@@ -19,6 +19,7 @@ import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { deleteMedia } from './mongodb/utils/medias';
 import { cookies } from 'next/headers';
 import mongoose, { ClientSession } from 'mongoose';
+import { config } from './config';
 
 const { AWS_CLOUDFRONT_URL, AWS_CLOUDFRONT_PRIVATE_KEY, AWS_CLOUDFRONT_KEY_PAIR_ID } = process.env;
 if (!AWS_CLOUDFRONT_URL) throw new Error('AWS_CLOUDFRONT_URL not defined');
@@ -588,5 +589,91 @@ export async function getApprovedEventsByVenueId(venueId: String) {
     return formattedData;
   } catch (error) {
     throw Error(`Unable to retrieve trending event by subcategory: ${error}`);
+  }
+}
+
+export async function getHeroHostProfile() {
+  await dbConnect();
+
+  try {
+    const data = await HostProfile.findOne({ hostId: config.HERO_HOST }).exec();
+    if (!data) {
+      throw Error('Host profile does not exist');
+    }
+    const { _id, __v, ...rest } = data._doc;
+    const formattedData = {
+      ...rest,
+    };
+    return formattedData;
+  } catch (error) {
+    throw Error(`Unable to retrieve hero host: ${error}`);
+  }
+}
+
+export async function getCategoryHeroHostProfile({
+  categoryId,
+  subcategoryId,
+}: {
+  categoryId: string;
+  subcategoryId?: string;
+}) {
+  await dbConnect();
+
+  try {
+    const isCategory = !subcategoryId;
+
+    let data;
+    if (isCategory) {
+      data = await HostProfile.findOne({
+        hostId: config.CATEGORY_HERO_HOSTS[categoryId],
+      }).exec();
+    } else {
+      data = await HostProfile.findOne({
+        hostId: config.SUBCATEGORY_HERO_HOSTS[subcategoryId],
+      }).exec();
+    }
+
+    if (!data) {
+      throw Error('Host profile does not exist');
+    }
+    const { _id, __v, ...rest } = data._doc;
+    const formattedData = {
+      ...rest,
+    };
+    return formattedData;
+  } catch (error) {
+    throw Error(`Unable to retrieve hero host: ${error}`);
+  }
+}
+
+export async function getUpcomingEventByHostId(hostId: string) {
+  await dbConnect();
+
+  try {
+    const data = await Event.find({
+      hostId,
+      approvalStatus: EventApprovalStatus.Approved,
+      datetime: { $gte: new Date() },
+    })
+      .sort({ datetime: 'asc' })
+      .limit(1)
+      .exec();
+    if (!data || !data.length) {
+      throw Error('Event does not exist');
+    }
+    const { _id, __v, ...rest } = data[0]._doc;
+    const formattedData = {
+      ...rest,
+      ticketTiers: data[0].ticketTiers.map((tier: any) => {
+        const { _id, __v, ...tierRest } = tier._doc;
+        return {
+          ...tierRest,
+          price: tier.price.toString(),
+        };
+      }),
+    };
+    return formattedData;
+  } catch (error) {
+    throw Error(`Unable to retrieve upcoming event: ${error}`);
   }
 }
