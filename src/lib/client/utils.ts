@@ -4,14 +4,54 @@ export function handleFetchError(error: any) {
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+export function formatTime(date: string) {
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(new Date(date));
+
+  return formattedDate;
+}
+
 export function formatDate(date: string) {
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
-    hour: 'numeric',
-    minute: 'numeric',
     month: 'long',
     day: 'numeric',
     year: 'numeric',
+  }).format(new Date(date));
+
+  return formattedDate;
+}
+
+export function formatMonthAndDay(date: string) {
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(date));
+
+  return formattedDate;
+}
+
+export function formatMonthShort(date: string) {
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+  }).format(new Date(date));
+
+  return formattedDate;
+}
+
+export function formatDayNumeric(date: string) {
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+  }).format(new Date(date));
+
+  return formattedDate;
+}
+
+export function formatWeekdayLong(date: string) {
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
   }).format(new Date(date));
 
   return formattedDate;

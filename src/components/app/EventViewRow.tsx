@@ -1,5 +1,12 @@
 'use client';
-import { fetcher, formatDate } from '@/lib/client/utils';
+import {
+  fetcher,
+  formatDate,
+  formatDayNumeric,
+  formatMonthShort,
+  formatTime,
+  formatWeekdayLong,
+} from '@/lib/client/utils';
 import { Event } from '@/lib/types';
 import useSWR from 'swr';
 import { Button } from '../ui/button';
@@ -28,17 +35,17 @@ export default function EventViewRow({ event }: EventViewRowProps) {
     <div className="space-y-3 pt-3">
       <div className="flex items-center gap-4 px-4">
         <div className="flex flex-col items-center w-20">
-          <p>{month}</p>
-          <p className="text-2xl">{day}</p>
+          <p>{formatMonthShort(event.datetime)}</p>
+          <p className="text-2xl">{formatDayNumeric(event.datetime)}</p>
         </div>
         <div className="flex flex-col flex-1">
           <p className="text-slate-500 whitespace-nowrap">
-            {weekday} - {time}
+            {formatWeekdayLong(event.datetime)} &#x2022; {formatTime(event.datetime)}
           </p>
-          <p className="font-semibold whitespace-nowrap">{event.title}</p>
+          <p className="font-semibold text-lg whitespace-nowrap">{event.title}</p>
           {venue ? (
             <p className="text-slate-500 whitespace-nowrap">
-              {venue.city}, {venue.state} - {venue.name}
+              {venue.name} &#x2022; {venue.city}, {venue.state}
             </p>
           ) : (
             <p>Loading...</p>

@@ -146,6 +146,10 @@ export const mockVenues: Venue[] = [
     state: 'CA',
     zipcode: '95814',
     parking: ['Across the street'],
+    location: {
+      latitude: 10.0,
+      longitude: 10.0,
+    },
   },
   {
     venueId: '1',
@@ -155,6 +159,10 @@ export const mockVenues: Venue[] = [
     state: 'CA',
     zipcode: '90014',
     parking: ['Next to venue'],
+    location: {
+      latitude: 20.0,
+      longitude: 20.0,
+    },
   },
 ];
 
@@ -200,8 +208,8 @@ export const mockOrders: Order[] = [
       { eventTitle: 'Knock2', price: '10', label: 'GA', currency: Currency.USD, eventId: '1', unitAmount: 1 },
     ],
     tickets: [],
-    timestamp: new Date(Date.now()),
-    totalPrice: Big('10'),
+    timestamp: '2024-01-25T00:43:00.000+00:00',
+    totalPrice: '10',
     userId: 'test-id',
   },
   {
@@ -212,8 +220,8 @@ export const mockOrders: Order[] = [
       { eventTitle: "Michael's Party", price: '10', label: 'GA', currency: Currency.USD, eventId: '2', unitAmount: 1 },
     ],
     tickets: [],
-    timestamp: new Date(Date.now()),
-    totalPrice: Big('20'),
+    timestamp: '2024-01-25T00:43:00.000+00:00',
+    totalPrice: '20',
     userId: 'test-id',
   },
 ];

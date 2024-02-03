@@ -182,3 +182,16 @@ export type Location = {
   latitude: number;
   longitude: number;
 };
+
+export type AppConfig = {
+  HOST_HASH_SALT: number;
+  TICKET_HASH_SALT: number;
+  ADMIN_HASH_SALT: number;
+  TRENDING_EVENTS_LIMIT: number;
+  TRENDING_EVENTS_BY_CATEGORY_LIMIT: number;
+  TRENDING_EVENTS_BY_SUBCATEGORY_LIMIT: number;
+  NEAR_DISTANCE_IN_MILES: number;
+  HERO_HOST: string;
+  CATEGORY_HERO_HOSTS: Record<string, string>;
+  SUBCATEGORY_HERO_HOSTS: Record<string, string>;
+};

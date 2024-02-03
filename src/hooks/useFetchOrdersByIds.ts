@@ -9,10 +9,10 @@ export default function useFetchOrdersByIds(orderIds?: string[]) {
   const { data: orders } = useSWR(fetchOrdersUrl, fetcher, {
     fallbackData: [],
   });
-
   const formattedOrders = orders.map((order: any) => {
+    const { __v, ...rest } = order;
     return {
-      ...order._doc,
+      ...rest,
       _id: order._id.toString(),
       totalPrice: order.totalPrice.toString(),
       ticketData: order.ticketData.map((data: any) => {

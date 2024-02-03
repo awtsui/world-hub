@@ -37,6 +37,7 @@ export default function AddTicketDialog({ event }: AddTicketDialogProps) {
           data-testid="add-ticket-dialog-button"
           onClick={() => setSelectedTicket(null)}
           disabled={!isValidVerificationLevel}
+          className="px-16 py-5"
         >
           Purchase a ticket
         </Button>

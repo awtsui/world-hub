@@ -1,10 +1,7 @@
 import { categories, categoryIdToName } from '@/lib/data';
-import { Event } from '@/lib/types';
 import CategoryDropdown from '@/components/app/CategoryDropdown';
-import { getApprovedEventsByCategory } from '@/lib/actions';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-import Image from 'next/image';
 import CategorySection from '@/components/app/CategorySection';
+import CategoryHeroSection from '@/components/app/CategoryHeroSection';
 
 interface CategoryPageParams {
   params: {
@@ -22,11 +19,9 @@ export default async function CategoryPage({ params }: CategoryPageParams) {
   const subCategories = categories[categoryId].subCategories;
 
   return (
-    <div className="pb-12">
+    <div className="pb-20">
       <div className="relative">
-        <AspectRatio ratio={3 / 1} className="w-full">
-          <Image src="/homebg2.png" alt="category-bg" fill className="object-cover " />
-        </AspectRatio>
+        <CategoryHeroSection categoryId={params.categoryId} />
         <div className="absolute top-10 left-14">
           <div className="flex items-center gap-10">
             <p className="text-5xl text-white font-bold">{categoryName}</p>

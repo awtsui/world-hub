@@ -1,5 +1,5 @@
 'use client';
-import { categories, categoryIdToName } from '@/lib/data';
+import { categories } from '@/lib/data';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
