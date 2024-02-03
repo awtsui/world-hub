@@ -8,12 +8,10 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SearchPlacesCommandProps {
-  location: string;
-  setLocation: (location: string) => void;
-  setLatLng: (result: LatLng) => void;
+  setLatLng: (result: LatLng | null) => void;
 }
 
-export default function SearchPlacesCommand({ location, setLocation, setLatLng }: SearchPlacesCommandProps) {
+export default function SearchPlacesCommand({ setLatLng }: SearchPlacesCommandProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [isKeywordHovered, setIsKeywordHovered] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +56,6 @@ export default function SearchPlacesCommand({ location, setLocation, setLatLng }
 
   function handleSelect({ description }: Suggestion) {
     setValue(description, false);
-    setLocation(description);
     clearSuggestions();
 
     getGeocode({ address: description }).then((results) => {
@@ -68,6 +65,7 @@ export default function SearchPlacesCommand({ location, setLocation, setLatLng }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     setValue(event.target.value);
+    setLatLng(null);
     setIsSearching(true);
   }
 

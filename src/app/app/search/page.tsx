@@ -4,12 +4,16 @@ import SearchResultTabs from '@/components/app/SearchResultTabs';
 import { fetcher } from '@/lib/client/utils';
 import { SearchResult } from '@/lib/types';
 import { useSearchParams } from 'next/navigation';
-import useSWRImmutable from 'swr/immutable';
+import useSWR from 'swr';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
 
-  const { data: searchResults } = useSWRImmutable<SearchResult>(`/api/search?${searchParams.toString()}`, fetcher);
+  const { data: searchResults } = useSWR<SearchResult>(`/api/search?${searchParams.toString()}`, fetcher, {
+    fallbackData: { events: [], venues: [], hostProfiles: [] },
+  });
+
+  const tab = searchParams.get('tab');
 
   if (!searchResults) {
     return <div>Loading...</div>;
@@ -18,7 +22,7 @@ export default function SearchPage() {
   return (
     <div className="w-full flex flex-col items-center pt-10 pb-20">
       <div className="w-4/5">
-        <SearchResultTabs searchResults={searchResults} />
+        <SearchResultTabs searchResults={searchResults} tab={tab} />
       </div>
     </div>
   );

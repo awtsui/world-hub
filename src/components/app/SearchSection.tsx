@@ -12,20 +12,14 @@ import { useSearchDialog } from '@/context/ModalContext';
 
 export default function SearchSection() {
   const { isSearchOpen, onSearchClose } = useSearchDialog();
-
-  const [location, setLocation] = useState('');
   const [latLng, setLatLng] = useState<LatLng | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [keyword, setKeyword] = useState('');
   const router = useRouter();
-  const searchDisabled = !(location || latLng || dateRange || keyword);
+  const searchDisabled = !(latLng || dateRange || keyword);
 
   function onClickSearch() {
     const params = new URLSearchParams();
-
-    // if (location) {
-    //   params.set('location', location);
-    // }
     if (latLng) {
       params.set('lat', latLng.lat.toString());
       params.set('lng', latLng.lng.toString());
@@ -44,12 +38,12 @@ export default function SearchSection() {
     if (isSearchOpen) {
       onSearchClose();
     }
-    router.push(`/search?${params.toString()}`);
+    router.push(`/search?tab=events&${params.toString()}`);
   }
 
   return (
     <div className="flex justify-center items-center gap-1 max-w-fit rounded-full border-2 h-[80px]">
-      <SearchPlacesCommand location={location} setLocation={setLocation} setLatLng={setLatLng} />
+      <SearchPlacesCommand setLatLng={setLatLng} />
       <Separator orientation="vertical" className="h-[60px]" />
       <DatePickerWithRange dateRange={dateRange} setDateRange={setDateRange} />
       <Separator orientation="vertical" className="h-[60px]" />

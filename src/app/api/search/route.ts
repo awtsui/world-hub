@@ -2,7 +2,7 @@ import { config } from '@/lib/config';
 import Event from '@/lib/mongodb/models/Event';
 import HostProfile from '@/lib/mongodb/models/HostProfile';
 import Venue from '@/lib/mongodb/models/Venue';
-import { calculateDistance } from '@/lib/server/utils';
+import { calculateDistance, containsKeyword } from '@/lib/server/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -14,23 +14,55 @@ export async function GET(request: NextRequest) {
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
 
+    const isLocationBound = !!lat && !!lng;
+
     let eventList = [];
     let venueList = [];
     let hostProfileList = [];
 
+    if (isLocationBound) {
+      const searchLocation = {
+        latitude: parseFloat(lat),
+        longitude: parseFloat(lng),
+      };
+      const venues = await Venue.find({});
+      const nearbyVenues = venues.filter(
+        (venue) => calculateDistance(searchLocation, venue.location) < config.NEAR_DISTANCE_IN_MILES,
+      );
+      venueList.push(...nearbyVenues);
+
+      const events = await Event.find({ venueId: { $in: nearbyVenues.map((venue) => venue.venueId) } });
+      eventList.push(...events);
+    }
+
     if (keyword) {
-      const events = await Event.find({
-        title: { $regex: keyword, $options: 'i' },
-        datetime: { $gte: new Date() },
-      });
-      eventList.push(...events);
-      const venues = await Venue.find({ name: { $regex: keyword, $options: 'i' } });
-      venueList.push(...venues);
-      const hostProfiles = await HostProfile.find({ name: { $regex: '^' + keyword, $options: 'i' } });
+      const hostProfiles = await HostProfile.find({ name: { $regex: keyword, $options: 'i' } });
       hostProfileList.push(...hostProfiles);
-    } else {
-      const events = await Event.find({ datetime: { $gte: new Date() } });
-      eventList.push(...events);
+
+      if (isLocationBound) {
+        eventList = eventList.filter(
+          (event) =>
+            containsKeyword(event.title, keyword) ||
+            containsKeyword(event.subTitle, keyword) ||
+            containsKeyword(event.category, keyword) ||
+            containsKeyword(event.subCategory, keyword),
+        );
+        venueList = venueList.filter((venue) => containsKeyword(venue.name, keyword));
+      } else {
+        const events = await Event.find({
+          $or: [
+            { title: { $regex: keyword, $options: 'i' } },
+            { subTitle: { $regex: keyword, $options: 'i' } },
+            { category: { $regex: keyword, $options: 'i' } },
+            { subCategory: { $regex: keyword, $options: 'i' } },
+          ],
+          datetime: { $gte: new Date() },
+        });
+        eventList.push(...events);
+
+        const venues = await Venue.find({ name: { $regex: keyword, $options: 'i' } });
+        venueList.push(...venues);
+      }
     }
 
     if (startDate) {
@@ -38,28 +70,6 @@ export async function GET(request: NextRequest) {
     }
     if (endDate) {
       eventList = eventList.filter((event) => new Date(event.datetime) <= new Date(endDate));
-    }
-
-    // Filter venues and events by location OR latitude and longitude
-
-    if (lat && lng) {
-      const venueIdsOfEvents = eventList.map((event) => event.venueId);
-      let eventVenues = await Venue.find({ venueId: { $in: venueIdsOfEvents } });
-      const searchLocation = {
-        latitude: parseFloat(lat),
-        longitude: parseFloat(lng),
-      };
-      eventVenues = eventVenues.filter(
-        (venue) => calculateDistance(searchLocation, venue.location) <= config.NEAR_DISTANCE_IN_MILES,
-      );
-
-      const validVenueIds = new Set<string>(eventVenues.map((venue) => venue.venueId));
-
-      eventList = eventList.filter((event) => validVenueIds.has(event.venueId));
-
-      venueList = venueList.filter(
-        (venue) => calculateDistance(searchLocation, venue.location) <= config.NEAR_DISTANCE_IN_MILES,
-      );
     }
 
     eventList = eventList.map((event) => {

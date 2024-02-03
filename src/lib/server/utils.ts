@@ -27,3 +27,7 @@ export function calculateDistance(pointA: Location, pointB: Location) {
 
   return distanceInMiles;
 }
+
+export function containsKeyword(str: string, keyword: string) {
+  return str.toLowerCase().includes(keyword.toLowerCase());
+}

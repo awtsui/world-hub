@@ -27,9 +27,9 @@ describe('App navigation', () => {
   });
   it('successfully opens search modal and navigate to search page with keyword in search params', () => {
     cy.findByTestId('app-navbar').findByTestId('search-menu-button').click();
-    cy.findByTestId('search-keyword-command-input').type('ch');
+    cy.findByTestId('search-keyword-command-input').type('test');
     cy.findByTestId('search-keyword-command-button').click();
     cy.location('pathname').should('eq', '/search');
-    cy.location('search').should('eq', '?keyword=ch');
+    cy.location('search').should('contain', 'keyword=test');
   });
 });
