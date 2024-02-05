@@ -8,7 +8,6 @@ import { fetcher } from '@/lib/client/utils';
 import { HostApprovalStatus } from '@/lib/types';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 import useSWR from 'swr';
 
 export default function HostApprovalStatusPage() {

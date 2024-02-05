@@ -79,9 +79,11 @@ export default function CartPage() {
               <p className="text-lg font-bold">${subTotal.toFixed(2)}</p>
             </div>
           </div>
-          <Button data-testid="checkout-button" className="w-full" disabled={isDisabled}>
-            <Link href="/checkout">Checkout</Link>
-          </Button>
+          <Link href="/checkout">
+            <Button data-testid="checkout-button" className="w-full" disabled={isDisabled}>
+              Checkout
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

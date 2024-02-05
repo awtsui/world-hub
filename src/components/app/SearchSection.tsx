@@ -38,7 +38,7 @@ export default function SearchSection() {
     if (isSearchOpen) {
       onSearchClose();
     }
-    router.push(`/search?tab=events&${params.toString()}`);
+    router.push(`/search?${params.toString()}`);
   }
 
   return (
