@@ -34,11 +34,11 @@ export default async function CategoryHeroSection({ categoryId, subcategoryId }:
       <div className="w-1/4 flex items-end justify-center">
         <div className="flex flex-col items-center px-12 pb-8 mb-8 gap-12 w-4/5">
           <p className="text-white text-5xl whitespace-nowrap">{hostProfile.name}</p>
-          <Button size="lg" variant="secondary" className="mt-2 w-full">
-            <Link href={`/host/${hostProfile.hostId}`} className="text-lg">
+          <Link href={`/host/${hostProfile.hostId}`} className="text-lg w-full">
+            <Button size="lg" variant="secondary" className="w-full">
               Find tickets
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="w-3/4 py-6 pr-3 pl-10">

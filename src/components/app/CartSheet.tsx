@@ -73,16 +73,21 @@ export default function CartSheet() {
             <hr />
           </div>
           <div className="flex gap-2">
-            <Button data-testid="modal-view-cart-button" variant="secondary" className="w-full" onClick={onCartClose}>
-              <Link href="/cart" className="w-full">
+            <Link href="/cart" className="w-full">
+              <Button data-testid="modal-view-cart-button" className="w-full" variant="secondary" onClick={onCartClose}>
                 View Cart
-              </Link>
-            </Button>
-            <Button data-testid="modal-checkout-button" className="w-full" disabled={isDisabled} onClick={onCartClose}>
-              <Link href="/checkout" className="w-full">
+              </Button>
+            </Link>
+            <Link href="/checkout" className="w-full">
+              <Button
+                data-testid="modal-checkout-button"
+                className="w-full"
+                disabled={isDisabled}
+                onClick={onCartClose}
+              >
                 Checkout
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </SheetContent>

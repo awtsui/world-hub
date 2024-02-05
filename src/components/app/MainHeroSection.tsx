@@ -25,17 +25,17 @@ export default async function MainHeroSection() {
         <div className="flex flex-col justify-between items-center px-12 pb-8 w-4/5 h-1/2 mb-8">
           <p className="text-white text-5xl">{hostProfile.name}</p>
           <div className="space-y-6">
-            <p className="text-white">
+            <p className="text-white mb-2">
               See you <span className="font-bold text-lg">{formatMonthAndDay(event.datetime)}</span> in{' '}
               <span className="text-lg">
                 {venue.city}, {venue.state}
               </span>
             </p>
-            <Button size="lg" variant="secondary" className="mt-2 w-full">
-              <Link href={`/host/${hostProfile.hostId}`} className="text-lg">
+            <Link href={`/host/${hostProfile.hostId}`} className="text-lg w-full">
+              <Button size="lg" variant="secondary" className="w-full">
                 Find tickets
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

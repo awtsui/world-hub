@@ -1,14 +1,7 @@
 'use client';
-import {
-  fetcher,
-  formatDate,
-  formatDayNumeric,
-  formatMonthShort,
-  formatTime,
-  formatWeekdayLong,
-} from '@/lib/client/utils';
+import { fetcher, formatDayNumeric, formatMonthShort, formatTime, formatWeekdayLong } from '@/lib/client/utils';
 import { Event } from '@/lib/types';
-import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
 import { Button } from '../ui/button';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -18,14 +11,8 @@ interface EventViewRowProps {
 }
 
 export default function EventViewRow({ event }: EventViewRowProps) {
-  const { data: venue } = useSWR(`/api/venues?id=${event.venueId}`, fetcher);
+  const { data: venue } = useSWRImmutable(`/api/venues?id=${event.venueId}`, fetcher);
   const router = useRouter();
-
-  const formattedDate = formatDate(event.datetime);
-  const [date, time] = formattedDate.split(' at ');
-  const [weekday, monthAndDay, _] = date.split(', ');
-
-  const [month, day] = monthAndDay.split(' ');
 
   function onClick() {
     router.push(`/event/${event.eventId}`);
