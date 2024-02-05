@@ -36,13 +36,13 @@ export default function useSearchWithKeyword() {
 
   useEffect(() => {
     const tempResults: KeywordSearchResult[] = [];
-    if (events) {
+    if (events.length) {
       tempResults.push(...events.map((event) => ({ resultType: 'Event', value: event.title, id: event.eventId })));
     }
-    if (venues) {
+    if (venues.length) {
       tempResults.push(...venues.map((venue) => ({ resultType: 'Venue', value: venue.name, id: venue.venueId })));
     }
-    if (hostProfiles) {
+    if (hostProfiles.length) {
       tempResults.push(
         ...hostProfiles.map((profile) => ({ resultType: 'Host', value: profile.name, id: profile.hostId })),
       );
