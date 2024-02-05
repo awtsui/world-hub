@@ -5,6 +5,7 @@ import { ErrorBoundary } from 'next/dist/client/components/error-boundary';
 import RootError from './error';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'WorldHub',
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <ErrorBoundary errorComponent={RootError}>{children}</ErrorBoundary>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
