@@ -31,7 +31,7 @@ export default async function HostPage({ params }: HostPageParams) {
         <div className="flex flex-col w-auto">
           <p className="text-8xl max-w-xl">{hostProfile.name}</p>
         </div>
-        <div className="w-[500px] max-h-[700px]">
+        <div className="w-1/4">
           <AspectRatio ratio={3 / 4}>
             <Image src={media ? media.url : '/placeholder.png'} alt={hostProfile.name} fill className="object-cover" />
           </AspectRatio>

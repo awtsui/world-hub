@@ -4,6 +4,7 @@ import { Kanit } from 'next/font/google';
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary';
 import RootError from './error';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: 'WorldHub',
@@ -31,6 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <ErrorBoundary errorComponent={RootError}>{children}</ErrorBoundary>
+        <Analytics />
       </body>
     </html>
   );
